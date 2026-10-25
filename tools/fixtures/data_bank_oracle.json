@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "contract": "upstream-data-bank",
+  "sillyTavernCommit": "7e8663cd9c184a550b37238218bdd32c6efc68e9",
+  "referenceFiles": {
+    "public/scripts/extensions/attachments/index.js": "9016388e51f21085404e95cdf20a9dd10cdd1317bfde6a29c966b23b2d68ce14",
+    "public/scripts/chats.js": "82a5113c6a7c6fd3a182db279b0c1d56aa3a0c27438f4a76e6dd8eaebc209360",
+    "public/scripts/extensions/vectors/index.js": "38201bea17f64866bd20dab122a0cebabbf241d00c948f75c0ad6985b0d18b12",
+    "public/scripts/utils.js": "65c16064e7b0ecb37cf66417a0e22e0a92ff596df104c6c057b6b79d797b4784",
+    "public/lib/pdf.min.mjs": "14364210f0325d551a6997061de65799456f377b6669d04d45555545926b0b10",
+    "public/lib/pdf.worker.min.mjs": "58c11b32d9b037ebc2d70a925bef87e66f98a691914e014bc42be4f0f0d2ce84"
+  },
+  "libraries": [
+    {
+      "name": "PDF.js",
+      "version": "4.7.76",
+      "license": "Apache-2.0",
+      "transform": "Normalize CRLF to LF, remove final ES export and wrap in an IIFE; keep globalThis.pdfjsLib/pdfjsWorker and complete bundled code."
+    },
+    {
+      "name": "Mozilla Readability",
+      "version": "0.6.0",
+      "license": "Apache-2.0",
+      "transform": "Concatenate Readability.js and Readability-readerable.js from fixed checkout dependency."
+    }
+  ],
+  "assets": {
+    "app/src/main/assets/js/vendor/pdf-4.7.76.js": "7308b96e43a9c295df4e9dfbb9cd5275ec86826e92692abe5f76155383580ae3",
+    "app/src/main/assets/js/vendor/pdf-worker-4.7.76.js": "9ee40b9101f4f398bd68dee666e0c624a64fb47593bcec7866c89694be378d86",
+    "app/src/main/assets/js/vendor/readability-0.6.0.js": "9e272aace513e8303dbe53c2fa5fc4338106a7ccb662f123d4e6eb7591f5a7bb"
+  },
+  "coverage": [
+    "34 slash-command names",
+    "three existing data/media owners and direct media-store restore",
+    "disabled inclusion and source selection",
+    "cross-file top-k and file-order chunk return",
+    "explicit ingest/purge and generation injection lifecycle",
+    "write rollback, in-flight invalidation and cancellation",
+    "lazy PDF/HTML extraction, EPUB spine order, plain/Markdown text",
+    "OnePlus 13 browser profile and safe-area manager UI",
+    "production macro expansion in query and preset helper",
+    "single query count source shared by command and manager",
+    "ordinary meta/session saves avoid media transactions",
+    "Readability null article failure"
+  ],
+  "licenses": {
+    "app/src/main/assets/js/vendor/pdf-4.7.76.LICENSE": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+    "app/src/main/assets/js/vendor/readability-0.6.0.LICENSE": "a5b1e8181751ce05b85b7bfaa832b785e87086250a5148e679d17ca9bdcfa958"
+  }
+}

@@ -1,0 +1,330 @@
+{
+  "schemaVersion": 3,
+  "description": "按功能域选测，规则见 docs/RELEASE_CHECKLIST.md 的验证入口；paths 支持 * 和目录前缀，related 声明跨域消费者，gate: fast 为 Fast 基础集（缺省 full）。keep 仅标注领域（data 数据安全 / main 日常主路径 / boundary 保护边界 / compat 生态兼容），不构成测试准入条件。",
+  "profiles": {
+    "node-parallel": {
+      "environment": "node",
+      "timeoutMs": 30000,
+      "parallel": true
+    },
+    "node-serial": {
+      "environment": "node",
+      "timeoutMs": 60000,
+      "parallel": false
+    },
+    "browser": {
+      "environment": "browser",
+      "timeoutMs": 120000,
+      "parallel": true
+    }
+  },
+  "probes": {
+    "android-smoke": {
+      "entry": "tools/probes/run_android_emulator_smoke.ps1",
+      "when": "Worker、CSP、原生桥、文件系统或 Android 生命周期在 WebView 上的行为",
+      "domains": ["platform"],
+      "paths": [
+        "app/src/main/assets/index.html",
+        "app/src/main/assets/js/workers/",
+        "app/src/main/assets/js/app/47-script-worker.js",
+        "app/src/main/assets/js/app/52-mvu-body.js",
+        "app/src/main/assets/js/core/risu-lua.js",
+        "app/src/main/assets/js/core/risu-regex-runtime.js",
+        "app/src/main/assets/js/app/30-card-import.js",
+        "app/src/main/assets/js/app/64-stream-drafts.js",
+        "app/src/main/assets/js/app/92-theme-ui.js",
+        "app/src/main/assets/js/app/95-chat-io-mobile.js"
+      ]
+    },
+    "real-card": {
+      "entry": "tools/probes/card_package_browser_acceptance.js",
+      "when": "按发布清单「真实卡选测」选择具备相应能力的原卡验证",
+      "domains": ["import", "risu", "scripts"]
+    }
+  },
+  "sharedPaths": [
+    "app/src/main/assets/js/app/00-*",
+    "app/src/main/assets/js/app/05-*",
+    "app/src/main/assets/js/app/99-*",
+    "app/src/main/assets/js/core/pure.js",
+    "tools/tests/source.js",
+    "app/src/main/assets/index.html",
+    "app/src/main/assets/js/vendor/*",
+    "tools/tests/run_all.js"
+  ],
+  "domains": {
+    "storage": {
+      "paths": [
+        "app/src/main/assets/js/core/repository*"
+      ],
+      "related": [
+        "import",
+        "memory",
+        "messages",
+        "scripts",
+        "risu",
+        "ui"
+      ]
+    },
+    "import": {
+      "paths": [
+        "app/src/main/assets/js/app/30-*.js",
+        "app/src/main/assets/js/app/31-*.js",
+        "app/src/main/assets/js/app/40-*.js",
+        "app/src/main/assets/js/app/42-*.js",
+        "app/src/main/assets/js/app/45-*.js",
+        "app/src/main/assets/js/core/charx.js"
+      ],
+      "related": [
+        "storage",
+        "risu",
+        "prompt",
+        "scripts",
+        "messages",
+        "ui"
+      ]
+    },
+    "risu": {
+      "paths": [
+        "app/src/main/assets/js/app/32-*.js",
+        "app/src/main/assets/js/app/33-*.js",
+        "app/src/main/assets/js/app/34-*.js",
+        "app/src/main/assets/js/app/35-*.js",
+        "app/src/main/assets/js/app/36-*.js",
+        "app/src/main/assets/js/core/risu-*"
+      ],
+      "related": [
+        "import",
+        "messages",
+        "storage",
+        "scripts",
+        "prompt"
+      ]
+    },
+    "scripts": {
+      "paths": [
+        "app/src/main/assets/js/app/46-*.js",
+        "app/src/main/assets/js/app/47-*.js",
+        "app/src/main/assets/js/app/48-*.js",
+        "app/src/main/assets/js/app/49-data-bank*.js",
+        "app/src/main/assets/js/app/52-mvu*.js",
+        "app/src/main/assets/js/app/63-*.js",
+        "app/src/main/assets/js/app/66-*.js",
+        "app/src/main/assets/js/app/67-*.js",
+        "app/src/main/assets/js/app/69-*.js",
+        "app/src/main/assets/js/app/73-*.js",
+        "app/src/main/assets/js/app/74-*.js",
+        "app/src/main/assets/js/app/75-*.js",
+        "app/src/main/assets/js/app/76-*.js",
+        "app/src/main/assets/js/app/83-*.js"
+      ],
+      "related": [
+        "messages",
+        "prompt",
+        "ui",
+        "import"
+      ]
+    },
+    "prompt": {
+      "paths": [
+        "app/src/main/assets/js/app/20-*.js",
+        "app/src/main/assets/js/app/50-*.js",
+        "app/src/main/assets/js/app/51-*.js",
+        "app/src/main/assets/js/app/52-worldbook*.js",
+        "app/src/main/assets/js/app/53-*.js",
+        "app/src/main/assets/js/app/55-*.js",
+        "app/src/main/assets/js/app/57-*.js",
+        "app/src/main/assets/js/app/58-*.js",
+        "app/src/main/assets/js/app/60-*.js"
+      ],
+      "related": [
+        "memory",
+        "messages",
+        "scripts"
+      ]
+    },
+    "memory": {
+      "paths": [
+        "app/src/main/assets/js/app/21-*.js",
+        "app/src/main/assets/js/app/49-vector*.js",
+        "app/src/main/assets/js/core/vector-*"
+      ],
+      "related": [
+        "prompt",
+        "messages"
+      ]
+    },
+    "messages": {
+      "paths": [
+        "app/src/main/assets/js/app/06-*.js",
+        "app/src/main/assets/js/app/07-*.js",
+        "app/src/main/assets/js/app/54-*.js",
+        "app/src/main/assets/js/app/62-*.js",
+        "app/src/main/assets/js/app/64-*.js",
+        "app/src/main/assets/js/app/68-*.js",
+        "app/src/main/assets/js/app/70-*.js",
+        "app/src/main/assets/js/app/72-*.js",
+        "app/src/main/assets/js/app/80-*.js",
+        "app/src/main/assets/js/app/81-*.js",
+        "app/src/main/assets/js/app/82-*.js",
+        "app/src/main/assets/js/app/84-*.js",
+        "app/src/main/assets/js/app/85-*.js",
+        "app/src/main/assets/js/app/86-*.js",
+        "app/src/main/assets/js/app/90-*.js",
+        "app/src/main/assets/js/app/91-*.js",
+        "app/src/main/assets/js/app/95-*.js",
+        "app/src/main/assets/js/app/96-*.js"
+      ],
+      "related": [
+        "memory",
+        "scripts",
+        "ui"
+      ]
+    },
+    "ui": {
+      "paths": [
+        "app/src/main/assets/js/app/10-*.js",
+        "app/src/main/assets/js/app/12-*.js",
+        "app/src/main/assets/js/app/14-*.js",
+        "app/src/main/assets/js/app/15-*.js",
+        "app/src/main/assets/js/app/16-*.js",
+        "app/src/main/assets/js/app/43-*.js",
+        "app/src/main/assets/js/app/44-*.js",
+        "app/src/main/assets/js/app/92-*.js",
+        "app/src/main/assets/css/",
+        "app/src/main/assets/js/core/wheel-*"
+      ],
+      "related": [
+        "messages"
+      ]
+    },
+    "platform": {
+      "paths": [
+        "app/src/main/java/",
+        "app/src/main/res/",
+        "app/src/main/AndroidManifest.xml",
+        "app/build.gradle.kts",
+        "gradle/",
+        "gradle.properties",
+        "build.gradle.kts",
+        "settings.gradle.kts"
+      ],
+      "related": [
+        "messages",
+        "storage"
+      ]
+    },
+    "tooling": {
+      "paths": [
+        "tools/qa/",
+        "tools/fixtures/",
+        "package.json",
+        "package-lock.json",
+        "eslint.config.js"
+      ],
+      "related": [
+        "storage",
+        "import",
+        "risu",
+        "scripts",
+        "prompt",
+        "memory",
+        "messages",
+        "ui",
+        "platform"
+      ]
+    }
+  },
+  "tests": [
+    {"id": "behavior.save-batch-browser", "path": "tools/tests/save_batch_browser.js", "profile": "browser", "domain": "storage", "keep": "data"},
+    {"id": "behavior.preset-task-lifecycle-browser", "path": "tools/tests/preset_task_lifecycle_browser.js", "profile": "browser", "domain": "scripts", "keep": "compat"},
+    {"id": "behavior.chat-viewport-lifecycle", "path": "tools/tests/chat_viewport_lifecycle.js", "profile": "browser", "domain": "scripts", "keep": "compat"},
+    {"id": "behavior.chat-history-window", "path": "tools/tests/chat_history_window.js", "profile": "browser", "domain": "messages", "keep": "main", "timeoutMs": 180000},
+    {"id": "behavior.recovery-ui", "path": "tools/tests/recovery_ui.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.stream-draft-runtime", "path": "tools/tests/stream_draft_runtime.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.prompt-transport", "path": "tools/tests/prompt_transport.js", "profile": "browser", "domain": "prompt", "keep": "main", "gate": "fast"},
+    {"id": "behavior.turn-parameters", "path": "tools/tests/turn_parameters_browser.js", "profile": "browser", "domain": "prompt", "keep": "main"},
+    {"id": "behavior.round-preview-send-parity", "path": "tools/tests/round_preview_send_parity_browser.js", "profile": "browser", "domain": "prompt", "keep": "main", "gate": "fast"},
+    {"id": "behavior.interrupted-reply-metadata", "path": "tools/tests/interrupted_reply_metadata.js", "profile": "browser", "domain": "messages", "keep": "main"},
+    {"id": "behavior.continuation-undo", "path": "tools/tests/continuation_undo.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.memory-story-time", "path": "tools/tests/memory_story_time.js", "profile": "browser", "domain": "memory", "keep": "data"},
+    {"id": "behavior.memory-manager-actions-browser", "path": "tools/tests/memory_manager_actions_browser.js", "profile": "browser", "domain": "memory", "keep": "data"},
+    {"id": "behavior.worldbook-four-positions", "path": "tools/tests/worldbook_four_positions.js", "profile": "browser", "domain": "prompt", "keep": "compat"},
+    {"id": "behavior.webview-streaming-rollback", "path": "tools/tests/webview_streaming_rollback.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.protected-prompt-baseline", "path": "tools/tests/protected_prompt_baseline.js", "profile": "node-parallel", "domain": "prompt", "keep": "boundary", "gate": "fast", "timeoutMs": 60000},
+    {"id": "behavior.startup-data-invariance", "path": "tools/tests/startup_data_invariance_browser.js", "profile": "browser", "domain": "storage", "keep": "data", "gate": "fast"},
+    {"id": "behavior.security-regression", "path": "tools/tests/security_regression.js", "profile": "browser", "domain": "platform", "keep": "boundary", "timeoutMs": 60000},
+    {"id": "behavior.trim-requires-summary", "path": "tools/tests/trim_requires_summary.js", "profile": "browser", "domain": "memory", "keep": "main"},
+    {"id": "behavior.image-prompt-context", "path": "tools/tests/image_prompt_context_browser.js", "profile": "browser", "domain": "messages", "keep": "main"},
+    {"id": "behavior.image-source-settings", "path": "tools/tests/image_source_settings_browser.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.message-images", "path": "tools/tests/message_images_browser.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.stscript-imagine", "path": "tools/tests/stscript_imagine_browser.js", "profile": "browser", "domain": "scripts", "keep": "compat"},
+    {"id": "behavior.risu-imggen", "path": "tools/tests/risu_imggen_browser.js", "profile": "browser", "domain": "risu", "keep": "compat"},
+    {"id": "behavior.streaming-preview", "path": "tools/tests/streaming_preview.js", "profile": "browser", "domain": "messages", "keep": "main"},
+    {"id": "behavior.manifest-selector", "path": "tools/tests/test_manifest_selector.js", "profile": "node-serial", "domain": "tooling", "keep": "boundary"},
+    {"id": "behavior.provider-capability-cache", "path": "tools/tests/provider_capability_cache.js", "profile": "browser", "domain": "messages", "keep": "main"},
+    {"id": "behavior.non-destructive-regex-scripts", "path": "tools/tests/non_destructive_regex_scripts.js", "profile": "browser", "domain": "prompt", "keep": "compat"},
+    {"id": "behavior.memory-branch-return-loss-guards", "path": "tools/tests/memory_branch_return_loss_guards.js", "profile": "browser", "domain": "memory", "keep": "data"},
+    {"id": "behavior.data-reference-integrity", "path": "tools/tests/data_reference_integrity.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.cleanup-user-guards", "path": "tools/tests/cleanup_user_guards.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.persona-binding", "path": "tools/tests/persona_binding.js", "profile": "browser", "domain": "import", "keep": "data"},
+    {"id": "behavior.interrupted-assistant-ui", "path": "tools/tests/interrupted_assistant_ui.js", "profile": "browser", "domain": "messages", "keep": "main"},
+    {"id": "behavior.story-objective", "path": "tools/tests/story_objective.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.wheel-scheme-game", "path": "tools/tests/wheel_scheme_game.js", "profile": "browser", "domain": "ui", "keep": "data"},
+    {"id": "behavior.prompt-settings-coverage", "path": "tools/tests/prompt_settings_coverage.js", "profile": "browser", "domain": "prompt", "keep": "data"},
+    {"id": "behavior.opening-media-edit-retry", "path": "tools/tests/opening_media_edit_retry.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.character-card-v3-l2", "path": "tools/tests/character_card_v3_l2.js", "profile": "browser", "domain": "import", "keep": "compat"},
+    {"id": "behavior.character-avatar-edit-persistence", "path": "tools/tests/character_avatar_edit_persistence_browser.js", "profile": "browser", "domain": "import", "keep": "data"},
+    {"id": "behavior.blob-media-playback", "path": "tools/tests/blob_media_playback.js", "profile": "browser", "domain": "ui", "keep": "data", "timeoutMs": 60000},
+    {"id": "behavior.vector-prompt-and-degrade", "path": "tools/tests/vector_prompt_and_degrade.js", "profile": "browser", "domain": "memory", "keep": "main"},
+    {"id": "behavior.vector-settings-ui", "path": "tools/tests/vector_settings_ui.js", "profile": "browser", "domain": "prompt", "keep": "data"},
+    {"id": "behavior.lorebook-decorators-cbs-v3", "path": "tools/tests/lorebook_decorators_cbs_v3.js", "profile": "browser", "domain": "prompt", "keep": "compat"},
+    {"id": "behavior.transparent-prompts-translation-context", "path": "tools/tests/transparent_prompts_translation_context.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.reading-viewport-redisplay", "path": "tools/tests/reading_viewport_redisplay.js", "profile": "browser", "domain": "messages", "keep": "main", "timeoutMs": 420000},
+    {"id": "behavior.world-info-alignment", "path": "tools/tests/world_info_alignment.js", "profile": "browser", "domain": "prompt", "keep": "compat", "timeoutMs": 420000},
+    {"id": "behavior.mvu-zod-runtime", "path": "tools/tests/mvu_zod_runtime.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 180000},
+    {"id": "behavior.card-frontend-same-origin-runtime", "path": "tools/tests/card_frontend_same_origin_runtime.js", "profile": "browser", "domain": "scripts", "keep": "compat"},
+    {"id": "behavior.remote-execution-alignment", "path": "tools/tests/remote_execution_alignment.js", "profile": "browser", "domain": "scripts", "keep": "compat"},
+    {"id": "behavior.card-frontend-rich-toastr", "path": "tools/tests/card_frontend_rich_toastr.js", "profile": "browser", "domain": "ui", "keep": "compat", "timeoutMs": 300000},
+    {"id": "behavior.card-script-generation-bridge", "path": "tools/tests/card_script_generation_bridge.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 420000},
+    {"id": "behavior.card-script-send-intercept", "path": "tools/tests/card_script_send_intercept.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 300000},
+    {"id": "behavior.prompt-post-processing", "path": "tools/tests/prompt_post_processing.js", "profile": "browser", "domain": "messages", "keep": "compat"},
+    {"id": "behavior.generation-contract", "path": "tools/tests/generation_contract.js", "profile": "browser", "domain": "messages", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.generation-contract-browser", "path": "tools/tests/generation_contract_browser.js", "profile": "browser", "domain": "messages", "keep": "compat", "timeoutMs": 300000, "gate": "fast"},
+    {"id": "behavior.main-path-browser", "path": "tools/tests/main_path_browser.js", "profile": "browser", "domain": "messages", "keep": "main", "gate": "fast"},
+    {"id": "behavior.host-write-contract-browser", "path": "tools/tests/host_write_contract_browser.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 300000, "gate": "fast"},
+    {"id": "behavior.prompt-template-contract-browser", "path": "tools/tests/prompt_template_contract_browser.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 300000, "gate": "fast"},
+    {"id": "behavior.audio-host-browser", "path": "tools/tests/audio_host_browser.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 300000, "gate": "fast"},
+    {"id": "behavior.snapshot-binary-recovery", "path": "tools/tests/snapshot_binary_recovery.js", "profile": "browser", "domain": "storage", "keep": "data"},
+    {"id": "behavior.clear-session-state", "path": "tools/tests/clear_session_state.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.script-generation-integration", "path": "tools/tests/script_generation_integration.js", "profile": "browser", "domain": "scripts", "keep": "compat"},
+    {"id": "behavior.quick-reply-lifecycle-browser", "path": "tools/tests/quick_reply_lifecycle_browser.js", "profile": "browser", "domain": "scripts", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.helper-entities", "path": "tools/tests/helper_entities_browser.js", "profile": "browser", "domain": "scripts", "keep": "compat"},
+    {"id": "behavior.stscript-ui-ui", "path": "tools/tests/stscript_ui_browser.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 180000},
+    {"id": "behavior.stscript-prompts", "path": "tools/tests/stscript_prompts.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 180000, "gate": "fast"},
+    {"id": "behavior.charx-import", "path": "tools/tests/charx_import_browser.js", "profile": "browser", "domain": "import", "keep": "compat"},
+    {"id": "behavior.prompt-template-pipeline", "path": "tools/tests/prompt_template_pipeline_browser.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 300000, "gate": "fast"},
+    {"id": "behavior.data-bank", "path": "tools/tests/data_bank_browser.js", "profile": "browser", "domain": "scripts", "keep": "data", "gate": "fast"},
+    {"id": "behavior.expressions", "path": "tools/tests/expressions_browser.js", "profile": "browser", "domain": "import", "keep": "data", "gate": "fast"},
+    {"id": "behavior.era-control-display", "path": "tools/tests/era_control_display.js", "profile": "browser", "domain": "scripts", "keep": "compat", "timeoutMs": 60000},
+    {"id": "behavior.risu-display-compute-browser", "path": "tools/tests/risu_display_compute_browser.js", "profile": "browser", "domain": "risu", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.translation-worker-browser", "path": "tools/tests/translation_worker_browser.js", "profile": "browser", "domain": "messages", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.risu-conditional-translation", "path": "tools/tests/risu_conditional_translation.js", "profile": "browser", "domain": "messages", "keep": "compat"},
+    {"id": "behavior.risu-runtime-browser", "path": "tools/tests/risu_runtime_browser.js", "profile": "browser", "domain": "risu", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.risu-execution-browser", "path": "tools/tests/risu_execution_browser.js", "profile": "browser", "domain": "risu", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.risu-transient-variables-browser", "path": "tools/tests/risu_transient_variables_browser.js", "profile": "browser", "domain": "risu", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.risu-lorebook-browser", "path": "tools/tests/risu_lorebook_browser.js", "profile": "browser", "domain": "risu", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.risu-display-browser", "path": "tools/tests/risu_display_browser.js", "profile": "browser", "domain": "risu", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.risu-options-browser", "path": "tools/tests/risu_options_browser.js", "profile": "browser", "domain": "risu", "keep": "compat", "gate": "fast"},
+    {"id": "behavior.generation-post-commit", "path": "tools/tests/generation_post_commit_browser.js", "profile": "browser", "domain": "messages", "keep": "compat", "timeoutMs": 60000},
+    {"id": "behavior.speech-dialogue-browser", "path": "tools/tests/speech_dialogue_browser.js", "profile": "browser", "domain": "messages", "keep": "main"},
+    {"id": "behavior.regex-render-send", "path": "tools/tests/regex_render_send.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.token-budget-unlimited-defaults", "path": "tools/tests/token_budget_unlimited_defaults.js", "profile": "browser", "domain": "prompt", "keep": "data"},
+    {"id": "behavior.message-raw-persistence", "path": "tools/tests/message_raw_persistence.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.history-macro-effects-browser", "path": "tools/tests/history_macro_effects_browser.js", "profile": "browser", "domain": "messages", "keep": "data"},
+    {"id": "behavior.branch-return-transactions-browser", "path": "tools/tests/branch_return_transactions_browser.js", "profile": "browser", "domain": "messages", "keep": "data", "timeoutMs": 60000},
+    {"id": "behavior.generation-mutation-transactions-browser", "path": "tools/tests/generation_mutation_transactions_browser.js", "profile": "browser", "domain": "messages", "keep": "data", "timeoutMs": 60000},
+    {"id": "behavior.risu-execution-ownership", "path": "tools/tests/risu_execution_ownership.js", "profile": "browser", "domain": "risu", "keep": "data", "gate": "fast"},
+    {"id": "behavior.card-import-localization-browser", "path": "tools/tests/card_import_localization_browser.js", "profile": "browser", "domain": "import", "keep": "data"}
+  ]
+}

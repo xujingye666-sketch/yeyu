@@ -1,0 +1,278 @@
+{
+  "referenceReviewedAt": "2026-10-22",
+  "referenceReview": "docs/SILLYTAVERN_REFERENCE.md",
+  "recordedAt": "2026-08-25",
+  "publicGroups": {
+    "chatMessage": [
+      "getChatMessages",
+      "setChatMessages",
+      "setChatMessage",
+      "createChatMessages",
+      "deleteChatMessages",
+      "rotateChatMessages"
+    ],
+    "variables": [
+      "registerVariableSchema",
+      "getVariables",
+      "getAllVariables",
+      "replaceVariables",
+      "updateVariablesWith",
+      "insertOrAssignVariables",
+      "insertVariables",
+      "deleteVariable"
+    ],
+    "lorebookEntry": [
+      "getLorebookEntries",
+      "replaceLorebookEntries",
+      "updateLorebookEntriesWith",
+      "setLorebookEntries",
+      "createLorebookEntries",
+      "createLorebookEntry",
+      "deleteLorebookEntries",
+      "deleteLorebookEntry"
+    ],
+    "lorebook": [
+      "getLorebookSettings",
+      "setLorebookSettings",
+      "getCharLorebooks",
+      "setCurrentCharLorebooks",
+      "getLorebooks",
+      "deleteLorebook",
+      "createLorebook",
+      "getCurrentCharPrimaryLorebook",
+      "getChatLorebook",
+      "setChatLorebook",
+      "getOrCreateChatLorebook"
+    ],
+    "worldbook": [
+      "getWorldbookNames",
+      "getGlobalWorldbookNames",
+      "rebindGlobalWorldbooks",
+      "getCharWorldbookNames",
+      "rebindCharWorldbooks",
+      "getChatWorldbookName",
+      "rebindChatWorldbook",
+      "getOrCreateChatWorldbook",
+      "createWorldbook",
+      "createOrReplaceWorldbook",
+      "deleteWorldbook",
+      "getWorldbook",
+      "replaceWorldbook",
+      "updateWorldbookWith",
+      "createWorldbookEntries",
+      "deleteWorldbookEntries"
+    ],
+    "script": [
+      "getButtonEvent",
+      "getScriptButtons",
+      "replaceScriptButtons",
+      "updateScriptButtonsWith",
+      "appendInexistentScriptButtons",
+      "getScriptName",
+      "getScriptInfo",
+      "replaceScriptInfo",
+      "getAllEnabledScriptButtons",
+      "getScriptTrees",
+      "replaceScriptTrees",
+      "updateScriptTreesWith"
+    ],
+    "tavernRegex": [
+      "formatAsTavernRegexedString",
+      "isCharacterTavernRegexesEnabled",
+      "getTavernRegexes",
+      "replaceTavernRegexes",
+      "updateTavernRegexesWith"
+    ]
+  },
+  "exposure": {
+    "directRequired": [
+      "getVariables",
+      "getAllVariables",
+      "replaceVariables",
+      "updateVariablesWith",
+      "insertOrAssignVariables",
+      "insertVariables",
+      "deleteVariable",
+      "getButtonEvent",
+      "getScriptButtons",
+      "replaceScriptButtons",
+      "updateScriptButtonsWith",
+      "appendInexistentScriptButtons",
+      "getScriptName",
+      "getScriptInfo",
+      "replaceScriptInfo"
+    ],
+    "helperRequiredExceptDirectOnly": [
+      "getChatMessages",
+      "setChatMessages",
+      "setChatMessage",
+      "createChatMessages",
+      "deleteChatMessages",
+      "rotateChatMessages",
+      "registerVariableSchema",
+      "getVariables",
+      "replaceVariables",
+      "updateVariablesWith",
+      "insertOrAssignVariables",
+      "insertVariables",
+      "deleteVariable",
+      "getLorebookEntries",
+      "replaceLorebookEntries",
+      "updateLorebookEntriesWith",
+      "setLorebookEntries",
+      "createLorebookEntries",
+      "createLorebookEntry",
+      "deleteLorebookEntries",
+      "deleteLorebookEntry",
+      "getLorebookSettings",
+      "setLorebookSettings",
+      "getCharLorebooks",
+      "setCurrentCharLorebooks",
+      "getLorebooks",
+      "deleteLorebook",
+      "createLorebook",
+      "getCurrentCharPrimaryLorebook",
+      "getChatLorebook",
+      "setChatLorebook",
+      "getOrCreateChatLorebook",
+      "getWorldbookNames",
+      "getGlobalWorldbookNames",
+      "rebindGlobalWorldbooks",
+      "getCharWorldbookNames",
+      "rebindCharWorldbooks",
+      "getChatWorldbookName",
+      "rebindChatWorldbook",
+      "getOrCreateChatWorldbook",
+      "createWorldbook",
+      "createOrReplaceWorldbook",
+      "deleteWorldbook",
+      "getWorldbook",
+      "replaceWorldbook",
+      "updateWorldbookWith",
+      "createWorldbookEntries",
+      "deleteWorldbookEntries",
+      "getAllEnabledScriptButtons",
+      "getScriptTrees",
+      "replaceScriptTrees",
+      "updateScriptTreesWith",
+      "formatAsTavernRegexedString",
+      "isCharacterTavernRegexesEnabled",
+      "getTavernRegexes",
+      "replaceTavernRegexes",
+      "updateTavernRegexesWith"
+    ]
+  },
+  "lifecycle": {
+    "schemaScopes": [
+      "global",
+      "preset",
+      "character",
+      "chat",
+      "message"
+    ]
+  },
+  "messageSemantics": {
+    "compactCompatibilityFields": [
+      "swipe_id",
+      "swipes",
+      "swipes_data"
+    ],
+    "compactExcludedFields": [
+      "swipes_info"
+    ]
+  },
+  "lorebookSettings": {
+    "runtimeDefaults": {
+      "selected_global_lorebooks": [],
+      "scan_depth": 20,
+      "context_percentage": 0,
+      "budget_cap": 0,
+      "min_activations": 0,
+      "max_depth": 0,
+      "max_recursion_steps": 0,
+      "insertion_strategy": "character_first",
+      "include_names": true,
+      "recursive": false,
+      "case_sensitive": false,
+      "match_whole_words": false,
+      "use_group_scoring": false,
+      "overflow_alert": false
+    }
+  },
+  "privacy": "Only public identifiers, runtime defaults and ownership labels are recorded; no prompt, chat, key, URL or model response is retained.",
+  "helperBatchOne": {
+    "recordedAt": "2026-09-07",
+    "evidence": "docs/COMPATIBILITY_MATRIX.md",
+    "publicGroups": {
+      "character": [
+        "getCharacterNames",
+        "getCharacterIds",
+        "getCurrentCharacterName",
+        "getCurrentCharacterId",
+        "getCharacter",
+        "createCharacter",
+        "createOrReplaceCharacter",
+        "deleteCharacter",
+        "replaceCharacter",
+        "updateCharacterWith"
+      ],
+      "persona": [
+        "getPersonaNames",
+        "getPersonaIds",
+        "getCurrentPersonaName",
+        "getCurrentPersonaId",
+        "getPersonaAvatarPath",
+        "createPersona",
+        "createOrReplacePersona",
+        "deletePersona",
+        "getPersona",
+        "replacePersona",
+        "updatePersonaWith"
+      ],
+      "rawCharacter": [
+        "RawCharacter",
+        "getCharData",
+        "getCharAvatarPath",
+        "getChatHistoryBrief",
+        "getChatHistoryDetail"
+      ],
+      "displayedMessage": [
+        "formatAsDisplayedMessage",
+        "retrieveDisplayedMessage",
+        "refreshOneMessage"
+      ],
+      "rawImport": [
+        "importRawCharacter",
+        "importRawPreset",
+        "importRawWorldbook",
+        "importRawTavernRegex"
+      ],
+      "inject": [
+        "injectPrompts",
+        "uninjectPrompts"
+      ]
+    },
+    "entityIdentity": "native_character_or_persona_id_separate_from_real_media_path",
+    "rawCharacterAvatarFlag": "reference_implementation_ignores_legacy_second_argument",
+    "updateOwner": "host_await_recheck_frame_and_entity_identity_before_commit",
+    "currentCharacter": "shared_ui_refresh_delete_and_script_lifecycle",
+    "importReturn": {
+      "character_chat": "Promise_Response_after_commit",
+      "preset_worldbook": "Promise_boolean",
+      "regex": "synchronous_boolean"
+    },
+    "injectionOwner": "session.promptInjections",
+    "injectionPersistence": "session; explicit_contract_extension_over_reference_page_lifetime",
+    "injectionFilter": "memory_only_per_frame_row_identity; dormant_after_reload_until_registered",
+    "injectionOnce": "remove_on_generation_success_or_stop",
+    "display": "sync_html; real_jquery_dom; async_refresh_waits_ejs_regex",
+    "schema": "ui_controls_only_no_parse_no_defaults_no_persistence",
+    "mvu": "bundle_delegation_else_existing_local_zod_worker; default_scope_chat; reloadInitVar_is_actual_upstream_name",
+    "facadeInjectionOwner": "page_memory_per_frame_and_session; cleared_on_dispose_disable_script_replace_session_clear_reload; shared_id_namespace_with_persistent_injections",
+    "injectionDepthLimit": 100,
+    "personaDefaultConnections": "default_and_connections_coexist_through_normalize_save_reload; character_binding_over_global_default",
+    "importErrors": "parse_normalize_and_storage_failure_return_false_with_rollback_and_import_notice; render_and_editor_refresh_errors_reject",
+    "injectionIdentity": "last_writer_replaces_other_source; persistence_only_for_injectPrompts_source; uninject_and_facade_delete_remove_either; extensionPrompts_enumerates_both",
+    "mainExtensionRole": "relative_main_keeps_extension_role; in_chat_main_supplies_role_depth_order"
+  }
+}

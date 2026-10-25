@@ -1,0 +1,35 @@
+{
+  "referenceReviewedAt": "2026-10-22",
+  "referenceReview": "docs/SILLYTAVERN_REFERENCE.md",
+  "schemaVersion": 1,
+  "capturedAt": "2026-08-26",
+  "audioPublicNames": [
+    "playAudio", "pauseAudio", "getAudioList", "replaceAudioList", "appendAudioList",
+    "getAudioSettings", "setAudioSettings", "getCurrentAudio",
+    "audioEnable", "audioPlay", "audioSelect", "audioImport", "audioMode"
+  ],
+  "audioSlashCommands": ["audioenable", "audioplay", "audioselect", "audioimport", "audiomode"],
+  "eventPublicNames": [
+    "eventOn", "eventOnce", "eventMakeFirst", "eventMakeLast", "eventOnButton",
+    "eventEmit", "eventEmitAndWait", "eventRemoveListener", "eventClearEvent",
+    "eventClearListener", "eventClearAll"
+  ],
+  "remainingPublicNames": [
+    "initializeGlobal", "waitGlobalInitialized", "registerMacroLike", "unregisterMacroLike",
+    "reloadIframe", "substitudeMacros", "errorCatched", "getIframeName", "getScriptId",
+    "getCurrentMessageId", "getLastMessageId", "getMessageId", "triggerSlashWithResult",
+    "getTavernVersion", "getTavernHelperVersion", "getFrontendVersion", "updateFrontendVersion", "updateTavernHelper"
+  ],
+  "hostContract": {
+    "settingsMaster": "settings.tavernHelperExtensionSettings.tavern_helper.audio",
+    "playlistMaster": "current session.tavernHelperAudio",
+    "runtimeState": "one in-memory state per bgm/ambient type",
+    "saveChannels": {"settings": "meta", "playlists": "sessions"},
+    "modes": ["repeat_one", "repeat_all", "shuffle", "play_one_and_stop"],
+    "slashModeMap": {"single": "repeat_one", "repeat": "repeat_all", "random": "shuffle", "stop": "play_one_and_stop"},
+    "eventDelivery": "async listeners run sequentially in registration order; sync delivery invokes without awaiting",
+    "slashConcurrency": "no host-wide or per-frame single-request mutex",
+    "domAliases": {"#send_textarea": "#user-input", "#send_but": "#composer-action-btn", "#user_avatar_image": "active persona IMG"},
+    "onlineUpdate": "explicitly rejected because the local compatibility target is pinned"
+  }
+}

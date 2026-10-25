@@ -1,0 +1,144 @@
+/* Bundled Yeyu Serif SC, a renamed Source Han Serif SC subset (SIL OFL, css/vendor), for the few
+   accent spots and immersive reading text: only the two weights the design uses, so nothing asks the
+   browser to synthesise a bold.
+   swap keeps text visible if decoding is slow; index.html preloads the SemiBold face used at launch. */
+@font-face {
+  font-family: "Yeyu Serif";
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+  src: url("vendor/source-han-serif-2.003R/YeyuSerifSC-SemiBold.subset.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Yeyu Serif";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("vendor/source-han-serif-2.003R/YeyuSerifSC-Bold.subset.woff2") format("woff2");
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+/* hidden 必须压过组件自己的 display（.btn 的 inline-flex 等），否则隐藏态仍可见可点。 */
+[hidden] {
+  display: none !important;
+}
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font);
+  background: var(--bg-base);
+  color: var(--t);
+}
+body {
+  display: flex;
+}
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ui-line-bright);
+  border-radius: 4px;
+}
+::selection {
+  background: var(--accent-tint);
+}
+
+#app {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+html,
+body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--motion-theme) var(--motion-ease),
+    color var(--motion-theme) var(--motion-ease);
+}
+body {
+  user-select: none;
+  font-feature-settings:
+    'kern' 1,
+    'liga' 1;
+  text-rendering: optimizeLegibility;
+}
+input,
+textarea,
+[contenteditable] {
+  user-select: text;
+}
+.ui-icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ui-icon {
+  width: 1.08em;
+  height: 1.08em;
+  display: inline-block;
+  vertical-align: -0.17em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: 0 0 auto;
+}
+button > .ui-icon {
+  margin-right: 0.38em;
+}
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: var(--bg-base);
+  opacity: 0;
+  transition:
+    opacity var(--motion-theme) var(--motion-ease),
+    background-color var(--motion-theme) var(--motion-ease);
+  will-change: opacity;
+}
+.bg-layer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-image);
+  transition: background var(--motion-theme) var(--motion-ease);
+}
+.bg-layer.active {
+  opacity: 1;
+}
+@media (max-width: 768px) {
+  .bg-layer {
+    will-change: auto;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .bg-layer {
+    will-change: auto;
+  }
+}

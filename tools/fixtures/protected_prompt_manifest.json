@@ -1,0 +1,367 @@
+{
+  "schemaVersion": 5,
+  "description": "登记全部当前默认提示词的身份、授权来源、固定哈希与用户编辑入口。sha256 取 00-defaults.js 与助手 defaultText 按运行时求值后的字符串（${...} 引用的常量已展开）的 UTF-8 字节；门禁（tools/qa/protected_prompts.js）按 AST 发现全部顶层 DEFAULT_* 声明和助手 defaultText，漏登记、偏离哈希或没有编辑入口即失败。",
+  "currentConstants": [
+    {
+      "name": "DEFAULT_MEMORY_SUMMARY_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "e527bd85aa00e5fad37e0c3a1198f7f88ffac6b7471518bad02134523e2413b8",
+      "editor": {
+        "surface": "memory-manager",
+        "key": "summary"
+      }
+    },
+    {
+      "name": "DEFAULT_MEMORY_INJECT_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "2ea4c1b1ddbe7242435b4694186b4c1c652520bed90e59de8915bd3d6498cae9",
+      "editor": {
+        "surface": "memory-manager",
+        "key": "inject"
+      }
+    },
+    {
+      "name": "DEFAULT_STYLE_AUDIT_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "9f9a98f4eea072bf4824616a78b03c90b0f740a318112872e46171ab21968b7b",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "styleAudit.review"
+      }
+    },
+    {
+      "name": "DEFAULT_WHEEL_SCHEME_PALETTE_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "94bb77eeee0a758a9fac3387014ed7b0d37068bed3273f1d11471619ae11b696",
+      "editor": {
+        "surface": "wheel-manager",
+        "key": "wheelScheme.palette"
+      }
+    },
+    {
+      "name": "DEFAULT_WHEEL_SCHEME_BIOGRAPHY_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "31708c7fd6fa97c19eb79f6bb655fbac195e57a5d820aa1d3f0b412da60eb205",
+      "editor": {
+        "surface": "wheel-manager",
+        "key": "wheelScheme.biography"
+      }
+    },
+    {
+      "name": "DEFAULT_FRAMEWORK_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "ed8a14c66a4cd61885e5738b8b84130a2242856ebe7f9d1a2f91a4e86eb55135",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.785b0a28-36f7-4b16-9ef7-64db5e1304e6.content"
+      }
+    },
+    {
+      "name": "DEFAULT_WRITING_PRINCIPLES_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "ac4cc0fdbcb56e0e8eece01713ed374ce37786abe31eff96cd8d1e7a39d5f436",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.53286048-c07b-45c5-8a39-7f6e3566a18c.content"
+      }
+    },
+    {
+      "name": "DEFAULT_LANGUAGE_FORMAT_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "c99f6b62352a572af29a95729bfcb07272ed4391c14a5dd82fdce616c2e9c89b",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.a934a37a-ae35-4423-8fbb-abcb682b1b49.content"
+      }
+    },
+    {
+      "name": "DEFAULT_TURN_PARAMS_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "f17622134dc2b2db1ea8d2e25d6204121aaef22784fc760ce46a4fef2e4bcfbb",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.646238cc-dabb-43e5-a238-7c59b6c5a29b.content"
+      }
+    },
+    {
+      "name": "DEFAULT_CARD_OPEN_TAG",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "e50fc89531877925a0f03c26d7bcf1f8dadaf66b7fd74f9940af4ffefed49072",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.d9666911-9f85-4e95-bf7c-cf22f4b7b3ae.content"
+      }
+    },
+    {
+      "name": "DEFAULT_CARD_CLOSE_TAG",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "e85b6a2edb94b4de70fbae0ebf89f27e8da10f1c06290ed177b56117a9667e07",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.5a922849-32df-4564-8a5d-f58b2470f1d9.content"
+      }
+    },
+    {
+      "name": "DEFAULT_PERSONALITY_FORMAT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "06caab599bcf7131e223c8e1a4e2e9e7a9fb2e10ed928d7a692fc95d89133dcb",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.personality_format"
+      }
+    },
+    {
+      "name": "DEFAULT_SCENARIO_FORMAT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "121ea6cf23f4fb3cf90b02aafa3b3407f227efcb035cdc56aec5926e5c3e52ff",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.scenario_format"
+      }
+    },
+    {
+      "name": "DEFAULT_CARD_EXECUTION_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "e4f410f88b941fadac8e194cd1386acd7ffc4cb89bd3dbf4e11c02c06fe65810",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.7b418fd2-852b-491c-9ea2-1dc7af43a383.content"
+      }
+    },
+    {
+      "name": "DEFAULT_USER_STRICT_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "f518709cac6cb3ae5d1b13f8b3ee20919d9f5a9bc354f7afa747d64bd163bcc4",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.f953be97-c411-43db-a744-1fe66511489e.content"
+      }
+    },
+    {
+      "name": "DEFAULT_USER_TAKEOVER_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "f9fb165adb7da44dc73c77ca7eeb87eb36aa8dec3dfe12e7fbba25f1ae97db90",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.8944a336-d6d9-48c7-8918-f909fbcbea96.content"
+      }
+    },
+    {
+      "name": "DEFAULT_PRE_REPLY_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "6771837ca8f838816738daa33b0636a55c196b8cb4cd4dc1d2ddd204327f0499",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.f29a122d-02f4-4871-85f1-059a9d8304a8.content"
+      }
+    },
+    {
+      "name": "DEFAULT_CONTINUATION_POST_HISTORY_TPL",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "e0a7d83e1c2ea78312c48d115c3bfce099d59c2977db2688aeac8416c877f81e",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.continue_nudge_prompt"
+      }
+    },
+    {
+      "name": "DEFAULT_IMPERSONATION_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "5108d8c955e80984b3f61d1842e1d7555c083c4eff5183589efdd67f2752795a",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.impersonation_prompt"
+      }
+    },
+    {
+      "name": "DEFAULT_TRANSLATION_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "f48eded11e3209c99dd4537b5f28d5d5bd7789ce6120de2404845d8480bb442e",
+      "editor": {
+        "surface": "translation",
+        "key": "translationPrompt"
+      }
+    },
+    {
+      "name": "DEFAULT_GREETING_OVERVIEW_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "ac6a27b8ae1ac453bbe3f5a4ec67f43d2a956b848e5c8d3d3713830b601fd255",
+      "editor": {
+        "surface": "translation",
+        "key": "greetingOverviewPrompt"
+      }
+    },
+    {
+      "name": "DEFAULT_CARD_LOCALIZATION_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "83beb6d98e22eec63f6adb4687158b74d93de1cd9d989b835212d47ad1938a9a",
+      "editor": {
+        "surface": "translation",
+        "key": "cardLocalizationPrompt"
+      }
+    },
+    {
+      "name": "DEFAULT_WORLDBOOK_LOCALIZATION_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "1b2b0c8a0873bca631b8df0dc809bb5006616da2ac434a5f7f4b8b4b4ebeb626",
+      "editor": {
+        "surface": "translation",
+        "key": "worldBookLocalizationPrompt"
+      }
+    },
+    {
+      "name": "DEFAULT_CREATOR_NOTES_TRANSLATION_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "0f0b9f9a303b834c03d1ef406e2109556ee30a162b2b93b679ed907b0949ddb9",
+      "editor": {
+        "surface": "translation",
+        "key": "creatorNotesTranslationPrompt"
+      }
+    },
+    {
+      "name": "DEFAULT_ENHANCE_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "d0b2d73c1794b21b3ec753e2cc9d6b6af91a3ca7681b56c87a284234051b1988",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.cd553846-565c-440a-85f8-5ad3adf26d41.content"
+      }
+    },
+    {
+      "name": "DEFAULT_AUX_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "58d6f2836c7868ca4ae9240ab7e5318653727bed562205373d0dee1d5ba09251",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.76258373-0ab3-419d-ae9e-365bd721ea80.content"
+      }
+    },
+    {
+      "name": "DEFAULT_AUTHORS_NOTE",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "issue:104",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "authorsNote"
+      }
+    },
+    {
+      "name": "DEFAULT_EXPRESSION_CLASSIFY_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "2aa8daa9b06ed0604eab76d5a1bf4bd453f314e454b49c0c98c26ed4809b947b",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "expressions.classify"
+      }
+    },
+    {
+      "name": "DEFAULT_IMAGE_PROMPT_SUMMARY",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "bc10a71dd12d1064f7cde169e3eca13ec869234a330b1428d4fea9a6a9c67574",
+      "editor": {
+        "surface": "image-generation",
+        "key": "imageGeneration.summary"
+      }
+    },
+    {
+      "name": "DEFAULT_IMAGE_PROMPT_DESENSITIZE",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "95d97783b09e15ea73bba9b5a493c6db7144622febe190ea9b59bfad4e2b987d",
+      "editor": {
+        "surface": "image-generation",
+        "key": "imageGeneration.desensitize"
+      }
+    },
+    {
+      "name": "DEFAULT_IMAGE_CARD_PROMPT_REWRITE",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "d2fad9ac63a6c6af9e9f3cd342a82e53398f4141d44ed6ed35e101d9c403f683",
+      "editor": {
+        "surface": "image-generation",
+        "key": "imageGeneration.cardRewrite"
+      }
+    },
+    {
+      "name": "DEFAULT_WI_FORMAT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "a00644508de97e85263c9d0cd67e63d3c3b5d733bcaddc65b110e501ad5a7b73",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.wi_format"
+      }
+    },
+    {
+      "name": "DEFAULT_POST_HISTORY_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "cd57f3ce938324e6f82ea9e15cd8f7f750f8e7d75dc427aea2569873ca1a1e3a",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.jailbreak.content"
+      }
+    },
+    {
+      "name": "DEFAULT_CARD_TRANSITION_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "4bf63bc7b8a970327a54855074b98748309d2736b87728b510f5e3e1e71b656e",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.prompts.41f64106-2525-4ad2-879e-6857dd9ef0ec.content"
+      }
+    },
+    {
+      "name": "DEFAULT_NEW_CHAT_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "c5dee402234ff9ba494f97876deef34d38e248f3ef94f9c2a5a866d1ccc48d39",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.new_chat_prompt"
+      }
+    },
+    {
+      "name": "DEFAULT_NEW_EXAMPLE_CHAT_PROMPT",
+      "sourcePath": "app/src/main/assets/js/app/00-defaults.js",
+      "authorizationSource": "user-direct",
+      "sha256": "72879e5654f0a1e290fe7bfe24223d688507db8832cbdf972e3dd03e81e1c508",
+      "editor": {
+        "surface": "prompt-presets",
+        "key": "defaultRaw.new_example_chat_prompt"
+      }
+    }
+  ],
+  "currentAssistantPrompts": []
+}

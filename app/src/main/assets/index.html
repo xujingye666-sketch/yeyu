@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-palette="neutral">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" id="theme-color-meta" content="#121212">
+<title>夜欲</title>
+<link rel="preload" href="css/vendor/source-han-serif-2.003R/YeyuSerifSC-SemiBold.subset.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/vendor/fontawesome-6.7.2/css/all.min.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/native.css">
+<link rel="stylesheet" href="css/workflows.css">
+<link rel="stylesheet" href="css/ui.css">
+<link rel="stylesheet" href="css/chat.css">
+<link rel="stylesheet" href="css/risu.css">
+</head>
+<body class="no-character">
+
+<svg class="ui-icon-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+<symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m16 8-2 6-6 2 2-6 6-2Z"/></symbol>
+<symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol><symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 6-6 6 6 6"/></symbol><symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol><symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3.8 2.5 5.1 5.6.8-4 4 .9 5.6-5-2.7-5 2.7.9-5.6-4-4 5.6-.8L12 3.8Z"/></symbol>
+<symbol id="i-expand" viewBox="0 0 24 24"><path d="M9 4H4v5M15 4h5v5M9 20H4v-5M15 20h5v-5"/></symbol><symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 19c.6-3.1 2.4-5 5.5-5s4.9 1.9 5.5 5M16 5.5a3 3 0 0 1 0 5.8M17 14c2.1.5 3.3 2.1 3.7 4.5"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20c.7-4 3.2-6 7.5-6s6.8 2 7.5 6"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v17H6.5A2.5 2.5 0 0 0 4 22V5.5ZM20 5.5A2.5 2.5 0 0 0 17.5 3H13v17h4.5A2.5 2.5 0 0 1 20 22V5.5Z"/></symbol>
+<symbol id="i-wheel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2"/><path d="M12 4v6M12 14v6M4 12h6M14 12h6M6.3 6.3l4.2 4.2M13.5 13.5l4.2 4.2M17.7 6.3l-4.2 4.2M10.5 13.5l-4.2 4.2"/></symbol>
+<symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 20h14"/></symbol><symbol id="i-export" viewBox="0 0 24 24"><path d="M12 16V4m0 0 4 4m-4-4-4 4M5 20h14"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h12l3 3v15H4V4a1 1 0 0 1 1-1Z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21h-4v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3.1 14H3v-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.5V3h4v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.5 1h.1v4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v12H8l-4 4V5Z"/></symbol><symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.3 4.2L17 9l-3.7 1.8L12 15l-1.3-4.2L7 9l3.7-1.8L12 3ZM18.5 14l.7 2.3 2.3.7-2.3.7-.7 2.3-.7-2.3-2.3-.7 2.3-.7.7-2.3Z"/></symbol>
+<symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9.5 18h5M10.5 21h3M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2v.5h5V16c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3Z"/></symbol>
+<symbol id="i-brain" viewBox="0 0 24 24"><path d="M9.5 4.5A3.5 3.5 0 0 0 6 8v.3A3.8 3.8 0 0 0 4 15a3.5 3.5 0 0 0 5.5 4.5V4.5ZM14.5 4.5A3.5 3.5 0 0 1 18 8v.3A3.8 3.8 0 0 1 20 15a3.5 3.5 0 0 1-5.5 4.5V4.5Z"/><path d="M9.5 9H7.8M14.5 9h1.7M9.5 15H7.8M14.5 15h1.7"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol><symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M18.5 10A7 7 0 0 0 6 7.5L4 10M5.5 14A7 7 0 0 0 18 16.5l2-2.5"/></symbol><symbol id="i-up-double" viewBox="0 0 24 24"><path d="m6 11 6-6 6 6M6 19l6-6 6 6"/></symbol><symbol id="i-down-double" viewBox="0 0 24 24"><path d="m6 5 6 6 6-6M6 13l6 6 6-6"/></symbol><symbol id="i-forward-double" viewBox="0 0 24 24"><path d="m4 6 6 6-6 6M12 6l6 6-6 6"/></symbol><symbol id="i-pair-quote" viewBox="0 0 24 24"><path d="M9 7c-2 1.4-3 3.2-3 5.5V16h4v-4H7.5M15 17c2-1.4 3-3.2 3-5.5V8h-4v4h2.5"/></symbol><symbol id="i-pair-paren" viewBox="0 0 24 24"><path d="M9 4C6.5 6.3 5.5 9 5.5 12S6.5 17.7 9 20M15 4c2.5 2.3 3.5 5 3.5 8s-1 5.7-3.5 8"/></symbol><symbol id="i-pair-corner" viewBox="0 0 24 24"><path d="M9 5H5v14h4M15 5h4v14h-4"/></symbol><symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"/></symbol><symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12M9 9l10-2"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></symbol><symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4V5ZM15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14"/></symbol><symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 3h6l1 4H8l1-4ZM7 7l1 14h8l1-14M10 11v6M14 11v6"/></symbol><symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol><symbol id="i-edit" viewBox="0 0 24 24"><path d="m14 5 5 5L9 20H4v-5L14 5ZM12 7l5 5"/></symbol><symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h2"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Z"/><path d="M14 3v5h5"/></symbol><symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3V6Z"/></symbol><symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path d="M12 12h9M17 12v3M20 12v2"/></symbol><symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h3M11 12h9M4 18h8M16 18h4"/><circle cx="16" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="14" cy="18" r="2"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.5a2 2 0 0 0 0-4H12a1.5 1.5 0 0 1 0-3h3a6 6 0 0 0 6-6c0-3.3-4-5-9-5Z"/><circle cx="7.5" cy="10" r="1"/><circle cx="10" cy="6.5" r="1"/><circle cx="15" cy="6.5" r="1"/></symbol><symbol id="i-clipboard" viewBox="0 0 24 24"><path d="M9 5h6M9 3h6v4H9V3Z"/><path d="M7 5H5v16h14V5h-2"/></symbol>
+<symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7M8 12h12"/></symbol><symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m5 14 7-7 7 7M12 7v13"/></symbol><symbol id="i-arrow-down" viewBox="0 0 24 24"><path d="m5 10 7 7 7-7M12 4v13"/></symbol><symbol id="i-undo" viewBox="0 0 24 24"><path d="m9 7-5 5 5 5M4 12h9a7 7 0 0 1 7 7"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol><symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 9v5M12 17.5v.5"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol><symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol><symbol id="i-link" viewBox="0 0 24 24"><path d="M9 15 7 17a4 4 0 1 1-6-6l3-3a4 4 0 0 1 6 0M15 9l2-2a4 4 0 1 1 6 6l-3 3a4 4 0 0 1-6 0M8 12h8"/></symbol><symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol><symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="7" r="2"/><circle cx="6" cy="19" r="2"/><path d="M6 7v10M8 12h3a7 7 0 0 0 7-3"/></symbol><symbol id="i-merge" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="12" cy="19" r="2"/><path d="M6 7v2a5 5 0 0 0 5 5h1M18 7v2a5 5 0 0 1-5 5h-1v3"/></symbol>
+</defs></svg>
+
+<div id="bg-layer-a" class="bg-layer active"></div>
+<div id="bg-layer-b" class="bg-layer"></div>
+<div id="theme-transition" class="theme-transition" aria-live="polite"><div class="theme-transition-card"><span>正在加载角色</span><i></i></div></div>
+<div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+<div id="app">
+  <button id="mobile-menu" onclick="toggleSidebar()" title="菜单" aria-label="菜单"><svg class="ui-icon" aria-hidden="true"><use href="#i-menu" xlink:href="#i-menu"></use></svg></button>
+
+  <aside id="sidebar">
+    <div class="sidebar-hd">
+      <h1>夜欲</h1>
+      <span class="ver" id="app-version"></span>
+      <button type="button" class="btn text accent sm sidebar-about" onclick="openAboutDialog()">关于</button>
+      <button type="button" class="sidebar-close" onclick="toggleSidebar()" aria-label="关闭侧栏"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button>
+    </div>
+    <div class="sidebar-tabs tabs" role="tablist" aria-label="侧栏内容">
+      <button type="button" role="tab" aria-selected="true" data-tab="chars" class="active" onclick="switchTab('chars')">角色</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="personas" onclick="switchTab('personas')">人格</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="worldbook" onclick="switchTab('worldbook')">世界书</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="wheels" onclick="switchTab('wheels')">转盘</button>
+    </div>
+    <div class="tab-panel active" id="tab-chars">
+      <div class="sidebar-search"><svg class="ui-icon" aria-hidden="true"><use href="#i-search" xlink:href="#i-search"></use></svg><input type="text" id="char-search" aria-label="搜索角色" placeholder="搜索角色名、标签或简介" oninput="scheduleListRender('characters')"></div>
+      <div class="char-list" id="char-list"></div>
+      <div class="sidebar-ft">
+        <button class="btn primary" onclick="openModal('import-modal')">导入角色卡</button>
+        <button class="btn" onclick="openCharacterCreator()">创建角色</button>
+      </div>
+    </div>
+    <div class="tab-panel" id="tab-personas">
+      <div class="char-list" id="persona-list"></div>
+      <div class="sidebar-ft">
+        <button class="btn primary" onclick="openModal('persona-modal')">新建人格</button>
+      </div>
+    </div>
+    <div class="tab-panel" id="tab-worldbook">
+      <div class="char-list" id="wb-sidebar-list"></div>
+      <div class="sidebar-ft">
+        <button class="btn primary" onclick="openModal('wb-modal')">管理世界书</button>
+      </div>
+    </div>
+    <div class="tab-panel" id="tab-wheels">
+      <div id="wheel-scheme-list" class="char-list wheel-scheme-list"></div>
+      <div id="wheel-scheme-import-status" class="wheel-scheme-import-status" aria-live="polite"></div>
+      <div class="sidebar-ft">
+        <button class="btn primary" onclick="document.getElementById('wheel-scheme-file').click()">导入方案</button>
+        <button class="btn" onclick="openWheelSchemeManager()">转盘设置</button>
+        <input type="file" id="wheel-scheme-file" accept=".wheel.json,application/json" hidden onchange="importWheelSchemeFile(event)">
+        <a class="btn text accent wheel-library-source" href="https://cnmeme.wiki/wheel/schemes">获取方案</a>
+      </div>
+    </div>
+  </aside>
+
+  <main id="main">
+    <img id="user_avatar_image" alt="" aria-hidden="true" hidden>
+    <div id="storage-health-banner" class="storage-health-banner" role="status" aria-live="assertive" hidden>
+      <svg class="ui-icon" aria-hidden="true"><use href="#i-alert" xlink:href="#i-alert"></use></svg>
+      <div><strong>修改暂未保存成功</strong><span>内容已临时保留在本机。请点击“重新尝试保存”，成功前不要清除应用数据。</span></div>
+      <button type="button" class="btn sm" onclick="retryPendingPrimarySave()">重新尝试保存</button>
+    </div>
+    <div class="session-manager-panel chat-popover" id="session-manager-panel" aria-hidden="true" aria-label="全部对话" tabindex="-1">
+      <div class="session-manager-heading"><h2>全部对话</h2><span id="session-count"></span><button type="button" class="btn text accent sm" onclick="addSession()">新建对话</button></div>
+      <div class="session-manager-search"><svg class="ui-icon" aria-hidden="true"><use href="#i-search" xlink:href="#i-search"></use></svg><input type="text" id="session-manager-search" aria-label="搜索对话名称" placeholder="搜索对话名称" oninput="scheduleSessionManagerRender()"></div>
+      <div class="session-manager-list" id="session-manager-list"></div>
+    </div>
+    <div class="chat-header" id="chat-header">
+      <button type="button" class="ch-avatar-shell" id="ch-avatar-shell" onclick="toggleCardBgmPanel(event)" aria-controls="card-bgm-panel" aria-expanded="false" disabled>
+        <span class="char-avatar" id="ch-avatar"></span>
+      </button>
+      <button type="button" class="chat-heading" id="chat-session-switch" onclick="toggleSessionManager()" aria-label="切换对话" aria-controls="session-manager-panel" aria-expanded="false">
+        <span class="ch-name" id="ch-name"></span>
+        <span class="chat-session-line"><span id="session-current"></span><span class="chat-typing-status">正在输入…</span><svg class="ui-icon" aria-hidden="true"><use href="#i-chevron-down" xlink:href="#i-chevron-down"></use></svg></span>
+      </button>
+      <button type="button" class="chat-header-icon chat-navigation-reveal" id="chat-navigation-reveal" onclick="showChatNavigation()" title="阅读导航" aria-label="阅读导航" style="display:none" hidden><svg class="ui-icon" aria-hidden="true"><use href="#i-compass" xlink:href="#i-compass"></use></svg></button>
+      <button type="button" class="chat-header-icon" id="chat-tools-toggle" onclick="toggleChatTools()" aria-label="对话工具" aria-controls="chat-tools-panel" aria-expanded="false"><svg class="ui-icon" aria-hidden="true"><use href="#i-more" xlink:href="#i-more"></use></svg></button>
+    </div>
+    <section class="chat-tools-panel chat-popover" id="chat-tools-panel" role="dialog" aria-label="对话工具" tabindex="-1" hidden>
+      <p class="ch-meta" aria-label="当前角色与上下文">
+        <span class="badge" id="wb-active-badge"></span>
+        <span class="badge" id="wb-hit-badge"></span>
+        <span class="badge" id="mem-badge" style="display:none"></span>
+        <span class="badge badge-persona" id="persona-active-badge" style="display:none"></span>
+      </p>
+      <div class="ch-actions">
+        <button type="button" class="chat-menu-item story-objective-btn" onclick="closeChatTools();openLatestStoryObjective()"><svg class="ui-icon" aria-hidden="true"><use href="#i-spark" xlink:href="#i-spark"></use></svg>剧情目标</button>
+        <button type="button" class="chat-menu-item latest-turn-statistics-btn" onclick="closeChatTools();openLatestTurnStatistics()"><svg class="ui-icon" aria-hidden="true"><use href="#i-chart" xlink:href="#i-chart"></use></svg>本轮统计</button>
+        <button type="button" class="chat-menu-item" onclick="closeChatTools();openSpeechSettings()"><svg class="ui-icon" aria-hidden="true"><use href="#i-volume"></use></svg>角色声音</button>
+        <button type="button" class="chat-menu-item" id="card-settings-btn" onclick="closeChatTools();openCardSettings()" hidden><svg class="ui-icon" aria-hidden="true"><use href="#i-settings" xlink:href="#i-settings"></use></svg>卡片设置</button>
+        <button type="button" class="chat-menu-item" id="risu-options-btn" onclick="openRisuOptions()" hidden><svg class="ui-icon" aria-hidden="true"><use href="#i-sliders" xlink:href="#i-sliders"></use></svg>演出选项</button>
+        <button type="button" class="chat-menu-item" id="expression-manager-btn" onclick="closeChatTools();openExpressionManager()"><svg class="ui-icon" aria-hidden="true"><use href="#i-user" xlink:href="#i-user"></use></svg>立绘表情</button>
+      </div>
+      <button type="button" class="chat-menu-item danger chat-clear" onclick="closeChatTools();clearChat()"><svg class="ui-icon" aria-hidden="true"><use href="#i-trash" xlink:href="#i-trash"></use></svg>清空当前对话</button>
+    </section>
+    <section class="card-bgm-panel chat-popover" id="card-bgm-panel" aria-label="音频播放器" hidden>
+      <h2 class="card-audio-panel-title">音频播放器</h2>
+      <div class="card-audio-channel" data-audio-type="bgm">
+        <div class="card-bgm-copy"><span>背景音乐</span><small id="card-bgm-status">等待音频</small></div>
+        <strong class="card-bgm-track" id="card-bgm-track">未选择音频</strong>
+        <input class="card-bgm-progress" id="card-bgm-progress" type="range" min="0" max="0" value="0" step="0.1" oninput="seekCardAudio('bgm',this.value)" aria-label="背景音乐播放进度">
+        <div class="card-bgm-times"><span id="card-bgm-current">0:00</span><span id="card-bgm-duration">0:00</span></div>
+        <div class="card-audio-controls">
+          <select id="card-bgm-mode" onchange="setCardAudioMode('bgm',this.value)" aria-label="背景音乐播放模式"><option value="repeat_all">列表循环</option><option value="repeat_one">单曲循环</option><option value="shuffle">随机播放</option><option value="play_one_and_stop">播完停止</option></select>
+          <label>音量 <input id="card-bgm-volume" type="range" min="0" max="100" value="50" oninput="setCardAudioVolume('bgm',this.value)" aria-label="背景音乐音量"></label>
+          <button type="button" class="btn sm" id="card-bgm-mute" onclick="toggleCardAudioMute('bgm')" aria-pressed="false">静音</button>
+          <button type="button" class="btn sm card-bgm-pause" id="card-bgm-pause" onclick="toggleCardAudioPause('bgm')" disabled>播放</button>
+        </div>
+      </div>
+      <div class="card-audio-channel" data-audio-type="ambient">
+        <div class="card-bgm-copy"><span>环境音</span><small id="card-ambient-status">等待音频</small></div>
+        <strong class="card-bgm-track" id="card-ambient-track">未选择音频</strong>
+        <input class="card-bgm-progress" id="card-ambient-progress" type="range" min="0" max="0" value="0" step="0.1" oninput="seekCardAudio('ambient',this.value)" aria-label="环境音播放进度">
+        <div class="card-bgm-times"><span id="card-ambient-current">0:00</span><span id="card-ambient-duration">0:00</span></div>
+        <div class="card-audio-controls">
+          <select id="card-ambient-mode" onchange="setCardAudioMode('ambient',this.value)" aria-label="环境音播放模式"><option value="play_one_and_stop">播完停止</option><option value="repeat_all">列表循环</option><option value="repeat_one">单曲循环</option><option value="shuffle">随机播放</option></select>
+          <label>音量 <input id="card-ambient-volume" type="range" min="0" max="100" value="50" oninput="setCardAudioVolume('ambient',this.value)" aria-label="环境音音量"></label>
+          <button type="button" class="btn sm" id="card-ambient-mute" onclick="toggleCardAudioMute('ambient')" aria-pressed="false">静音</button>
+          <button type="button" class="btn sm card-bgm-pause" id="card-ambient-pause" onclick="toggleCardAudioPause('ambient')" disabled>播放</button>
+        </div>
+      </div>
+      <p class="card-audio-feedback" id="card-audio-feedback" role="status" aria-live="polite"></p>
+    </section>
+    <section id="empty-home" class="empty-home" aria-labelledby="empty-home-title">
+      <div class="empty-home-content">
+        <svg class="empty-home-art" viewBox="0 0 220 176" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="empty-home-moon-fill" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="empty-home-moon-a"/><stop offset="1" class="empty-home-moon-b"/></linearGradient>
+            <radialGradient id="empty-home-halo-fill"><stop offset=".45" class="empty-home-halo-a"/><stop offset="1" class="empty-home-halo-b"/></radialGradient>
+            <mask id="empty-home-moon-cut"><rect width="220" height="176" fill="#fff"/><circle cx="117" cy="59" r="16" fill="#000"/></mask>
+          </defs>
+          <ellipse class="empty-home-orbit" cx="110" cy="92" rx="100" ry="72"/>
+          <rect class="empty-home-card back" x="72" y="30" width="76" height="110" rx="12" transform="translate(-15 5) rotate(-15 110 85)"/>
+          <rect class="empty-home-card back" x="72" y="30" width="76" height="110" rx="12" transform="translate(15 5) rotate(13 110 85)"/>
+          <rect class="empty-home-card front" x="72" y="28" width="76" height="114" rx="12"/>
+          <circle class="empty-home-halo" cx="110" cy="66" r="32"/>
+          <circle class="empty-home-moon" cx="110" cy="66" r="18" mask="url(#empty-home-moon-cut)"/>
+          <rect class="empty-home-line" x="90" y="104" width="40" height="5" rx="2.5"/>
+          <rect class="empty-home-line faint" x="97" y="116" width="26" height="4" rx="2"/>
+          <path class="empty-home-star" d="M36 40c.9 4.2 2.8 6.1 7 7-4.2.9-6.1 2.8-7 7-.9-4.2-2.8-6.1-7-7 4.2-.9 6.1-2.8 7-7z"/>
+          <path class="empty-home-star" d="M183 26c.7 3.2 2.1 4.6 5.3 5.3-3.2.7-4.6 2.1-5.3 5.3-.7-3.2-2.1-4.6-5.3-5.3 3.2-.7 4.6-2.1 5.3-5.3z"/>
+          <path class="empty-home-star dim" d="M178 128c.5 2.4 1.6 3.5 4 4-2.4.5-3.5 1.6-4 4-.5-2.4-1.6-3.5-4-4 2.4-.5 3.5-1.6 4-4z"/>
+          <circle class="empty-home-star dim" cx="44" cy="130" r="1.6"/>
+          <circle class="empty-home-star dim" cx="196" cy="78" r="1.3"/>
+        </svg>
+        <h1 id="empty-home-title">还没有角色</h1>
+        <p class="empty-home-copy">导入一张角色卡（PNG、JSON 或 CHARX），或从空白创建一个角色，就可以开始对话。</p>
+        <div class="empty-home-actions">
+          <button type="button" class="btn primary" onclick="openModal('import-modal')">导入角色卡</button>
+          <button type="button" class="btn" onclick="openCharacterCreator()">创建角色</button>
+        </div>
+      </div>
+    </section>
+    <section id="expression-stage" aria-label="角色立绘" hidden>
+      <span id="expression-status" role="status" hidden>判定中…</span>
+      <img id="expression-image" alt="">
+      <div class="expression-stage-tools"><button type="button" class="btn sm" onclick="openExpressionManager()" id="expression-label">立绘</button><button type="button" class="btn sm" onclick="expressionUiVn(false)" id="expression-exit-vn">退出视觉小说</button><button type="button" class="btn sm" onclick="expressionUiVisibility(true)">隐藏</button></div>
+    </section>
+    <div id="chat-messages"></div>
+    <div id="chat-nav-tools" class="chat-nav-tools chat-popover" aria-label="对话导航"><button type="button" onclick="toggleAnchorPanel()" title="搜索对话与选择楼层" aria-label="搜索对话与选择楼层" id="chat-anchor-toggle" aria-controls="chat-anchor-panel" aria-expanded="false"><svg class="ui-icon" aria-hidden="true"><use href="#i-search" xlink:href="#i-search"></use></svg></button><div class="chat-nav-divider" role="separator"></div><button type="button" onclick="confirmJumpConversationStart()" title="跳转到对话开始（二次确认）" aria-label="跳转到对话开始（二次确认）"><svg class="ui-icon" aria-hidden="true"><use href="#i-up-double" xlink:href="#i-up-double"></use></svg></button><button type="button" onclick="jumpRelativeMessage(-1)" title="上一条对话" aria-label="上一条对话"><svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-up" xlink:href="#i-arrow-up"></use></svg></button><button type="button" onclick="jumpRelativeMessage(1)" title="下一条对话" aria-label="下一条对话"><svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-down" xlink:href="#i-arrow-down"></use></svg></button><button type="button" onclick="confirmJumpConversationEnd()" title="跳转到对话底部（二次确认）" aria-label="跳转到对话底部（二次确认）"><svg class="ui-icon" aria-hidden="true"><use href="#i-down-double" xlink:href="#i-down-double"></use></svg></button></div><div id="chat-anchor-panel" class="chat-anchor-panel chat-popover"></div>
+    <button type="button" id="chat-new-content" class="chat-new-content" hidden onclick="jumpChatToNewContent()" title="回到最新内容" aria-label="回到最新内容"><svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-down" xlink:href="#i-arrow-down"></use></svg></button>
+    <div id="typing"><div class="typing-dots" aria-hidden="true"><span></span><span></span><span></span></div><span id="generation-status-text">正在生成</span></div>
+    <div class="chat-input-wrap" id="chat-input-wrap">
+      <div id="stream-draft-recovery-slot" class="stream-draft-recovery-slot" aria-live="polite" hidden></div>
+      <div id="quick-reply-bar" class="quick-reply-bar" hidden></div>
+      <div id="stscript-run-status" class="stscript-run-status" hidden><span id="stscript-run-label"></span><button type="button" class="btn sm danger" onclick="stopStscriptRun()">停止</button></div>
+      <div class="chat-input-inner">
+        <textarea id="user-input" placeholder="说点什么…或用【】控制走向" rows="1" enterkeyhint="enter" onkeydown="handleKey(event)"></textarea>
+        <button type="button" class="primary composer-action-btn" id="composer-action-btn" onclick="handleComposerAction()" aria-label="发送消息"><svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-up" xlink:href="#i-arrow-up"></use></svg></button>
+      </div>
+      <div class="composer-accessories">
+        <div class="tokens-bar" id="tokens-bar">
+          <details class="tokens-details">
+            <summary title="查看上下文估算与明细" aria-label="上下文估算与明细"><span class="tokens-label">上下文</span><strong id="tokens-text">估算中…</strong><svg class="ui-icon" aria-hidden="true"><use href="#i-chevron-down" xlink:href="#i-chevron-down"></use></svg></summary>
+            <div class="tokens-detail-popover">
+              <div class="tokens-detail-list"></div>
+              <span id="tokens-cache" hidden></span>
+              <div class="tokens-usage" id="tokens-usage" hidden><div class="t-fill"><div class="t-fill-inner" id="tokens-fill" style="width:0%"></div></div><span id="tokens-pct"></span></div>
+            </div>
+          </details>
+        </div>
+        <div class="composer-pair-toolbar" aria-label="生成与成对符号快捷操作">
+          <button type="button" title="重新生成" aria-label="重新生成" onclick="regenerateLast()"><svg class="ui-icon" aria-hidden="true"><use href="#i-refresh" xlink:href="#i-refresh"></use></svg></button>
+          <button type="button" id="speech-auto-btn" title="开启自动朗读" aria-label="开启自动朗读" aria-pressed="false" onclick="toggleAutoSpeech()"><svg class="ui-icon" aria-hidden="true"><use href="#i-volume"></use></svg></button>
+          <button type="button" title="继续生成" aria-label="继续生成" onclick="continueGeneration()"><svg class="ui-icon" aria-hidden="true"><use href="#i-forward-double" xlink:href="#i-forward-double"></use></svg></button>
+          <button type="button" class="composer-impersonate" title="生成一条用户回复草稿" aria-label="扮演用户" onclick="impersonateUser()"><svg class="ui-icon" aria-hidden="true"><use href="#i-user" xlink:href="#i-user"></use></svg></button>
+          <button type="button" id="composer-image-btn" title="为最新 AI 回复生图" aria-label="为最新 AI 回复生图" onclick="generateLatestMessageImage()"><svg class="ui-icon" aria-hidden="true"><use href="#i-palette" xlink:href="#i-palette"></use></svg></button>
+          <button type="button" aria-label="插入全角方头括号" onpointerdown="event.preventDefault()" onclick="insertComposerPair('【','】')"><svg class="ui-icon" aria-hidden="true"><use href="#i-pair-corner" xlink:href="#i-pair-corner"></use></svg></button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<section id="wheel-game-view" class="wheel-game-view palette-scope" aria-hidden="true" aria-label="转盘对局">
+  <header class="wheel-game-header">
+    <button type="button" class="btn icon text wheel-game-back" onclick="closeWheelSchemeGame()" aria-label="返回转盘方案库"><svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-left" xlink:href="#i-arrow-left"></use></svg></button>
+    <div class="wheel-game-heading"><h1 id="wheel-game-title">转盘对局</h1><span id="wheel-game-subtitle"></span></div>
+  </header>
+  <div id="wheel-game-stats" class="wheel-game-stats" aria-label="当前状态"></div>
+  <main id="wheel-game-feed" class="wheel-game-feed" tabindex="0"></main>
+  <footer id="wheel-game-stage" class="wheel-game-stage"></footer>
+</section>
+
+<div id="bottom-nav">
+  <div class="bn-inner">
+    <button class="active" data-page="chat" aria-current="page" onclick="switchAppPage('chat')"><span class="bn-icon"><svg class="ui-icon" aria-hidden="true"><use href="#i-chat" xlink:href="#i-chat"></use></svg></span>对话</button>
+    <button data-page="presets" onclick="switchAppPage('presets')"><span class="bn-icon"><svg class="ui-icon" aria-hidden="true"><use href="#i-spark" xlink:href="#i-spark"></use></svg></span>预设</button>
+    <button data-page="memory" onclick="switchAppPage('memory')"><span class="bn-icon"><svg class="ui-icon" aria-hidden="true"><use href="#i-brain" xlink:href="#i-brain"></use></svg></span>记忆</button>
+    <button data-page="settings" onclick="switchAppPage('settings')"><span class="bn-icon"><svg class="ui-icon" aria-hidden="true"><use href="#i-settings" xlink:href="#i-settings"></use></svg></span>设置</button>
+  </div>
+</div>
+<!-- ====== MODALS ====== -->
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="speech-settings-modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="speech-settings-title"><div class="modal-hd"><h2 id="speech-settings-title">语音朗读</h2><button type="button" class="modal-close" aria-label="关闭语音设置" onclick="closeModal('speech-settings-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close"></use></svg></button></div><div class="modal-body" id="speech-settings-fields"></div><div class="modal-ft"><button type="button" class="btn text" onclick="closeModal('speech-settings-modal')">取消</button><button type="button" class="btn" onclick="previewSpeechVoice()">试听</button><button type="button" class="btn text" onclick="stopSpeech()">停止</button><button type="button" class="btn primary" onclick="saveSpeechSettings()">保存</button></div></div></div>
+
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal settings-dialog">
+    <div class="modal-hd"><h2>设置</h2></div>
+    <nav class="tabs page-tabs settings-tabs" role="tablist" aria-label="设置分区">
+      <button class="active" role="tab" aria-selected="true" onclick="switchSettingsTab('api',this)">API</button>
+      <button role="tab" aria-selected="false" onclick="switchSettingsTab('routes',this)">任务模型</button>
+      <button role="tab" aria-selected="false" onclick="switchSettingsTab('retrieval',this)">语义检索</button>
+      <button role="tab" aria-selected="false" onclick="switchSettingsTab('params',this)">参数</button>
+      <button role="tab" aria-selected="false" onclick="switchSettingsTab('translation',this)">翻译</button>
+      <button role="tab" aria-selected="false" onclick="switchSettingsTab('image',this)">生图</button>
+      <button role="tab" aria-selected="false" onclick="switchSettingsTab('speech',this)">语音朗读</button>
+      <button role="tab" aria-selected="false" onclick="switchSettingsTab('appearance',this)">外观</button>
+      <button role="tab" aria-selected="false" onclick="switchSettingsTab('regex',this)">正则脚本</button>
+      <button role="tab" aria-selected="false" onclick="switchSettingsTab('qr',this)">快捷栏</button>
+    </nav>
+    <div class="modal-body">
+      <div id="st-api">
+        <section class="ui-section">
+          <div class="ui-group-hd"><h3 class="ui-group-title">供应商</h3><div class="ui-actions"><button type="button" class="btn text sm accent" onclick="addApiProvider()">新增</button><button type="button" class="btn text sm danger" onclick="deleteApiProvider()">删除</button></div></div>
+          <div class="fg"><select id="s-provider-select" onchange="selectProviderForEditing()" aria-label="主对话供应商"></select><div class="hint">主对话使用这里选中的供应商，对所有角色生效；其他任务可在「任务模型」里另选。</div></div>
+          <div class="fg"><label for="s-provider-name">名称</label><input type="text" id="s-provider-name" placeholder="例如：主力 API"></div>
+          <div class="fg"><label for="s-provider-protocol">供应商类型</label><select id="s-provider-protocol" onchange="changeProviderProtocol()"></select><div class="hint">Gemini 不支持回复开头预填、Claude 开思考时不支持</div></div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">连接</h3>
+          <div id="grok-subscription-panel" hidden>
+            <div class="grok-login" data-grok-login></div>
+            <div class="hint">与 Grok 网页共用订阅额度；账号登录和退出立即生效。Grok 4.7 不能关闭思考，“最大”对应最高档。</div>
+          </div>
+          <div class="fg"><label for="s-api-url">API 地址</label><input type="text" id="s-api-url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://api.example.com/v1"><div class="hint" id="s-api-url-hint">填到版本路径为止，例如 https://api.example.com/v1。</div></div>
+          <div class="fg"><label for="s-api-key">API Key</label><input type="password" id="s-api-key" autocomplete="off" placeholder="sk-..."><div class="hint">只保存在本机。</div></div>
+          <div class="fg" id="s-api-key-manager"><div class="ui-field-hd"><label for="s-api-key-select">已存密钥</label><div class="ui-actions"><button type="button" class="btn text sm accent" id="s-api-key-add" onclick="stscriptAddApiKey()">新增</button><button type="button" class="btn text sm accent" id="s-api-key-rename" onclick="stscriptRenameApiKey()">重命名</button><button type="button" class="btn text sm danger" id="s-api-key-delete" onclick="stscriptDeleteApiKey()">删除</button></div></div><select id="s-api-key-select" onchange="stscriptSelectApiKey()"></select><div class="hint" id="s-api-key-hint"></div></div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">模型</h3>
+          <div class="fg"><div class="ui-field-hd"><label for="s-model">默认模型</label><div class="ui-actions"><button type="button" class="btn text sm accent" id="api-detect-btn" data-probe-slot="provider" onclick="detectApiModels()">检测模型</button><button type="button" class="btn text sm accent" id="api-connectivity-btn" data-probe-slot="provider" onclick="testProviderFormConnectivity()">测试</button></div></div><input type="text" id="s-model" autocomplete="off" spellcheck="false" placeholder="例如：deepseek-chat"><div id="api-test-status" class="api-test-status" aria-live="polite">尚未检测</div><div id="api-model-results" class="api-model-results" style="display:none"></div><div class="hint">检测后可直接点选；供应商不提供模型列表时手动填写。「测试」按当前填写的地址、Key、模型和思考强度发一条最短请求。</div></div>
+          <div class="fg"><label for="s-prompt-post-processing">提示后处理</label><select id="s-prompt-post-processing"><option value="none">不处理（默认）</option><option value="merge">合并相邻同角色消息</option><option value="semi">半严格：中途系统消息改为用户</option><option value="strict">严格：再补上开头的用户消息</option><option value="single">单条用户消息：末条必须是用户</option></select><div class="hint">默认原样发送；接口报消息格式错误时再改选。</div></div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">回复</h3>
+          <div class="fg switch-field"><label class="switch-row" for="s-stream-output"><span class="switch-copy"><strong>流式输出</strong><small>主对话边生成边显示；关闭后整段返回再显示。</small></span><input type="checkbox" id="s-stream-output" checked><span class="switch-control" aria-hidden="true"></span></label></div>
+          <div class="fg switch-field"><label class="switch-row" for="s-show-thinking"><span class="switch-copy"><strong>显示思考过程</strong><small>在回复上方显示模型返回的思考内容。</small></span><input type="checkbox" id="s-show-thinking" checked><span class="switch-control" aria-hidden="true"></span></label></div>
+          <div class="fg" id="s-reasoning-template-panel"><div class="ui-field-hd"><label for="s-reasoning-template-select">思考标签模板</label><button type="button" class="btn text sm accent" id="s-reasoning-template-manage" onclick="stscriptOpenPromptProfileManager('reasoning')">管理</button></div><select id="s-reasoning-template-select" onchange="stscriptSelectReasoningTemplate()"></select><div class="hint">用来识别正文里的思考块，脚本格式化思考与正文时也用它。</div></div>
+          <div class="fg"><label for="s-reasoning-effort">思考强度</label><select id="s-reasoning-effort"><option value="auto">自动</option><option value="off">关闭</option><option value="low">低</option><option value="medium">中</option><option value="high">高</option><option value="max">最大</option></select><div class="hint">主对话和选「跟随全局」的任务使用这一档。「关闭」会尽力停用思考；模型名自带思考模式（如 <code>-thinking</code>）时关不掉，请换用不带思考的模型。</div></div>
+        </section>
+      </div>
+      <div id="st-routes" style="display:none">
+        <section class="ui-section">
+          <div class="ui-group-hd"><h3 class="ui-group-title">任务模型</h3><div class="ui-actions"><button type="button" class="btn text sm accent" onclick="addModelPreset()">新增方案</button><button type="button" class="btn text sm danger" onclick="deleteModelPreset()">删除</button></div></div>
+          <p class="hint ui-group-hint">为翻译、汉化、记忆整理等任务单独指定供应商和模型；未指定的跟随主对话。</p>
+          <div class="fg-row"><div class="fg"><label for="s-model-preset-select">当前方案</label><select id="s-model-preset-select" onchange="selectModelPresetForEditing()"></select></div><div class="fg"><label for="s-model-preset-name">方案名称</label><input type="text" id="s-model-preset-name" placeholder="例如：翻译轻量"></div></div>
+          <div id="s-model-routes" class="ui-group model-routes"></div>
+        </section>
+      </div>
+      <div id="st-retrieval" style="display:none">
+        <section class="ui-section vector-retrieval-settings">
+          <h3 class="ui-group-title">语义检索</h3>
+          <p class="hint ui-group-hint">用嵌入接口按意思查找相关的世界书条目和辅助记忆；接口不可用时照常按关键词和记忆规则对话。</p>
+          <div class="fg switch-field"><label class="switch-row" for="s-embedding-enabled"><span class="switch-copy"><strong>启用语义检索</strong><small>从下一次发送起生效。</small></span><input type="checkbox" id="s-embedding-enabled"><span class="switch-control" aria-hidden="true"></span></label></div>
+          <div class="fg switch-field"><label class="switch-row" for="s-vector-chats-enabled"><span class="switch-copy"><strong>检索长记忆</strong><small>按当前对话含义查找相关的辅助记忆。</small></span><input type="checkbox" id="s-vector-chats-enabled"><span class="switch-control" aria-hidden="true"></span></label></div>
+          <div class="fg switch-field"><label class="switch-row" for="s-vector-worldbook-enabled"><span class="switch-copy"><strong>检索向量世界书</strong><small>只查找标记为「向量」的世界书条目。</small></span><input type="checkbox" id="s-vector-worldbook-enabled"><span class="switch-control" aria-hidden="true"></span></label></div>
+          <div class="fg"><label for="s-embedding-api-url">嵌入 API 地址</label><input type="text" id="s-embedding-api-url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://api.example.com/v1"><div class="hint">OpenAI 兼容接口，请求发往其下的 <code>/embeddings</code>。</div></div>
+          <div class="fg"><label for="s-embedding-api-key">嵌入 API Key</label><input type="password" id="s-embedding-api-key" autocomplete="off" placeholder="只保存在本机"></div>
+          <div class="fg-row"><div class="fg"><label for="s-embedding-model">嵌入模型</label><input type="text" id="s-embedding-model" autocomplete="off" spellcheck="false" placeholder="例如：embedding-3"></div><div class="fg"><label for="s-embedding-dimensions">向量维度 <span class="ui-meta">可选</span></label><input type="number" id="s-embedding-dimensions" min="0" step="1" placeholder="模型默认"><div class="hint">服务支持自定义维度时再填。</div></div></div>
+          <div class="fg"><div class="status-field"><span class="status-field-label">检索状态</span><span id="s-embedding-status" class="api-test-status" role="status" aria-live="polite">保存后在下一次发送时检查</span></div></div>
+          <div class="ui-group"><button type="button" class="nav-row" onclick="openDataBank()"><span class="nav-row-copy"><strong>附件资料库</strong><small>管理语义检索可以查阅的附件资料</small></span></button></div>
+        </section>
+      </div>
+      <div id="st-params" style="display:none">
+        <section class="ui-section">
+          <h3 class="ui-group-title">长度</h3>
+          <div class="fg-row">
+            <div class="fg"><label for="s-max-context">上下文上限 <span class="ui-meta">Token</span></label><input type="number" id="s-max-context" value="0" min="0" max="1048576" step="4096"><div class="hint">设定、世界书、记忆和聊天合计。0 为不限；超出时先整理较早对话，仍超出再裁剪。</div></div>
+            <div class="fg"><label for="s-max-tokens">回复长度上限 <span class="ui-meta">Token</span></label><input type="number" id="s-max-tokens" value="0" min="0" max="393216" step="1024"><div class="hint">0 由供应商决定。思考也计入，过小可能没有正文。</div></div>
+          </div>
+          <div class="fg"><label for="s-style-audit-max-tokens">文风检查输出上限 <span class="ui-meta">Token</span></label><input type="number" id="s-style-audit-max-tokens" value="0" min="0" max="393216" step="128" placeholder="0 或留空为不限"><div class="hint">后台文风检查使用。0 或留空由供应商决定；过小可能拿不到完整判断。</div></div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">采样</h3>
+          <p class="hint ui-group-hint">四项都只在关闭思考时发送，留空则不发送；供应商不接受的项会自动停发。</p>
+          <div class="fg-row">
+            <div class="fg"><label for="s-temperature">随机程度 <span class="ui-meta">temperature</span></label><input type="number" id="s-temperature" min="0" max="2" step="0.05" placeholder="留空不发送"><div class="hint">0–2，常用 0.7–1.3。越高表达变化越多。</div></div>
+            <div class="fg"><label for="s-top-p">候选范围 <span class="ui-meta">top_p</span></label><input type="number" id="s-top-p" min="0" max="1" step="0.05" placeholder="留空不发送"><div class="hint">0–1，填 0 也不发送，常用 0.9–0.99。与随机程度通常只调其一。</div></div>
+          </div>
+          <div class="fg-row">
+            <div class="fg"><label for="s-frequency-penalty">减少重复用词 <span class="ui-meta">frequency</span></label><input type="number" id="s-frequency-penalty" min="-2" max="2" step="0.1" placeholder="留空不发送"><div class="hint">-2–2。正数减少重复用词，负数相反。</div></div>
+            <div class="fg"><label for="s-presence-penalty">鼓励新内容 <span class="ui-meta">presence</span></label><input type="number" id="s-presence-penalty" min="-2" max="2" step="0.1" placeholder="留空不发送"><div class="hint">-2–2。正数鼓励引入新内容，负数相反。</div></div>
+          </div>
+        </section>
+        <div class="page-tail"><button class="btn text sm accent" type="button" onclick="resetParameterSettings()">恢复本页默认值</button></div>
+<input type="checkbox" id="s-inner-os" style="display:none" disabled>
+      </div>
+      <div id="st-translation" style="display:none">
+        <section class="ui-section">
+          <h3 class="ui-group-title">翻译</h3>
+          <div class="fg"><label for="s-translation-prompt">消息翻译提示词</label><textarea id="s-translation-prompt" rows="9"></textarea><div class="hint">用于消息的「翻译」。只改变语言，不改写或续写剧情。</div></div>
+          <div class="fg"><label for="s-greeting-overview-prompt">开场白中文概览提示词</label><textarea id="s-greeting-overview-prompt" rows="5"></textarea><div class="hint">用于选择开场白时的「中文概览」，不加入对话。</div></div>
+          <div class="fg"><label for="s-creator-notes-translation-prompt">作者注记翻译提示词</label><textarea id="s-creator-notes-translation-prompt" rows="6"></textarea><div class="hint">用于作者注记的「翻译为中文」，译文只给你看，不发给角色。</div></div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">汉化</h3>
+          <div class="fg"><label for="s-worldbook-localization-batch-size">每批汉化条数</label><input type="number" id="s-worldbook-localization-batch-size" value="80" min="10" max="120" step="10"><div class="hint">名称与触发词按批请求，10–120，默认 80。小一些更稳，大一些请求更少。</div></div>
+          <div class="fg"><label for="s-card-localization-prompt">角色卡与卡内世界书汉化提示词</label><textarea id="s-card-localization-prompt" rows="8"></textarea><div class="prompt-constraint-warning" data-prompt-constraint-warning="cardLocalization" hidden>缺少默认的返回格式要求，可能读不到汉化结果。仍可保存。</div><div class="hint">导入角色卡时汉化名称、短标签和卡内世界书触发词，不发送图片和完整正文。</div></div>
+          <div class="fg"><label for="s-worldbook-localization-prompt">独立世界书汉化提示词</label><textarea id="s-worldbook-localization-prompt" rows="8"></textarea><div class="prompt-constraint-warning" data-prompt-constraint-warning="worldBookLocalization" hidden>缺少默认的返回格式要求，可能读不到汉化结果。仍可保存。</div><div class="hint">单独导入世界书时生成中文名称和触发别名，原文与规则不变。</div></div>
+        </section>
+        <div class="page-tail"><button class="btn text sm accent" type="button" onclick="resetTranslationPrompts()">恢复默认提示词</button></div>
+      </div>
+      <div id="st-image" style="display:none">
+        <section class="ui-section">
+          <div class="ui-group-hd"><h3 class="ui-group-title">图片来源</h3><div class="ui-actions"><button type="button" class="btn text sm accent" onclick="addImageSource()">新增</button><button type="button" class="btn text sm accent" id="image-source-rename" onclick="renameImageSource()">重命名</button><button type="button" class="btn text sm danger" id="image-source-delete" onclick="deleteImageSource()">删除</button></div></div>
+          <div class="fg" id="image-source-picker"><select id="image-source-select" onchange="selectImageSourceForEditing()" aria-label="当前图片来源"></select><div class="hint">手动生图使用这里选中的来源。</div></div>
+          <p class="hint ui-group-hint" id="image-source-empty">还没有图片来源。可以添加 Grok 订阅，或自定义图片接口（OpenAI 图片接口或 Gemini 原生）。</p>
+        </section>
+        <section class="ui-section" id="image-source-connection" hidden>
+          <h3 class="ui-group-title">连接</h3>
+          <p class="hint ui-group-hint" id="image-source-type-hint"></p>
+          <div id="image-source-grok"><div class="grok-login" data-grok-login></div></div>
+          <div id="image-source-openai">
+            <div class="fg"><label for="image-source-format">接口格式</label><select id="image-source-format" onchange="changeImageSourceFormat()"><option value="openai">OpenAI 图片接口</option><option value="gemini">Gemini 原生</option></select></div>
+            <div class="fg"><label for="image-source-url">接口地址</label><input type="text" id="image-source-url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://api.example.com/v1"><div class="hint" id="image-source-url-hint">填到版本路径为止，例如 …/v1；出图请求发往其下的 /images/generations。</div></div>
+            <div class="fg"><label for="image-source-key">API Key <span class="ui-meta">可选</span></label><input type="password" id="image-source-key" autocomplete="off" placeholder="接口不需要时留空"><div class="hint">只保存在本机。</div></div>
+          </div>
+        </section>
+        <section class="ui-section" id="image-source-output" hidden>
+          <h3 class="ui-group-title">出图</h3>
+          <div class="fg"><div class="ui-field-hd"><label for="image-source-model">模型</label><button type="button" class="btn text sm accent" id="image-source-detect-btn" onclick="detectImageSourceFormModels()">检测模型</button></div><input type="text" id="image-source-model" autocomplete="off" spellcheck="false" placeholder="例如：grok-imagine-image"><div id="image-source-status" class="api-test-status" aria-live="polite" hidden></div><div id="image-source-model-results" class="api-model-results" style="display:none"></div><div class="hint">检测后可直接点选；读不到模型列表时手动填写。</div></div>
+          <div class="fg-row">
+            <div class="fg" id="image-source-aspect-field"><label for="image-source-aspect">画幅</label><select id="image-source-aspect"></select></div>
+            <div class="fg" id="image-source-size-field"><label for="image-source-size">尺寸 <span class="ui-meta">可选</span></label><input type="text" id="image-source-size" autocomplete="off" spellcheck="false" placeholder="例如 1024x1024"></div>
+            <div class="fg"><label for="image-source-count">每次张数</label><select id="image-source-count"><option value="1">1 张</option><option value="2">2 张</option><option value="3">3 张</option><option value="4">4 张</option></select></div>
+          </div>
+          <div class="fg"><label for="image-source-prompt-mode">提示词处理方式</label><select id="image-source-prompt-mode"><option value="summary">直接总结</option><option value="desensitize">去敏感化</option></select><div class="hint">出图前由聊天模型读消息写提示词。去敏感化把露骨内容改写成含蓄画面，适合审核严格的来源。</div></div>
+        </section>
+        <div id="image-assistant-prompts" class="assistant-prompt-settings"></div>
+      </div>
+      <div id="st-speech" style="display:none"><div id="speech-global-fields" class="ui-section"></div><div class="ui-section ui-actions"><button type="button" class="btn" onclick="previewSpeechVoice()">试听</button><button type="button" class="btn text" onclick="stopSpeech()">停止</button></div></div>
+      <div id="st-appearance" style="display:none">
+        <section class="ui-section">
+          <h3 class="ui-group-title">界面</h3>
+          <div class="fg"><label for="s-theme-mode">主题</label><select id="s-theme-mode"><option value="auto">自动：跟随背景明暗</option><option value="dark">深色</option><option value="light">浅色</option></select><div class="hint">自动模式按当前背景图明暗切换页面和系统栏；没有背景图时用深色。</div></div>
+          <div class="fg"><label for="s-message-style">消息样式</label><select id="s-message-style" onchange="syncImmersiveAppearanceFields()"><option value="bubble">气泡（默认）</option><option value="immersive">全宽沉浸</option></select><div class="hint">全宽沉浸去掉消息气泡，让卡片前端铺满消息区。</div></div>
+          <div class="fg range-field" id="s-immersive-blur-field" hidden><label for="s-immersive-blur">背景模糊 <span class="range-value" id="s-immersive-blur-value">50</span></label><input type="range" id="s-immersive-blur" min="0" max="100" step="1" value="50" oninput="syncImmersiveAppearanceFields()" aria-label="背景模糊程度"><div class="hint">只用于全宽沉浸：0 为清晰，默认 50。</div></div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">角色</h3>
+          <div class="ui-group"><button type="button" class="nav-row" onclick="openCurrentCharacterGallery()"><span class="nav-row-copy"><strong>角色图库与背景</strong><small>管理当前角色的图片，选择聊天背景</small></span></button></div>
+        </section>
+      </div>
+      <div id="st-regex" style="display:none">
+        <section class="ui-section">
+          <div class="ui-group-hd"><h3 class="ui-group-title">正则预设</h3><div class="ui-actions"><button type="button" class="btn text sm accent" onclick="createRegexPresetFromCurrent()">另存为</button><button type="button" class="btn text sm accent" onclick="updateRegexPresetFromCurrent()">保存当前</button><button type="button" class="btn text sm danger" onclick="deleteRegexPresetSelection()">删除</button></div></div>
+          <div class="fg"><select id="regex-preset-select" aria-label="正则预设" onchange="applyRegexPresetSelection(this.value)"></select><div class="hint">记录全局、当前聊天补全预设和当前角色里哪些脚本启用及其顺序；选中预设即恢复。</div></div>
+        </section>
+        <section class="ui-section">
+          <div class="ui-group-hd"><h3 class="ui-group-title">脚本</h3><button type="button" class="btn sm" onclick="openRegexScriptEditor()">新建脚本</button></div>
+          <p class="hint ui-group-hint">查找可填裸表达式或 <code>/pattern/flags</code>；无法执行的规则会跳过并注明原因。这里的修改立即保存。</p>
+          <div id="regex-script-runtime-status" class="regex-script-runtime" hidden></div>
+          <div id="regex-script-list" class="regex-script-list"></div>
+        </section>
+      </div>
+      <div id="st-qr" style="display:none">
+        <div id="qr-manager" class="qr-manager"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn text" onclick="closeModal('settings-modal')">取消</button>
+      <button class="btn primary" onclick="saveSettings()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Regex Script Editor Modal -->
+<div class="modal-overlay" id="regex-script-editor-modal" data-panel="editor">
+  <div class="modal regex-script-editor-dialog">
+    <div class="modal-hd"><h2 id="regex-script-editor-title">编辑正则脚本</h2><button class="modal-close" aria-label="关闭" onclick="closeModal('regex-script-editor-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <div class="fg"><label for="regex-script-name">名称</label><input type="text" id="regex-script-name" maxlength="120" placeholder="例如：清理残留标记"></div>
+      <div class="fg"><label for="regex-script-owner">归属</label><select id="regex-script-owner"></select><div class="hint">全局脚本用于所有角色；角色脚本只用于该角色的聊天。</div></div>
+      <div class="fg"><label for="regex-script-find">查找</label><input type="text" id="regex-script-find" class="code-input" spellcheck="false" autocomplete="off" onchange="updateRegexScriptEditorSafety()" placeholder="/\[旁白\]：?/g"><div id="regex-script-safety" class="regex-script-editor-safety" aria-live="polite"></div><div class="hint">可填裸表达式；忽略大小写或替换全部匹配时写成 <code>/pattern/i</code>、<code>/pattern/g</code>。</div></div>
+      <div class="fg"><label for="regex-script-replace">替换为</label><textarea id="regex-script-replace" class="code-input" rows="3" spellcheck="false" placeholder="留空即删除匹配内容"></textarea><div class="hint">支持 <code>$1</code>、<code>$&amp;</code>，以及换成当前名称的 <code>{{user}}</code>、<code>{{char}}</code>。</div></div>
+      <fieldset class="fg regex-script-choice"><legend>作用对象</legend><div class="ui-group"><label class="check-row"><input type="checkbox" id="regex-script-target-user"><span class="check-row-copy"><strong>用户消息</strong><small>你发送的聊天内容</small></span></label><label class="check-row"><input type="checkbox" id="regex-script-target-assistant"><span class="check-row-copy"><strong>AI 回复</strong><small>角色返回的聊天内容</small></span></label><label class="check-row"><input type="checkbox" id="regex-script-target-worldbook"><span class="check-row-copy"><strong>世界书</strong><small>本轮实际注入的正文，原文不变</small></span></label></div></fieldset>
+      <fieldset class="fg regex-script-choice"><legend>作用环节</legend><div class="ui-group"><label class="check-row"><input type="checkbox" id="regex-script-phase-display"><span class="check-row-copy"><strong>聊天显示</strong><small>只改变界面上看到的文字</small></span></label><label class="check-row"><input type="checkbox" id="regex-script-phase-send"><span class="check-row-copy"><strong>发送给 AI</strong><small>构建下一次请求时替换</small></span></label></div></fieldset>
+      <div class="fg switch-field"><label class="switch-row" for="regex-script-enabled"><span class="switch-copy"><strong>启用脚本</strong><small>关闭后保留设置，但不执行。</small></span><input type="checkbox" id="regex-script-enabled"><span class="switch-control" aria-hidden="true"></span></label></div>
+    </div>
+    <div class="modal-ft"><button type="button" class="btn text" onclick="closeModal('regex-script-editor-modal')">取消</button><button type="button" class="btn primary" onclick="saveRegexScriptEditor()">保存脚本</button></div>
+  </div>
+</div>
+
+<!-- Greeting Selector Modal -->
+<div class="modal-overlay" id="risu-options-modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="risu-options-title"><div class="modal-hd"><h2 id="risu-options-title">演出选项</h2><button type="button" class="modal-close" aria-label="关闭演出选项" onclick="closeModal('risu-options-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div><div class="modal-body" id="risu-options-body"></div><div class="modal-ft"><button type="button" class="btn primary" onclick="closeModal('risu-options-modal')">完成</button></div></div></div>
+<div class="modal-overlay" id="greeting-modal"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="greeting-modal-title"><div class="modal-hd"><h2 id="greeting-modal-title">选择开场白</h2><button type="button" class="modal-close" aria-label="关闭" onclick="resolveGreetingChoice(null)"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div><div class="modal-body"><p class="hint ui-intro">选择这次对话的开场白，列表只显示开头部分。</p><div id="greeting-list" class="greeting-list" role="radiogroup" aria-labelledby="greeting-modal-title"></div></div><div class="modal-ft"><button type="button" class="btn text" onclick="resolveGreetingChoice(null)">取消</button><button type="button" class="btn primary" onclick="confirmGreetingChoice()">开始对话</button></div></div></div>
+<div class="modal-overlay" id="card-settings-modal"><div class="modal card-settings-dialog" role="dialog" aria-modal="true" aria-labelledby="card-settings-title"><div class="modal-hd"><h2 id="card-settings-title">卡片设置</h2><button type="button" class="modal-close" aria-label="关闭卡片设置" onclick="cancelCardSettings()"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div><div class="modal-body"><p class="hint ui-intro">查看这张卡片的依赖和运行状态；这里的开关只作用于这张卡片。</p><section id="card-dependency-status" class="ui-section card-dependency-group" hidden></section><section id="card-script-status" class="ui-section card-script-group" hidden></section><section id="mvu-runtime-status" class="ui-section mvu-runtime-group" hidden></section></div><div class="modal-ft"><button type="button" class="btn primary" onclick="cancelCardSettings()">完成</button></div></div></div>
+
+<!-- Prompt Manager Modal -->
+<div class="modal-overlay" id="prompt-manager-modal">
+  <div class="modal prompt-manager-dialog">
+    <div class="modal-hd"><h2>提示词预设</h2></div>
+    <nav class="tabs page-tabs preset-manager-tabs" role="tablist" aria-label="预设设置分区"><button type="button" class="active" data-preset-tab="manage" role="tab" onclick="switchCompletionPresetTab('manage')">管理</button><button type="button" data-preset-tab="order" role="tab" onclick="switchCompletionPresetTab('order')">顺序</button><button type="button" data-preset-tab="note" role="tab" onclick="switchCompletionPresetTab('note')">注记</button><button type="button" data-preset-tab="utility" role="tab" onclick="switchCompletionPresetTab('utility')">辅助</button></nav>
+    <div class="modal-body prompt-manager-body">
+      <div id="pm-preset-editor" class="preset-tab-panels">
+        <section class="preset-tab-panel" data-preset-panel="manage">
+          <section class="ui-section">
+            <div class="ui-group-hd"><h3 class="ui-group-title">当前预设</h3><div class="ui-actions"><button type="button" class="btn text sm accent" onclick="createPromptPreset()">新建</button><button type="button" class="btn text sm accent" onclick="duplicatePromptPreset()">复制</button><button type="button" id="pm-rename-preset" class="btn text sm accent" onclick="renamePromptPreset()">重命名</button><button type="button" id="pm-delete-preset" class="btn text sm danger" onclick="deletePromptPreset()">删除</button></div></div>
+            <div class="fg"><select id="pm-preset-select" aria-label="当前预设" onchange="switchPromptPreset(this.value)"></select><div class="hint">新建得到空白预设，复制另存当前预设。可导入 SillyTavern 聊天补全预设。</div></div>
+            <div class="button-row preset-file-actions"><button type="button" class="btn sm" onclick="document.getElementById('prompt-preset-file').click()">导入 JSON</button><button type="button" id="pm-export-preset" class="btn sm" onclick="exportPromptPreset()">导出 JSON</button><input type="file" id="prompt-preset-file" accept="application/json,.json" hidden onchange="importPromptPresetFile(event)"><span id="prompt-import-status" class="hint" aria-live="polite"></span></div>
+          </section>
+          <section id="pm-task-panel" class="ui-section preset-task-panel" hidden>
+            <div class="ui-group-hd"><h3 class="ui-group-title">预设内嵌任务</h3><small id="pm-task-count" class="ui-meta"></small></div>
+            <div class="fg switch-field"><label class="switch-row" for="pm-task-enabled"><span class="switch-copy"><strong>启用内嵌任务</strong><small>任务会在对话中运行，可能额外调用模型。关闭后不执行任何任务。</small></span><input type="checkbox" id="pm-task-enabled" onchange="changeCompletionPresetTasksEnabled(this.checked)"><span class="switch-control" aria-hidden="true"></span></label></div>
+            <div id="pm-task-save-hint" class="notice" hidden>先保存当前预设，才能手动运行任务。</div>
+            <div id="pm-task-list" class="ui-group preset-task-list"></div>
+          </section>
+          <section class="ui-section">
+            <h3 class="ui-group-title">兼容性</h3>
+            <ul id="pm-compatibility-status" class="preset-compatibility" aria-live="polite"></ul>
+          </section>
+          <div class="page-tail"><button type="button" id="pm-reset-preset" class="btn text sm accent" onclick="resetPromptPresetDefault()">恢复为默认内容</button></div>
+        </section>
+        <section class="preset-tab-panel" data-preset-panel="order" hidden>
+          <section class="ui-section">
+            <div class="ui-group-hd"><h3 class="ui-group-title">提示词顺序 <small id="pm-order-count" class="ui-meta"></small></h3><button class="btn sm" type="button" onclick="addCompletionPresetPrompt()">添加</button></div>
+            <div id="pm-prompt-list" class="preset-prompt-list"></div>
+          </section>
+          <section class="ui-section">
+            <h3 class="ui-group-title">本轮组合</h3>
+            <div id="prompt-layer-list"></div>
+            <div class="button-row"><button type="button" id="prompt-preview-toggle" class="btn sm" aria-expanded="false" aria-controls="prompt-preview" onclick="togglePresetRoundPreview()">预览本轮内容</button><button type="button" class="btn sm" onclick="copyPresetRoundPreview()">复制预览</button></div>
+            <div id="prompt-preview" class="preset-preview" hidden><div id="prompt-stats-box" class="preset-preview-stats" aria-live="polite"></div><div id="prompt-preview-box" class="preset-preview-box"></div></div>
+          </section>
+        </section>
+        <section class="preset-tab-panel" data-preset-panel="note" hidden>
+          <section class="ui-section">
+            <h3 class="ui-group-title">作者注记</h3>
+            <p class="hint ui-group-hint">独立于当前预设，按频率在所选位置加入提示词。</p>
+            <div class="fg"><label for="pm-authors-note">注记内容</label><textarea id="pm-authors-note" rows="10" placeholder="留空表示不使用作者注记"></textarea></div>
+            <div class="fg-row"><div class="fg"><label for="pm-an-depth">注入深度</label><input id="pm-an-depth" type="number" inputmode="numeric" min="0" step="1"><div class="hint">0 放在最新消息之后，越大越靠前。</div></div><div class="fg"><label for="pm-an-freq">注入频率</label><input id="pm-an-freq" type="number" inputmode="numeric" min="0" step="1"><div class="hint">每几次用户发言插入一次；0 为关闭。</div></div></div>
+            <div class="fg-row"><div class="fg"><label for="pm-author-note-position">加入位置</label><select id="pm-author-note-position" onchange="completionPresetCaptureFields()"><option value="chat">聊天记录内</option><option value="before">主提示词之前</option><option value="after">主提示词之后</option></select></div><div class="fg"><label for="pm-author-note-role">聊天记录内角色</label><select id="pm-author-note-role" onchange="completionPresetCaptureFields()"><option value="system">系统</option><option value="user">用户</option><option value="assistant">助手</option></select></div></div>
+          </section>
+        </section>
+        <section class="preset-tab-panel" data-preset-panel="utility" hidden>
+          <p class="hint ui-intro">文风检查、表情分类和命名系统提示词对所有角色生效，不写入预设，也不随预设导出。</p>
+          <div id="pm-global-assistant-prompts" class="assistant-prompt-settings"></div>
+          <section class="ui-section" id="pm-system-prompt-panel">
+            <div class="ui-group-hd"><h3 class="ui-group-title">命名系统提示词</h3><button type="button" class="btn text sm accent" onclick="stscriptOpenPromptProfileManager('system')">管理</button></div>
+            <div class="fg"><select id="pm-system-prompt-select" aria-label="命名系统提示词" onchange="stscriptSelectSystemPrompt()"><option value="">关闭</option></select><div class="hint">给所有角色附加的要求。正文放在预设主提示词之后、角色卡系统提示词之前；后置内容放在最靠近你最新消息的位置。</div></div>
+          </section>
+          <section class="ui-section">
+            <h3 class="ui-group-title">当前预设的辅助提示</h3>
+            <p class="hint ui-group-hint">属于当前预设，随预设导出；留空即关闭对应行为。</p>
+            <div class="fg"><label for="pm-new-chat-prompt">新对话提示 <span class="ui-meta">new_chat_prompt</span></label><textarea id="pm-new-chat-prompt" rows="3"></textarea></div>
+            <div class="fg"><label for="pm-new-example-chat-prompt">新示例分隔提示 <span class="ui-meta">new_example_chat_prompt</span></label><textarea id="pm-new-example-chat-prompt" rows="3"></textarea></div>
+            <div class="fg"><label for="pm-wi-format">世界书格式 <span class="ui-meta">wi_format</span></label><textarea id="pm-wi-format" rows="3"></textarea><div class="hint">用 {0} 表示世界书内容。</div></div>
+            <div class="fg"><label for="pm-personality-format">性格格式 <span class="ui-meta">personality_format</span></label><textarea id="pm-personality-format" rows="3"></textarea><div class="hint">用 {{personality}} 表示角色性格。</div></div>
+            <div class="fg"><label for="pm-scenario-format">场景格式 <span class="ui-meta">scenario_format</span></label><textarea id="pm-scenario-format" rows="3"></textarea><div class="hint">用 {{scenario}} 表示场景。</div></div>
+            <div class="fg"><label for="pm-continue-nudge-prompt">续写提示 <span class="ui-meta">continue_nudge_prompt</span></label><textarea id="pm-continue-nudge-prompt" rows="3"></textarea></div>
+            <div class="fg"><label for="pm-send-if-empty">空轮次补发 <span class="ui-meta">send_if_empty</span></label><textarea id="pm-send-if-empty" rows="3"></textarea></div>
+            <div class="fg"><label for="pm-impersonation-prompt">扮演用户提示 <span class="ui-meta">impersonation_prompt</span></label><textarea id="pm-impersonation-prompt" rows="3"></textarea></div>
+            <div class="fg"><label for="pm-assistant-prefill">AI 回复强制开头 <span class="ui-meta">assistant_prefill</span></label><textarea id="pm-assistant-prefill" rows="3"></textarea></div>
+          </section>
+          <section class="ui-section">
+            <div class="fg"><label for="pm-start-reply-with">回复开头 <span class="ui-meta">Start Reply With</span></label><textarea id="pm-start-reply-with" rows="3"></textarea><div class="hint">对所有角色生效，仅在 AI 回复强制开头为空时使用；不随预设导出。</div></div>
+          </section>
+        </section>
+      </div>
+    </div>
+    <div class="modal-ft preset-manager-footer"><span class="preset-draft-hint" id="pm-draft-hint" role="status" hidden>改动未保存</span><button class="btn text" onclick="closeModal('prompt-manager-modal')">取消</button><button class="btn primary" onclick="savePromptManager()">保存</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="prompt-entry-modal" data-panel="editor">
+  <div class="modal prompt-entry-dialog">
+    <div class="modal-hd"><h2>提示词条目</h2><button class="modal-close" aria-label="关闭" onclick="cancelCompletionPresetPrompt()"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <div class="fg"><label for="pm-entry-name">名称</label><input id="pm-entry-name"><div class="hint">只用于列表显示，不发送给模型。</div></div>
+      <div class="fg"><label for="pm-entry-id">标识符</label><input id="pm-entry-id" class="code-input" disabled><div class="hint">预设用它匹配顺序，已有条目不可修改。</div></div>
+      <div class="fg-row">
+        <div class="fg"><label for="pm-entry-role">消息角色</label><select id="pm-entry-role"><option value="system">系统</option><option value="user">用户</option><option value="assistant">助手</option></select></div>
+        <div class="fg"><label for="pm-entry-position">加入位置</label><select id="pm-entry-position" onchange="syncCompletionPresetEntryPosition()"><option value="relative">按预设顺序</option><option value="in_chat">插入聊天记录</option></select></div>
+      </div>
+      <div id="pm-entry-position-fields" class="fg-row">
+        <div class="fg"><label for="pm-entry-depth">深度</label><input id="pm-entry-depth" type="number" inputmode="numeric" min="0"><div class="hint">0 紧贴最新消息，越大越靠前。</div></div>
+        <div class="fg"><label for="pm-entry-order">同深度排序</label><input id="pm-entry-order" type="number" inputmode="numeric"><div class="hint">数值小的靠前。</div></div>
+      </div>
+      <div id="pm-entry-enable-field" class="fg" hidden><label class="check-row" for="pm-entry-enable"><input type="checkbox" id="pm-entry-enable"><span class="check-row-copy"><strong>直接启用</strong><small>加到启用列表末尾；不勾选则先放进备用提示词。</small></span></label></div>
+      <div id="pm-entry-content-field" class="fg"><label for="pm-entry-content">内容</label><textarea id="pm-entry-content" data-autogrow="long" rows="12"></textarea></div>
+      <div id="pm-entry-impersonate-field"><label class="check-row" for="pm-entry-impersonate"><input type="checkbox" id="pm-entry-impersonate"><span class="check-row-copy"><strong>代拟时也发送</strong><small>让这条提示词同时用于起草用户发言。</small></span></label></div>
+      <p id="pm-entry-marker" class="notice" hidden>这是占位条目，内容取自「<b id="pm-entry-marker-source"></b>」，不能在这里编辑。</p>
+    </div>
+    <div class="modal-ft"><button class="btn text" onclick="cancelCompletionPresetPrompt()">取消</button><button class="btn primary" onclick="saveCompletionPresetPrompt()">完成</button></div>
+  </div>
+</div>
+
+<!-- Named System Prompt / Reasoning Template Manager -->
+<div class="modal-overlay" id="prompt-profile-manager-modal">
+  <div class="modal">
+    <div class="modal-hd"><h2 id="prompt-profile-manager-title">命名条目</h2><button type="button" class="modal-close" aria-label="关闭" onclick="closeModal('prompt-profile-manager-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <p class="hint ui-group-hint" id="prompt-profile-manager-hint"></p>
+      <div id="prompt-profile-manager-list" class="ui-group prompt-profile-list"></div>
+    </div>
+    <div class="modal-ft"><button type="button" class="btn text danger" id="prompt-profile-manager-reset" onclick="stscriptResetPromptProfiles()">恢复默认</button><button type="button" class="btn primary" onclick="stscriptAddPromptProfile()">新建</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="prompt-profile-entry-modal" data-panel="editor">
+  <div class="modal prompt-entry-dialog">
+    <div class="modal-hd"><h2 id="prompt-profile-entry-title">编辑条目</h2><button type="button" class="modal-close" aria-label="关闭" onclick="closeModal('prompt-profile-entry-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <div class="fg"><label for="prompt-profile-entry-name">名称</label><input id="prompt-profile-entry-name" type="text" maxlength="60"></div>
+      <div id="prompt-profile-entry-fields"></div>
+    </div>
+    <div class="modal-ft"><button type="button" class="btn text" onclick="closeModal('prompt-profile-entry-modal')">取消</button><button type="button" class="btn primary" onclick="stscriptSavePromptProfileEntry()">完成</button></div>
+  </div>
+</div>
+
+<!-- Memory Manager Modal -->
+<div class="modal-overlay" id="memory-manager-modal">
+  <div class="modal">
+    <div class="modal-hd"><h2>记忆</h2></div>
+    <nav class="tabs page-tabs memory-tabs" role="tablist" aria-label="记忆分区"><button type="button" class="active" role="tab" aria-selected="true" onclick="switchMemoryTab('overview',this)">当前对话</button><button type="button" role="tab" aria-selected="false" onclick="switchMemoryTab('settings',this)">整理设置</button></nav>
+    <div class="modal-body">
+      <section id="memory-overview">
+        <div class="fg switch-field"><label class="switch-row" for="mm-use-memory"><span class="switch-copy"><strong>启用记忆</strong><small>对所有对话生效。记忆按对话分开保存，不改动角色卡、世界书和聊天原文。</small></span><input type="checkbox" id="mm-use-memory"><span class="switch-control" aria-hidden="true"></span></label></div>
+        <div id="mm-memory-structured" class="memory-structured"></div>
+      </section>
+      <section id="memory-settings" hidden>
+        <section class="ui-section">
+          <h3 class="ui-group-title">整理</h3>
+          <div class="fg-row"><div class="fg"><label for="mm-auto-summary-every">整理频率 <span class="ui-meta">条</span></label><input type="number" id="mm-auto-summary-every" inputmode="numeric" min="10" max="60" step="1" oninput="syncMemoryRecentLimit(false)" onblur="syncMemoryRecentLimit(true)"><div class="hint">每积累这么多条未整理消息更新一次摘要，10–60，默认 30。</div></div><div class="fg"><label for="mm-recent-msg-limit">保留最近原文 <span class="ui-meta">条</span></label><input type="number" id="mm-recent-msg-limit" inputmode="numeric" min="0" max="58" step="1" onblur="syncMemoryRecentLimit(true)"><div class="hint" id="mm-recent-msg-limit-hint">默认 10，最多比整理频率少 2 条。</div></div></div>
+          <div class="fg"><label for="mm-summary-token-limit">单次整理长度上限 <span class="ui-meta">Token</span></label><input type="number" id="mm-summary-token-limit" inputmode="numeric" min="0" max="65536" step="256" placeholder="0 或留空为不限"><div class="hint">只限制整理出的摘要，不影响角色回复。0 或留空由供应商决定。</div></div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">带入</h3>
+          <div class="fg-row"><div class="fg"><label for="mm-memory-query-limit">查找依据 <span class="ui-meta">条</span></label><input type="number" id="mm-memory-query-limit" inputmode="numeric" min="4" max="8" step="1"><div class="hint">回复前用最近几条消息查找相关辅助记忆和附件资料，4–8，默认 6。</div></div><div class="fg"><label for="mm-memory-token-budget">带入上限 <span class="ui-meta">Token</span></label><input type="number" id="mm-memory-token-budget" inputmode="numeric" min="0" max="8192" step="128" placeholder="0 或留空为不限"><div class="hint">一次最多带入多少辅助记忆。0 或留空不限；不够相关的不会凑数。</div></div></div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">提示词</h3>
+          <div class="fg"><label for="mm-summary-prompt">较早对话整理提示词</label><textarea id="mm-summary-prompt" rows="8"></textarea><div class="prompt-constraint-warning" data-prompt-constraint-warning="memorySummary" hidden>缺少整理结果必需的 JSON 字段，整理可能失败。仍可保存。</div><div class="hint">把已有摘要和新对话整理成一份当前摘要，保留关系、决定、承诺和待办。</div></div>
+          <div class="fg"><label for="mm-inject-prompt">辅助记忆参考提示词</label><textarea id="mm-inject-prompt" rows="5"></textarea><div class="hint">随辅助记忆一起发送，说明它只作补充参考，不覆盖角色设定、世界书和最近原文。</div></div>
+        </section>
+        <div class="page-tail"><button type="button" class="btn text sm accent" onclick="resetMemoryPromptsDefault()">恢复默认提示词</button></div>
+      </section>
+    </div>
+    <div class="modal-ft"><button class="btn text" onclick="closeModal('memory-manager-modal')">取消</button><button class="btn primary" onclick="saveMemoryManager()">保存</button></div>
+  </div>
+</div>
+
+<!-- Auxiliary Memory Entry Editor -->
+<div class="modal-overlay" id="memory-entry-modal">
+  <div class="modal memory-entry-dialog">
+    <div class="modal-hd"><h2>编辑辅助记忆</h2><button class="modal-close" aria-label="关闭" onclick="closeModal('memory-entry-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <div class="fg-row"><div class="fg"><label for="me-type">类别</label><select id="me-type"><option value="character_fact">人物信息</option><option value="relationship_change">关系变化</option><option value="key_event">关键事件</option></select></div><div class="fg"><label for="me-importance">重要度</label><select id="me-importance"><option value="1">低</option><option value="3">普通</option><option value="4">重要</option><option value="5">很重要</option></select></div></div>
+      <div class="fg"><label for="me-content">内容</label><textarea id="me-content" rows="6"></textarea></div>
+      <div class="fg-row"><div class="fg"><label for="me-subject">主体</label><input id="me-subject" type="text" maxlength="160" placeholder="主要说的是谁或什么"></div><div class="fg"><label for="me-object">对象</label><input id="me-object" type="text" maxlength="160" placeholder="相关的人、事或物"></div></div>
+      <p class="hint ui-group-hint">主体和对象帮助判断这条记忆与当前对话是否相关。</p>
+      <div class="fg"><label for="me-confidence">可信程度 <span class="ui-meta">0–100</span></label><input id="me-confidence" type="number" inputmode="numeric" min="0" max="100" step="1"></div>
+    </div>
+    <div class="modal-ft"><button class="btn text" onclick="closeModal('memory-entry-modal')">取消</button><button class="btn primary" onclick="saveMemoryV5Entry()">保存</button></div>
+  </div>
+</div>
+
+<!-- Current History Summary Editor -->
+<div class="modal-overlay" id="memory-summary-modal">
+  <div class="modal memory-entry-dialog">
+    <div class="modal-hd"><h2>编辑历史摘要</h2><button class="modal-close" aria-label="关闭" onclick="closeModal('memory-summary-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <div class="fg"><label for="ms-summary-text">摘要正文</label><textarea id="ms-summary-text" data-autogrow="long" rows="9"></textarea><div class="hint">每次回复前作为「较早对话摘要」发送，多余空白会合并；下次整理在它的基础上继续。<span id="ms-summary-limit"></span></div></div>
+    </div>
+    <div class="modal-ft"><button class="btn text" onclick="closeModal('memory-summary-modal')">取消</button><button class="btn primary" onclick="saveMemoryV5Summary()">保存</button></div>
+  </div>
+</div>
+
+<!-- Memory Batch Review Before Writing -->
+<div class="modal-overlay" id="memory-review-modal">
+  <div class="modal memory-review-dialog">
+    <div class="modal-hd"><h2>确认整理结果</h2><button class="modal-close" aria-label="关闭" onclick="discardMemoryReview()"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body"><p class="hint ui-group-hint" id="memory-review-status" aria-live="polite"></p><div id="memory-review-body"></div></div>
+    <div class="modal-ft"><button class="btn text" onclick="discardMemoryReview()">丢弃</button><button class="btn primary" onclick="confirmMemoryReview()">确认写入</button></div>
+  </div>
+</div>
+
+<!-- Blocking Memory Job Modal -->
+<div class="modal-overlay locked-modal" id="memory-progress-modal" aria-modal="true" role="dialog">
+  <div class="modal memory-progress-dialog">
+    <div class="modal-hd"><h2 id="memory-progress-title">正在总结长期记忆</h2></div>
+    <div class="modal-body"><div class="memory-progress-track"><i></i></div><p id="memory-progress-text">正在整理较早对话…</p><div class="hint">取消或失败都不会改动原摘要和聊天内容。</div></div>
+    <div class="modal-ft"><button class="btn text" id="memory-progress-cancel" onclick="cancelMemoryJob()">取消处理</button></div>
+  </div>
+</div>
+
+<!-- Branch Return Bridge Preview -->
+<div class="modal-overlay" id="branch-merge-modal">
+  <div class="modal branch-return-dialog" role="dialog" aria-modal="true" aria-labelledby="branch-merge-title">
+    <div class="modal-hd"><h2 id="branch-merge-title">带回父对话</h2><button type="button" class="modal-close" onclick="cancelBranchMergePreview()" aria-label="关闭带回父对话"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body"><p class="hint" id="branch-merge-summary"></p><div id="branch-merge-preview" class="branch-merge-preview"></div></div>
+    <div class="modal-ft"><button type="button" class="btn text" onclick="cancelBranchMergePreview()">取消</button><button type="button" class="btn primary" id="branch-merge-confirm" onclick="confirmBranchMerge()" disabled>生成预览</button></div>
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div class="modal-overlay" id="import-modal" data-panel="sheet">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="import-modal-title">
+    <div class="modal-hd"><h2 id="import-modal-title">导入角色卡</h2><button type="button" class="modal-close" aria-label="关闭" onclick="closeModal('import-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <div class="tabs">
+        <button type="button" class="active" onclick="switchSub('import','file',this)">文件</button>
+        <button type="button" onclick="switchSub('import','paste',this)">粘贴</button>
+      </div>
+      <div id="import-file">
+        <div class="drop-zone" id="drop-zone" role="button" tabindex="0" onclick="document.getElementById('file-input').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}">
+          <div class="dz-icon"><svg class="ui-icon" aria-hidden="true"><use href="#i-import" xlink:href="#i-import"></use></svg></div><div class="dz-text">选择或拖入角色卡<small>PNG、JSON、CHARX</small></div>
+        </div>
+        <input type="file" id="file-input" accept="*/*" hidden onchange="handleFileImport(event)">
+        <div id="import-preview"></div>
+      </div>
+      <div id="import-paste" style="display:none">
+        <div class="fg"><label for="paste-json">角色卡 JSON</label><textarea id="paste-json" rows="12" placeholder='{"name":"...","description":"..."}'></textarea></div>
+        <button type="button" class="btn" onclick="importPaste()">分析并选择导入方式</button>
+        <div id="paste-result"></div>
+      </div>
+    </div>
+    <div class="modal-ft"><button type="button" class="btn text" onclick="closeModal('import-modal')">关闭</button></div>
+  </div>
+</div>
+
+<!-- Create/Edit Character Modal -->
+<div class="modal-overlay" id="create-modal" data-panel="editor">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="create-title">
+    <div class="modal-hd"><h2 id="create-title">创建角色</h2><button type="button" class="modal-close" aria-label="关闭" onclick="requestCloseModal('create-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-char-id">
+      <input type="hidden" id="c-emoji" value="">
+      <section class="ui-section">
+        <h3 class="ui-group-title">形象</h3>
+        <div class="media-field">
+          <button type="button" class="media-thumb is-round" id="character-avatar-preview" aria-label="选择角色头像" onclick="$('c-avatar-file').click()"><span class="media-thumb-empty" id="c-avatar-text"><svg class="ui-icon" aria-hidden="true"><use href="#i-user" xlink:href="#i-user"></use></svg></span></button>
+          <div class="media-field-copy">
+            <strong>头像</strong>
+            <small>用于角色列表和消息，选择图片后可裁剪。</small>
+            <div class="media-field-actions"><button type="button" class="btn sm" onclick="$('c-avatar-file').click()"><span class="media-when-empty">选择图片</span><span class="media-when-set">更换</span></button><button type="button" class="btn text sm media-when-set" onclick="clearCharacterAvatar(event)">清除</button></div>
+          </div>
+        </div>
+        <input type="file" id="c-avatar-file" accept="image/png,image/jpeg,image/webp" hidden onchange="handleAvatarUpload(event, 'character')">
+        <input type="hidden" id="c-avatar-data">
+        <div class="media-field">
+          <button type="button" class="media-thumb is-wide" id="bg-preview" aria-label="选择聊天背景" onclick="$('c-bg-file').click()"><span class="media-thumb-empty" id="bg-text"><svg class="ui-icon" aria-hidden="true"><use href="#i-plus" xlink:href="#i-plus"></use></svg></span></button>
+          <div class="media-field-copy">
+            <strong>聊天背景</strong>
+            <small>显示在聊天页，界面配色随它变化。不设置时，带卡面导入的角色用头像作背景，否则使用中性主题。</small>
+            <div class="media-field-actions"><button type="button" class="btn sm" onclick="$('c-bg-file').click()"><span class="media-when-empty">选择图片</span><span class="media-when-set">更换</span></button><button type="button" class="btn text sm media-when-set" onclick="clearCharacterBackground(event)">清除</button></div>
+          </div>
+        </div>
+        <input type="file" id="c-bg-file" accept="image/*" hidden onchange="handleBgUpload(event)">
+      </section>
+      <section class="ui-section">
+        <h3 class="ui-group-title">设定</h3>
+        <div class="fg"><label for="c-name">名称 *</label><input type="text" id="c-name" placeholder="角色名称"></div>
+        <div class="fg"><label for="c-desc">描述</label><textarea id="c-desc" rows="3" placeholder="外貌、身份背景、世界观"></textarea></div>
+        <div class="fg"><label for="c-personality">性格</label><textarea id="c-personality" rows="3" placeholder="性格特点、说话方式、习惯与口癖"></textarea></div>
+        <div class="fg"><label for="c-scenario">场景</label><input type="text" id="c-scenario" placeholder="当前所处的场景"></div>
+        <div class="fg"><label for="c-tags">标签</label><input type="text" id="c-tags" placeholder="奇幻, NPC"><div class="hint">用逗号分隔。</div></div>
+      </section>
+      <section class="ui-section">
+        <h3 class="ui-group-title">开场</h3>
+        <div class="fg"><label for="c-first-mes">开场白</label><textarea id="c-first-mes" rows="3" placeholder="角色在新对话中说的第一句话"></textarea><div class="hint">成为新对话的第一条角色消息，也是角色说话方式的参考。</div></div>
+        <div class="fg"><div class="ui-field-hd"><label>备用开场白</label><button type="button" class="btn text accent sm" onclick="addAlternateGreeting()">添加</button></div><div id="c-alt-greetings" class="character-alt-greetings"></div><div class="hint">开始新对话时，可以在开场白和这些备用开场白中选择。</div></div>
+        <div class="fg"><label for="c-examples">对话示例</label><textarea id="c-examples" rows="4" placeholder="{{user}}: 你好&#10;{{char}}: 欢迎！&#10;&#10;用 &lt;START&gt; 分隔不同场景"></textarea></div>
+      </section>
+      <section class="ui-section">
+        <h3 class="ui-group-title">提示词</h3>
+        <div class="fg"><label for="c-system-prompt">角色专属开头提示</label><textarea id="c-system-prompt" rows="2" placeholder="留空则只使用当前提示词预设"></textarea><div class="hint">放在当前预设的主提示词之后，只用于这个角色；通常留空。</div></div>
+        <div class="fg"><label for="c-post-history">角色自带的发送后指令</label><textarea id="c-post-history" rows="3" placeholder="这张角色卡没有附带内容"></textarea><div class="hint">每次回复前发送，排在预设「发送后指令」之前。导入外来卡后建议先查看。</div></div>
+      </section>
+      <section class="ui-section">
+        <h3 class="ui-group-title">卡片资料</h3>
+        <div class="fg card-author-notes"><label for="c-author-notes-preview">作者注记</label><textarea id="c-author-notes-preview" rows="5" readonly placeholder="这张角色卡没有作者注记"></textarea><div class="hint">只展示给你，不发送给模型；第一次开始对话前会显示一次。</div></div>
+        <details class="card-source-details" id="c-card-meta" hidden><summary>角色卡来源信息</summary><div id="c-card-meta-content" class="card-source-content"></div></details>
+      </section>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn text" onclick="requestCloseModal('create-modal')">取消</button>
+      <button type="button" class="btn primary" onclick="saveCharacter()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Persona Modal -->
+<div class="modal-overlay" id="persona-modal" data-panel="editor">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="persona-modal-title">
+    <div class="modal-hd"><h2 id="persona-modal-title">新建人格</h2><button type="button" class="modal-close" aria-label="关闭" onclick="requestCloseModal('persona-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="persona-edit-id">
+      <input type="hidden" id="p-emoji" value="">
+      <div class="media-field">
+        <button type="button" class="media-thumb is-round" id="persona-avatar-preview" aria-label="选择人格头像" onclick="$('p-avatar-file').click()"><span class="media-thumb-empty" id="p-avatar-text"><svg class="ui-icon" aria-hidden="true"><use href="#i-user" xlink:href="#i-user"></use></svg></span></button>
+        <div class="media-field-copy">
+          <strong>头像</strong>
+          <small>选择图片后可裁剪；不选择时头像留空。</small>
+          <div class="media-field-actions"><button type="button" class="btn sm" onclick="$('p-avatar-file').click()"><span class="media-when-empty">选择图片</span><span class="media-when-set">更换</span></button></div>
+        </div>
+      </div>
+      <input type="file" id="p-avatar-file" accept="image/*" hidden onchange="handleAvatarUpload(event)">
+      <input type="hidden" id="p-avatar-data">
+      <div class="fg"><label for="p-name">名称</label><input type="text" id="p-name" placeholder="你的名字"></div>
+      <div class="fg"><label for="p-desc">描述</label><textarea id="p-desc" rows="9" placeholder="你的外貌、身份、背景或表达偏好"></textarea><div class="hint">使用中的人格代表你参与普通角色对话；不选择人格时使用默认用户身份。</div></div>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn text" onclick="requestCloseModal('persona-modal')">取消</button>
+      <button type="button" class="btn primary" onclick="savePersona()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- Persona Avatar Crop Modal -->
+<div class="modal-overlay" id="persona-crop-modal">
+  <div class="modal persona-crop-dialog" role="dialog" aria-modal="true" aria-labelledby="avatar-crop-title">
+    <div class="modal-hd"><h2 id="avatar-crop-title">裁剪人格头像</h2><button type="button" class="modal-close" aria-label="关闭" onclick="cancelPersonaCrop()"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <div class="persona-crop-stage" id="persona-crop-stage"><canvas id="persona-crop-canvas" width="720" height="720" onpointerdown="startPersonaCropDrag(event)" onpointermove="movePersonaCropDrag(event)" onpointerup="endPersonaCropDrag()" onpointercancel="endPersonaCropDrag()" onpointerleave="endPersonaCropDrag()"></canvas></div>
+      <p class="persona-crop-help">拖动图片调整位置，用下方滑块缩放。</p>
+      <div class="persona-crop-zoom"><span aria-hidden="true">缩小</span><input type="range" id="persona-crop-scale" min="1" max="4" step="0.01" value="1" aria-label="缩放" oninput="updatePersonaCropScale(this.value)"><span aria-hidden="true">放大</span></div>
+    </div>
+    <div class="modal-ft"><button type="button" class="btn text" onclick="cancelPersonaCrop()">取消</button><button type="button" class="btn primary" onclick="confirmPersonaCrop()">使用这张头像</button></div>
+  </div>
+</div>
+
+<!-- Wheel Biography Manager Modal -->
+<div class="modal-overlay" id="wheel-manager-modal" data-panel="sheet">
+  <div class="modal wheel-manager-dialog" role="dialog" aria-modal="true" aria-labelledby="wheel-manager-title">
+    <div class="modal-hd"><h2 id="wheel-manager-title">转盘设置</h2><button type="button" class="modal-close" onclick="closeModal('wheel-manager-modal')" aria-label="关闭转盘设置"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <div id="wheel-assistant-prompts" class="assistant-prompt-settings"></div>
+      <section class="ui-section">
+        <div class="fg"><label for="wheel-scheme-max-tokens">人物志输出上限（Token）</label><input type="number" id="wheel-scheme-max-tokens" value="0" min="0" max="393216" step="1024" inputmode="numeric" placeholder="0 或留空为不限"><div class="hint">0 或留空为不限（由供应商决定），与聊天回复上限分开。思考过程也计入上限；正文不完整时调大此值，或降低此任务的思考档位。</div></div>
+      </section>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn text" onclick="closeModal('wheel-manager-modal')">返回</button>
+      <button type="button" class="btn primary" id="wheel-manager-save" onclick="saveWheelSchemeManager()">保存设置</button>
+    </div>
+  </div>
+</div>
+<!-- World Book Modal -->
+<div class="modal-overlay" id="wb-modal" data-panel="editor">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wb-modal-title">
+    <div class="modal-hd"><h2 id="wb-modal-title">世界书管理</h2><button type="button" class="modal-close" aria-label="关闭" onclick="requestCloseModal('wb-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <div class="tabs wb-primary-tabs">
+        <button type="button" class="active" data-wb-tab="browse" onclick="selectWBSection('browse')">条目与分类</button>
+        <button type="button" data-wb-tab="import" onclick="selectWBSection('import')">导入</button>
+        <button type="button" data-wb-tab="settings" onclick="selectWBSection('settings')">设置</button>
+      </div>
+
+      <div id="wb-browse">
+        <div class="wb-toolbar">
+          <input type="text" id="wb-cat-search" placeholder="搜索条目" aria-label="搜索条目" oninput="scheduleListRender('worldbook')">
+          <button type="button" class="btn sm" onclick="openWBEditor()">新建条目</button>
+          <button type="button" class="btn sm" onclick="addWBCategory()">新建分类</button>
+        </div>
+        <div id="wb-cat-list"></div>
+      </div>
+
+      <div id="wb-add" style="display:none">
+        <input type="hidden" id="wb-edit-id">
+        <input type="hidden" id="wb-edit-cat-id">
+        <div id="wb-add-status"></div>
+        <details class="wb-section" open><summary>基础</summary><div class="wb-section-body">
+        <div class="fg"><label for="wb-cat-select">所属分类</label><select id="wb-cat-select"></select></div>
+        <div class="fg"><label for="wb-name">条目名称</label><input type="text" id="wb-name" placeholder="用于在列表中辨认这条设定"></div>
+        <div class="fg"><label for="wb-keys">触发关键词</label><input type="text" id="wb-keys" placeholder="魔法, *法术*, /龙$/"><div class="hint">逗号分隔；支持 * 通配符、/正则/ 和 /正则/flags。</div></div>
+        <div class="fg"><label for="wb-content">设定内容</label><textarea id="wb-content" rows="4" placeholder="条目命中后提供给模型的设定内容"></textarea></div>
+        <div class="fg"><label for="wb-comment">备注</label><input type="text" id="wb-comment" placeholder="只给自己看的说明"></div>
+        <div class="fg"><label class="switch-row" for="wb-enabled"><span class="switch-copy"><strong>启用此条目</strong></span><input type="checkbox" id="wb-enabled" checked><span class="switch-control" aria-hidden="true"></span></label></div>
+        </div></details>
+        <details class="wb-section" open><summary>触发方式</summary><div class="wb-section-body">
+        <div class="fg"><label for="wb-trigger-mode">触发策略</label><select id="wb-trigger-mode"><option value="keyword">关键词触发</option><option value="constant">常驻：每次都加入</option><option value="vector">向量：按含义匹配</option></select><div class="hint">常驻不看关键词；向量需先在「设置 → 语义检索」配置，向量条目仍可被关键词命中。</div></div>
+        <div class="fg-row">
+          <div class="fg"><label for="wb-case-sensitive">关键词大小写</label><select id="wb-case-sensitive"><option value="">跟随所属分类</option><option value="true">区分大小写</option><option value="false">不区分大小写</option></select></div>
+          <div class="fg"><label for="wb-match-whole-words">英文完整单词匹配</label><select id="wb-match-whole-words"><option value="">跟随世界书设置</option><option value="true">开启</option><option value="false">关闭</option></select></div>
+        </div>
+        <div class="hint fg-row-hint">大小写主要影响英文，分类未指定时用世界书设置。完整单词匹配开启后 cat 不会命中 catalog；中文、通配符和正则按各自规则。</div>
+        <div class="fg"><label class="switch-row" for="wb-selective"><span class="switch-copy"><strong>使用次级关键词筛选</strong><small>主关键词命中后，再按次级规则判断是否启用。</small></span><input type="checkbox" id="wb-selective"><span class="switch-control" aria-hidden="true"></span></label></div>
+        <div class="fg"><label for="wb-secondary">次级关键词</label><input type="text" id="wb-secondary" placeholder="用逗号分隔多个关键词"></div>
+        <div class="fg"><label for="wb-selective-logic">次级关键词组合规则</label><select id="wb-selective-logic"><option value="0">命中任意一个即可</option><option value="3">必须全部命中</option><option value="1">只在没有全部命中时</option><option value="2">只在一个都没命中时</option></select><div class="hint">仅在开启次级关键词筛选时生效。</div></div>
+        <div class="fg"><label for="wb-entry-scan-depth">本条回看条数</label><input type="number" id="wb-entry-scan-depth" min="0" max="1000" step="1" placeholder="跟随分类或世界书设置"><div class="hint">0–1000，留空跟随分类或世界书设置；0 表示不按关键词查找，只在常驻、持续、强制激活或向量命中时生效。</div></div>
+        <div class="fg"><label>额外查找来源</label><div class="wb-check-grid"><label class="wb-check" for="wb-match-persona-description"><input type="checkbox" id="wb-match-persona-description"><span>你的人格描述</span></label><label class="wb-check" for="wb-match-character-description"><input type="checkbox" id="wb-match-character-description"><span>角色描述</span></label><label class="wb-check" for="wb-match-character-personality"><input type="checkbox" id="wb-match-character-personality"><span>角色性格</span></label><label class="wb-check" for="wb-match-character-depth-prompt"><input type="checkbox" id="wb-match-character-depth-prompt"><span>角色深度补充</span></label><label class="wb-check" for="wb-match-scenario"><input type="checkbox" id="wb-match-scenario"><span>场景</span></label><label class="wb-check" for="wb-match-creator-notes"><input type="checkbox" id="wb-match-creator-notes"><span>作者备注</span></label></div><div class="hint">除最近聊天外，也在勾选的内容里查找本条关键词。</div></div>
+        <div class="fg"><label>只在这些生成方式下触发</label><div class="wb-check-grid"><label class="wb-check" for="wb-trigger-normal"><input type="checkbox" id="wb-trigger-normal"><span>普通生成</span></label><label class="wb-check" for="wb-trigger-continue"><input type="checkbox" id="wb-trigger-continue"><span>继续写</span></label><label class="wb-check" for="wb-trigger-regenerate"><input type="checkbox" id="wb-trigger-regenerate"><span>重新生成</span></label><label class="wb-check" for="wb-trigger-swipe"><input type="checkbox" id="wb-trigger-swipe"><span>滑动重写</span></label><label class="wb-check" for="wb-trigger-impersonate"><input type="checkbox" id="wb-trigger-impersonate"><span>代写用户</span></label><label class="wb-check" for="wb-trigger-quiet"><input type="checkbox" id="wb-trigger-quiet"><span>后台生成</span></label></div><div class="hint">都不勾选表示不限制。</div></div>
+        <div class="fg"><label for="wb-character-filter">适用角色</label><input type="text" id="wb-character-filter" placeholder="留空表示所有启用此分类的角色"><div class="hint">逗号分隔角色名称或角色 ID。</div></div>
+        <div class="fg"><label for="wb-character-filter-tags">适用角色标签</label><input type="text" id="wb-character-filter-tags" placeholder="留空表示不按标签筛选"><div class="hint">逗号分隔；名称和标签命中任意一项即算符合。</div></div>
+        <div class="fg"><label class="switch-row" for="wb-character-filter-exclude"><span class="switch-copy"><strong>改为排除这些角色</strong><small>开启后，名单里的角色不使用这条，其他角色照常使用。</small></span><input type="checkbox" id="wb-character-filter-exclude"><span class="switch-control" aria-hidden="true"></span></label></div>
+        </div></details>
+        <details class="wb-section"><summary>加入位置与预算</summary><div class="wb-section-body">
+        <div class="fg"><label for="wb-position">加入位置</label><select id="wb-position" onchange="syncWBPositionState()"><option value="before_char">角色设定之前</option><option value="after_char" selected>角色设定之后</option><option value="em_top">示例对话之前</option><option value="em_bottom">示例对话之后</option><option value="an_top">作者注记之前</option><option value="an_bottom">作者注记之后</option><option value="at_depth">聊天记录中的指定位置</option><option value="before_user">当前用户消息之前</option><option value="outlet">命名出口</option></select></div>
+        <div class="fg-row">
+          <div class="fg"><label for="wb-depth">距最新消息的条数</label><input type="number" id="wb-depth" value="4" min="0" max="999"></div>
+          <div class="fg"><label for="wb-order">排列顺序</label><input type="number" id="wb-order" value="100" min="0" max="1000"></div>
+        </div>
+        <div class="hint fg-row-hint">条数仅用于「聊天记录中的指定位置」，0 最接近最新消息。排列顺序越大越靠后、越早占用预算；预算不足时数值小的先被挤掉。</div>
+        <div class="fg"><label for="wb-role">加入聊天记录时显示为</label><select id="wb-role"><option value="system">背景设定</option><option value="user">用户补充</option><option value="assistant">角色补充</option></select><div class="hint">仅用于「聊天记录中的指定位置」。通常用背景设定；另两项会被视作对应一方的发言。</div></div>
+        <div class="fg"><label for="wb-outlet-name">出口名称</label><input type="text" id="wb-outlet-name" placeholder="例如：Lore"><div class="hint">仅用于「命名出口」：在提示词里写 {{outlet::出口名称}}，内容就出现在那里；未填或未被引用则不加入。</div></div>
+        <div class="fg"><label class="switch-row" for="wb-ignore-budget"><span class="switch-copy"><strong>忽略预算</strong><small>世界书预算用完时这条仍会加入，只给必须出现的内容开启。</small></span><input type="checkbox" id="wb-ignore-budget"><span class="switch-control" aria-hidden="true"></span></label></div>
+        </div></details>
+        <details class="wb-section"><summary>分组、概率与时效</summary><div class="wb-section-body">
+        <div class="fg"><label for="wb-group">互斥组名称</label><input type="text" id="wb-group" placeholder="留空表示不分组"><div class="hint">同名组里已触发的条目每轮通常只选一条；逗号分隔多个组，不同世界书的同名组算同一组。</div></div>
+        <div class="fg-row">
+          <div class="fg"><label for="wb-group-weight">组内权重</label><input type="number" id="wb-group-weight" value="100" min="1" max="100000"></div>
+          <div class="fg"><label for="wb-use-group-scoring">组内比较方式</label><select id="wb-use-group-scoring"><option value="">跟随世界书设置</option><option value="true">按关键词命中数量</option><option value="false">只按权重抽选</option></select></div>
+        </div>
+        <div class="hint fg-row-hint">权重越大越容易被抽中；按命中数量比较时，关键词命中最多的条目胜出。</div>
+        <div class="fg"><label class="switch-row" for="wb-group-override"><span class="switch-copy"><strong>命中时直接采用</strong><small>填写互斥组后生效：这条命中即成为该组赢家；多条开启时取排列顺序最大的一条。</small></span><input type="checkbox" id="wb-group-override"><span class="switch-control" aria-hidden="true"></span></label></div>
+        <div class="fg"><label class="switch-row" for="wb-use-probability"><span class="switch-copy"><strong>使用触发概率</strong><small>开启后，命中还要通过概率判断；关闭时每次命中都生效。</small></span><input type="checkbox" id="wb-use-probability" checked onchange="syncWBProbabilityState()"><span class="switch-control" aria-hidden="true"></span></label></div>
+        <div class="fg-row">
+          <div class="fg"><label for="wb-probability">触发概率 %</label><input type="number" id="wb-probability" value="100" min="0" max="100"></div>
+          <div class="fg"><label for="wb-delay">等待消息数</label><input type="number" id="wb-delay" value="0" min="0" max="9999"></div>
+        </div>
+        <div class="fg-row">
+          <div class="fg"><label for="wb-sticky">持续消息数</label><input type="number" id="wb-sticky" value="0" min="0" max="9999"></div>
+          <div class="fg"><label for="wb-cooldown">冷却消息数</label><input type="number" id="wb-cooldown" value="0" min="0" max="9999"></div>
+        </div>
+        <div class="hint fg-row-hint">等待：对话消息达到这个数量前不触发。持续：首次触发后接下来这些条消息继续带入。冷却：持续期结束后这些条消息内不再触发。</div>
+        <div class="fg"><label class="switch-row" for="wb-prevent-recursion"><span class="switch-copy"><strong>这条不再触发其他条目</strong><small>这条的内容不用来触发别的条目，它自己仍可被触发。</small></span><input type="checkbox" id="wb-prevent-recursion"><span class="switch-control" aria-hidden="true"></span></label></div>
+        <div class="fg"><label class="switch-row" for="wb-exclude-recursion"><span class="switch-copy"><strong>这条不被其他条目触发</strong><small>只有聊天内容能触发这条，其他条目的正文不能。</small></span><input type="checkbox" id="wb-exclude-recursion"><span class="switch-control" aria-hidden="true"></span></label></div>
+        <div class="fg"><label for="wb-delay-until-recursion">递归到第几层后才可触发</label><input type="number" id="wb-delay-until-recursion" value="0" min="0" step="1"><div class="hint">0 表示被其他条目命中即可；2 表示至少两层关联后才触发。不影响聊天直接命中。</div></div>
+        </div></details>
+        <details class="wb-section"><summary>快捷栏自动化</summary><div class="wb-section-body">
+        <div class="fg"><label for="wb-automation-id">快捷栏自动化 ID</label><input type="text" id="wb-automation-id" placeholder="例如：intro"><div class="hint">条目真正加入后，运行自动化 ID 相同的快捷栏按钮；未命中、被过滤或未编入预算的条目不会触发。</div></div>
+        </div></details>
+      </div>
+
+      <div id="wb-settings" style="display:none">
+        <p class="hint ui-intro">这些设置作用于所有世界书，保存后从下一次生成起生效。</p>
+        <section class="ui-section">
+          <h3 class="ui-group-title">扫描</h3>
+          <div class="fg-row">
+            <div class="fg"><label for="wb-scan-depth">回看消息数量</label><input type="number" id="wb-scan-depth" value="20" min="0" max="1000"><div class="hint">0–1000，每次生成前在这些消息里找关键词。</div></div>
+            <div class="fg"><label for="wb-max-recursion-steps">最多递归几轮</label><input type="number" id="wb-max-recursion-steps" value="0" min="0"><div class="hint">0 表示不额外限制。</div></div>
+          </div>
+          <div class="fg-row">
+            <div class="fg"><label for="wb-min-activations">最少激活条数</label><input type="number" id="wb-min-activations" value="0" min="0"><div class="hint">命中太少时，往更早的消息里继续找。</div></div>
+            <div class="fg"><label for="wb-min-activations-depth-max">继续找的最大回看</label><input type="number" id="wb-min-activations-depth-max" value="0" min="0" max="1000"><div class="hint">0–1000，0 表示不额外限制。</div></div>
+          </div>
+          <div class="ui-group wb-switch-group">
+            <label class="switch-row" for="wb-recursive"><span class="switch-copy"><strong>递归扫描</strong><small>已激活条目的正文继续触发其他条目；分类或条目明确禁止递归时仍以它们为准。</small></span><input type="checkbox" id="wb-recursive"><span class="switch-control" aria-hidden="true"></span></label>
+            <label class="switch-row" for="wb-include-names"><span class="switch-copy"><strong>关键词查找包含发言人名称</strong><small>角色名和用户名与消息正文一起参与匹配。</small></span><input type="checkbox" id="wb-include-names" checked><span class="switch-control" aria-hidden="true"></span></label>
+          </div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">预算</h3>
+          <p class="hint ui-group-hint">某条装不下时，它和后面的普通条目都不再加入；可调高预算，或给关键条目开「忽略预算」。</p>
+          <div class="fg-row">
+            <div class="fg"><label for="wb-budget-percent">占上下文比例 %</label><input type="number" id="wb-budget-percent" value="0" min="0" max="100" placeholder="不限"><div class="hint">0–100，0 或留空为不限；「设置 → 参数」的上下文内容上限大于 0 时才起作用。</div></div>
+            <div class="fg"><label for="wb-token-budget">上限（Token）</label><input type="number" id="wb-token-budget" value="0" min="0" max="262144" step="256" placeholder="不限"><div class="hint">0–262144，0 或留空为不限。</div></div>
+          </div>
+          <div class="fg"><label for="wb-insertion-strategy">全局与角色世界书的排列方式</label><select id="wb-insertion-strategy"><option value="character_first">角色世界书优先</option><option value="global_first">全局世界书优先</option><option value="evenly">按顺序统一排列</option></select><div class="hint">决定同一位置里两种来源的先后，也决定预算不足时谁先被挤掉。</div></div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">匹配默认值</h3>
+          <div class="ui-group wb-switch-group">
+            <label class="switch-row" for="wb-case-sensitive-global"><span class="switch-copy"><strong>关键词区分大小写</strong><small>所有分类和条目的默认值。</small></span><input type="checkbox" id="wb-case-sensitive-global"><span class="switch-control" aria-hidden="true"></span></label>
+            <label class="switch-row" for="wb-match-whole-words-global"><span class="switch-copy"><strong>英文按完整单词匹配</strong><small>所有条目的默认值。</small></span><input type="checkbox" id="wb-match-whole-words-global"><span class="switch-control" aria-hidden="true"></span></label>
+            <label class="switch-row" for="wb-use-group-scoring-global"><span class="switch-copy"><strong>同组按关键词命中数量比较</strong><small>所有条目的默认值；关闭时同组只按权重抽选。</small></span><input type="checkbox" id="wb-use-group-scoring-global"><span class="switch-control" aria-hidden="true"></span></label>
+          </div>
+        </section>
+        <section class="ui-section">
+          <h3 class="ui-group-title">向量条目</h3>
+          <div class="fg-row">
+            <div class="fg"><label for="wb-vector-query-messages">查询消息数</label><input type="number" id="wb-vector-query-messages" value="6" min="1"><div class="hint">用最近多少条消息代表当前话题。</div></div>
+            <div class="fg"><label for="wb-vector-max-entries">最多取回条数</label><input type="number" id="wb-vector-max-entries" value="5" min="1"><div class="hint">一次最多取回的向量条目数。</div></div>
+          </div>
+          <div class="fg"><label for="wb-vector-score-threshold">相似度门槛</label><input type="number" id="wb-vector-score-threshold" value="0.25" min="0" max="1" step="0.05"><div class="hint">0–1，达到才会取回，越高越严格。</div></div>
+        </section>
+        <div class="wb-settings-save"><button type="button" class="btn primary" onclick="saveWBSettings()">保存世界书设置</button><div id="wb-settings-status" aria-live="polite"></div></div>
+      </div>
+
+      <div id="wb-import" style="display:none">
+        <div class="drop-zone" id="wb-drop" role="button" tabindex="0" onclick="document.getElementById('wb-file').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"><div class="dz-icon"><svg class="ui-icon" aria-hidden="true"><use href="#i-import" xlink:href="#i-import"></use></svg></div><div class="dz-text">选择或拖入世界书<small>JSON 文件</small></div></div>
+        <input type="file" id="wb-file" accept=".json" hidden onchange="importWBFile(event)">
+        <div class="fg wb-paste-field"><label for="wb-paste">或粘贴 JSON</label><textarea id="wb-paste" rows="8" placeholder='[{"keys":["关键词"],"content":"内容"}]'></textarea></div>
+        <button type="button" class="btn" onclick="importWBPaste()">分析并选择导入方式</button>
+        <div id="wb-import-status"></div>
+        <div id="wb-import-preview"></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn danger wb-footer-browse" onclick="clearWB()">清空世界书</button>
+      <button type="button" class="btn text wb-footer-browse" onclick="closeModal('wb-modal')">关闭</button>
+      <button type="button" class="btn text wb-footer-editor" style="display:none" onclick="handleWBBack()">返回条目列表</button>
+      <button type="button" class="btn primary wb-footer-editor" style="display:none" onclick="saveWBEntry()">保存条目</button>
+    </div>
+  </div>
+</div>
+
+<!-- About Modal -->
+<div class="modal-overlay" id="about-modal">
+  <div class="modal about-dialog" role="dialog" aria-modal="true" aria-labelledby="about-title">
+    <div class="modal-hd"><h2 id="about-title">关于夜欲</h2><button type="button" class="modal-close" onclick="closeModal('about-modal')" aria-label="关闭关于"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <p class="hint ui-intro">夜欲是一款在手机本地运行的角色对话应用，支持导入 SillyTavern 与 RisuAI 格式的角色卡，以及 SillyTavern 的预设和世界书，接入你自行配置的模型服务即可对话。所有角色、聊天记录和设置都保存在本机。</p>
+      <div class="ui-group">
+        <div class="about-row"><span class="nav-row-copy"><strong>当前版本</strong><small id="about-version"></small></span></div>
+        <button type="button" class="nav-row about-copy-row" onclick="copyAboutEmail()"><span class="nav-row-copy"><strong>联系邮箱</strong><small>xujingye666@gmail.com</small></span></button>
+        <a class="nav-row" href="https://github.com/xujingye666-sketch/yeyu"><span class="nav-row-copy"><strong>项目地址</strong><small>github.com/xujingye666-sketch/yeyu</small></span></a>
+      </div>
+      <p class="hint about-update-status" id="about-update-status" aria-live="polite"></p>
+    </div>
+    <div class="modal-ft"><button type="button" class="btn" id="about-update-check" onclick="checkAppUpdateManually()">检查更新</button><button type="button" class="btn primary" id="about-update-open" hidden>前往更新</button></div>
+  </div>
+</div>
+
+<!-- Latest Turn Statistics Modal -->
+<div class="modal-overlay" id="turn-statistics-modal">
+  <div class="modal turn-statistics-dialog" role="dialog" aria-modal="true" aria-labelledby="turn-statistics-title">
+    <div class="modal-hd"><h2 id="turn-statistics-title">本轮统计</h2><button type="button" class="modal-close" onclick="closeModal('turn-statistics-modal')" aria-label="关闭本轮统计"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body"><div class="turn-insights latest-turn-insights"></div></div>
+  </div>
+</div>
+
+<!-- Story Direction Modal -->
+<div class="modal-overlay" id="story-objective-modal">
+  <div class="modal story-objective-dialog" role="dialog" aria-modal="true" aria-labelledby="story-objective-title">
+    <div class="modal-hd"><h2 id="story-objective-title">剧情方向</h2><button type="button" class="modal-close" onclick="closeModal('story-objective-modal')" aria-label="关闭剧情方向"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body story-direction-body">
+      <section class="ui-section">
+        <h3 class="ui-group-title">长期方向</h3>
+        <textarea class="story-direction-long-term-input" rows="3" maxlength="4000" aria-label="剧情大纲或长期目标" placeholder="例如：围绕两人的共同调查展开，逐步揭示旧案真相"></textarea>
+        <p class="hint">整段剧情的大纲或长期目标，每次回复都会参考；留空即不设。</p>
+      </section>
+      <section class="ui-section">
+        <h3 class="ui-group-title">阶段目标</h3>
+        <div class="story-direction-list">
+          <div class="story-direction-queue"></div>
+          <button type="button" class="story-direction-add">添加阶段目标</button>
+        </div>
+        <p class="hint">按顺序推进：当前目标每次回复消耗 1 次，用完自动进入下一项；重新生成和继续生成不消耗。</p>
+      </section>
+    </div>
+    <div class="modal-ft"><button type="button" class="btn text" onclick="closeModal('story-objective-modal')">关闭</button><button type="button" class="btn primary story-direction-save">保存方向</button></div>
+  </div>
+</div>
+
+<!-- Edit Message Modal -->
+<div class="modal-overlay" id="edit-msg-modal" data-panel="sheet">
+  <div class="modal edit-msg-dialog" role="dialog" aria-modal="true" aria-labelledby="edit-msg-title">
+    <div class="modal-hd"><h2 id="edit-msg-title">编辑消息</h2><button type="button" class="modal-close" id="edit-msg-close" onclick="requestCloseModal('edit-msg-modal')" aria-label="关闭编辑消息"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="edit-msg-idx">
+      <textarea id="edit-msg-content" rows="18" aria-label="消息内容" placeholder="消息内容"></textarea>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn danger" id="edit-msg-stop" onclick="stopEditMessageScript()" hidden>停止脚本</button>
+      <button type="button" class="btn text" id="edit-msg-cancel" onclick="requestCloseModal('edit-msg-modal')">取消</button>
+      <button type="button" class="btn primary" id="edit-msg-save" onclick="saveEditMessage()"><span id="edit-msg-save-label">保存</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Session Modal -->
+<div class="modal-overlay" id="rename-session-modal">
+  <div class="modal prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="rename-session-title">
+    <div class="modal-hd"><h2 id="rename-session-title">重命名对话</h2></div>
+    <div class="modal-body">
+      <input type="hidden" id="rename-session-id">
+      <input type="text" id="rename-session-name" aria-label="对话名称" placeholder="对话名称" onkeydown="handleRenameSessionKey(event)">
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn text" onclick="closeModal('rename-session-modal')">取消</button>
+      <button type="button" class="btn primary" onclick="saveRenameSession()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- App Prompt Modal -->
+<div class="modal-overlay" id="app-prompt-modal">
+  <div class="modal prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="app-prompt-title">
+    <div class="modal-hd"><h2 id="app-prompt-title">输入</h2></div>
+    <div class="modal-body">
+      <div id="app-prompt-message" class="app-prompt-message"></div>
+      <div class="fg" id="app-prompt-field"><label id="app-prompt-label" for="app-prompt-input">内容</label><input type="text" id="app-prompt-input" onkeydown="handleAppPromptKey(event)"><textarea id="app-prompt-textarea" rows="9" style="display:none" aria-labelledby="app-prompt-label" onkeydown="handleAppPromptKey(event)"></textarea><div id="app-prompt-choice" class="prompt-choice-list" role="radiogroup" aria-labelledby="app-prompt-label" onkeydown="handleAppPromptKey(event)" hidden></div></div>
+    </div>
+    <div class="modal-ft">
+      <button type="button" class="btn text" onclick="resolveAppPrompt(false)">取消</button>
+      <button type="button" class="btn text danger" id="app-prompt-alt" onclick="resolveAppPromptAlternative()" hidden></button>
+      <button type="button" class="btn primary" id="app-prompt-ok" onclick="resolveAppPrompt(true)">确定</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="stscript-choice-modal">
+  <div class="modal prompt-dialog" role="dialog" aria-modal="true" aria-labelledby="stscript-choice-title">
+    <div class="modal-hd"><h2 id="stscript-choice-title">请选择</h2></div>
+    <div class="modal-body"><div id="stscript-choice-list" class="prompt-choice-list"></div></div>
+    <div class="modal-ft"><button type="button" class="btn text" id="stscript-choice-cancel">取消</button></div>
+  </div>
+</div>
+
+<!-- Import localization progress -->
+<div class="modal-overlay" id="import-progress-modal">
+  <div class="modal import-progress-dialog" role="dialog" aria-modal="true" aria-labelledby="import-progress-title">
+    <div class="modal-hd"><h2 id="import-progress-title">正在导入</h2></div>
+    <div class="modal-body">
+      <p id="import-progress-text">正在准备数据…</p>
+      <div class="import-progress-track" role="progressbar" aria-labelledby="import-progress-text"><i id="import-progress-fill"></i></div>
+      <div id="import-progress-detail" class="hint"></div>
+    </div>
+    <div class="modal-ft"><button type="button" class="btn text" id="import-progress-cancel" onclick="cancelImportLocalization()">取消导入</button></div>
+  </div>
+</div>
+
+<!-- Creator notes shown once before the first greeting -->
+<div class="modal-overlay" id="creator-notes-modal">
+  <div class="modal creator-notes-dialog" role="dialog" aria-modal="true" aria-labelledby="creator-notes-title">
+    <div class="modal-hd"><h2 id="creator-notes-title">作者注记</h2></div>
+    <div class="modal-body">
+      <div class="creator-notes-toolbar">
+        <button type="button" class="btn sm" id="creator-notes-translate-btn" onclick="translateCreatorNotesForDisplay()">翻译为中文</button>
+        <p id="creator-notes-status" class="creator-notes-status" aria-live="polite"></p>
+      </div>
+      <div id="creator-notes-content" class="creator-notes-content"></div>
+    </div>
+    <div class="modal-ft"><button type="button" class="btn primary" id="creator-notes-confirm" onclick="confirmCreatorNotes()">知道了，开始对话</button></div>
+  </div>
+</div>
+
+<!-- Wheel Scheme Spin Overlay -->
+<div class="modal-overlay palette-scope" id="wheel-scheme-spin-modal" data-panel="sheet" aria-hidden="true">
+  <div class="modal wheel-scheme-dialog" role="dialog" aria-modal="true" aria-labelledby="wheel-scheme-spin-title">
+    <div class="modal-hd"><h2 id="wheel-scheme-spin-title">转盘</h2><button type="button" class="modal-close" onclick="closeWheelSchemeSpin()" aria-label="关闭转盘"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body wheel-scheme-body">
+      <p class="wheel-scheme-intro"><span class="wheel-game-turn-badge" id="wheel-scheme-spin-turn"></span><span>点中心开始转动，指针停下的位置就是这一转的结果。</span></p>
+      <div class="wheel-scheme-stage">
+        <span class="wheel-scheme-pointer" aria-hidden="true"><svg class="ui-icon"><use href="#i-arrow-down" xlink:href="#i-arrow-down"></use></svg></span>
+        <svg viewBox="0 0 320 320" aria-label="转盘"><g id="wheel-scheme-spin-rotor"></g></svg>
+        <button type="button" id="wheel-scheme-spin-button" onclick="spinWheelSchemeModal()">转</button>
+      </div>
+      <ul id="wheel-scheme-spin-legend" class="wheel-scheme-legend" aria-label="按顺时针排列的全部选项"></ul>
+      <div class="wheel-scheme-outcome" aria-live="polite"><strong id="wheel-scheme-spin-result" hidden></strong><button type="button" class="btn primary" id="wheel-scheme-spin-confirm" onclick="confirmWheelSchemeSpin()" hidden>确认结果</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast container -->
+<div class="modal-overlay" id="expressions-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="expressions-modal-title">
+    <div class="modal-hd"><h2 id="expressions-modal-title">立绘表情</h2><button type="button" class="modal-close" aria-label="关闭立绘表情" onclick="closeModal('expressions-modal')"><svg class="ui-icon" aria-hidden="true"><use href="#i-close" xlink:href="#i-close"></use></svg></button></div>
+    <div class="modal-body expression-manager">
+      <p class="hint ui-intro">单张图片也能作为固定立绘；添加更多标签后，可以手动切换或开启自动表情。</p>
+      <section class="ui-section">
+        <h3 class="ui-group-title">显示</h3>
+        <div class="ui-group expression-switches">
+          <label class="switch-row" for="expression-visible"><span class="switch-copy"><strong>显示立绘</strong></span><input type="checkbox" id="expression-visible" onchange="expressionUpdateSettings(this.id)"><span class="switch-control" aria-hidden="true"></span></label>
+          <label class="switch-row" for="expression-vn-toggle"><span class="switch-copy"><strong>视觉小说</strong></span><input type="checkbox" id="expression-vn-toggle" onchange="expressionUpdateSettings(this.id)"><span class="switch-control" aria-hidden="true"></span></label>
+        </div>
+        <div class="fg-row">
+          <div class="fg range-field"><label for="expression-height">大小</label><input id="expression-height" type="range" min="16" max="42" value="24" onchange="expressionUpdateSettings(this.id)"></div>
+          <div class="fg"><label for="expression-position">位置</label><select id="expression-position" onchange="expressionUpdateSettings(this.id)"><option value="left">左侧</option><option value="center">居中</option><option value="right">右侧</option></select></div>
+        </div>
+      </section>
+      <section class="ui-section">
+        <h3 class="ui-group-title">表情</h3>
+        <div class="fg"><label for="expression-group">素材组</label><select id="expression-group" onchange="expressionUiFolder(this.value)"></select></div>
+        <div class="expression-actions"><button type="button" class="btn sm" onclick="expressionChooseFiles()">添加图片或 ZIP</button><button type="button" class="btn sm" onclick="expressionNewGroup()">新建素材组</button></div>
+        <div id="expression-bindings" class="expression-grid"></div>
+        <div class="fg"><label for="expression-fallback">默认表情</label><select id="expression-fallback" onchange="expressionUpdateSettings(this.id)"></select></div>
+      </section>
+      <section class="ui-section expression-more">
+        <details><summary>绑定卡内图片</summary><div class="expression-details-body"><p class="hint">填写标签后点图片完成绑定。通用插图、地图和附属头像不会自动识别为表情；删除绑定会保留原图片。</p>
+          <div class="fg-row"><div class="fg"><label for="expression-bind-label">表情标签</label><input id="expression-bind-label" placeholder="自定义标签"></div><div class="fg"><label for="expression-bind-group">素材组名称</label><input id="expression-bind-group" placeholder="留空用默认素材组"></div></div>
+          <div id="expression-assets" class="expression-grid"></div>
+        </div></details>
+        <details><summary>自动表情</summary><div class="expression-details-body">
+          <div class="ui-group expression-switches"><label class="switch-row" for="expression-auto"><span class="switch-copy"><strong>回复后自动判断表情</strong><small>每次角色回复完成后额外调用一次当前聊天模型，只发送这条正文和当前素材组的标签；可能产生额外费用，失败时保留当前立绘。</small></span><input type="checkbox" id="expression-auto" onchange="expressionUpdateSettings(this.id)"><span class="switch-control" aria-hidden="true"></span></label></div>
+          <p class="hint">分类提示词在「预设 → 辅助 → 立绘表情分类」中编辑。</p>
+          <div class="expression-actions"><button type="button" class="btn sm" onclick="expressionClassifyLatest()">判断最新回复</button><button type="button" class="btn sm danger" id="expression-stop" onclick="cancelExpressionClassification()" hidden>停止分类</button></div>
+        </div></details>
+      </section>
+    </div>
+  </div>
+</div>
+<input type="file" id="expression-files" accept="image/*,.zip" hidden>
+<div id="toasts"></div>
+<script defer src="js/vendor/dompurify-3.4.5.min.js"></script>
+<script defer src="js/vendor/mvu-runtime-source-1.0.0.js"></script>
+<script defer src="js/vendor/mvu-runtime-1.0.0.js"></script>
+<script defer src="js/vendor/mvu-worker-vendor-source-1.0.0.js"></script>
+<script defer src="js/vendor/ejs-3.1.9.js"></script>
+<script defer src="js/vendor/jsonrepair-3.13.1.min.js"></script>
+<script defer src="js/core/pure.js"></script>
+<script defer src="js/core/charx.js"></script>
+<script defer src="js/vendor/rpack-map.js"></script>
+<script defer src="js/core/risu-module.js"></script>
+<script defer src="js/core/risu-lorebook.js"></script>
+<script defer src="js/core/risu-cbs.js"></script>
+<script defer src="js/core/risu-history.js"></script>
+<script defer src="js/core/risu-regex.js"></script>
+<script defer src="js/core/risu-regex-runtime.js"></script>
+<script defer src="js/core/risu-trigger.js"></script>
+<script defer src="js/core/risu-command.js"></script>
+<script defer src="js/core/risu-lua-worker.js"></script>
+<script defer src="js/core/risu-lua.js"></script>
+<script defer src="js/core/wheel-scheme-engine.js"></script>
+<script defer src="js/core/repository-db.js"></script>
+<script defer src="js/core/repository-media.js"></script>
+<script defer src="js/core/repository.js"></script>
+<script defer src="js/core/vector-retrieval.js"></script>
+<script defer src="js/app/00-defaults.js"></script>
+<script defer src="js/app/05-runtime.js"></script>
+<script defer src="js/app/06-provider-protocols.js"></script>
+<script defer src="js/app/07-grok-subscription.js"></script>
+<script defer src="js/app/10-ui-core.js"></script>
+<script defer src="js/app/12-motion.js"></script>
+<script defer src="js/app/14-modal.js"></script>
+<script defer src="js/app/15-controls.js"></script>
+<script defer src="js/app/16-list-reorder.js"></script>
+<script defer src="js/app/20-prompt-memory-settings.js"></script>
+<script defer src="js/app/21-layered-memory.js"></script>
+<script defer src="js/app/30-card-import.js"></script>
+<script defer src="js/app/31-card-dependencies.js"></script>
+<script defer src="js/app/32-risu-runtime.js"></script>
+<script defer src="js/app/33-risu-execution.js"></script>
+<script defer src="js/app/34-risu-lorebook.js"></script>
+<script defer src="js/app/35-risu-display.js"></script>
+<script defer src="js/app/36-risu-options.js"></script>
+<script defer src="js/app/40-characters-persona.js"></script>
+<script defer src="js/app/42-persona-ui.js"></script>
+<script defer src="js/app/43-wheel-library.js"></script>
+<script defer src="js/app/44-wheel-game.js"></script>
+<script defer src="js/app/45-expression-assets.js"></script>
+<script defer src="js/app/45-expressions.js"></script>
+<script defer src="js/app/46-card-script-model.js"></script>
+<script defer src="js/app/47-script-worker.js"></script>
+<script defer src="js/app/48-stscript-parser.js"></script>
+<script defer src="js/app/49-vector-retrieval-runtime.js"></script>
+<script defer src="js/app/49-data-bank.js"></script>
+<script defer src="js/app/49-data-bank-import.js"></script>
+<script defer src="js/app/50-worldbook.js"></script>
+<script defer src="js/app/51-worldbook-ui.js"></script>
+<script defer src="js/app/52-worldbook-import.js"></script>
+<script defer src="js/app/52-mvu-body.js"></script>
+<script defer src="js/app/52-mvu-runtime.js"></script>
+<script defer src="js/app/53-regex-scripts.js"></script>
+<script defer src="js/app/54-message-panels.js"></script>
+<script defer src="js/app/55-prompt-core.js"></script>
+<script defer src="js/app/57-preset-manager.js"></script>
+<script defer src="js/app/57-preset-round-preview.js"></script>
+<script defer src="js/app/58-prompt-pipeline.js"></script>
+<script defer src="js/app/60-prompt-build-cache.js"></script>
+<script defer src="js/app/62-generation-state.js"></script>
+<script defer src="js/app/63-card-script-ui.js"></script>
+<script defer src="js/app/64-stream-drafts.js"></script>
+<script defer src="js/app/66-stscript-commands.js"></script>
+<script defer src="js/app/66-stscript-tools.js"></script>
+<script defer src="js/app/66-stscript-ui.js"></script>
+<script defer src="js/app/66-stscript-entities.js"></script>
+<script defer src="js/app/66-stscript-worldbook.js"></script>
+<script defer src="js/app/66-stscript-prompts.js"></script>
+<script defer src="js/app/66-stscript-data-bank.js"></script>
+<script defer src="js/app/67-quick-reply.js"></script>
+<script defer src="js/app/68-generation-commit.js"></script>
+<script defer src="js/app/69-quick-reply-ui.js"></script>
+<script defer src="js/app/70-api.js"></script>
+<script defer src="js/app/72-stream-response.js"></script>
+<script defer src="js/app/73-card-frontend-body.js"></script>
+<script defer src="js/app/73-card-frontend.js"></script>
+<script defer src="js/app/74-host-write-contract.js"></script>
+<script defer src="js/app/74-host-entities.js"></script>
+<script defer src="js/app/74-host-imports.js"></script>
+<script defer src="js/app/74-host-prompts.js"></script>
+<script defer src="js/app/74-host-display.js"></script>
+<script defer src="js/app/74-host-variable-ui.js"></script>
+<script defer src="js/app/74-host-mvu.js"></script>
+<script defer src="js/app/74-host-facade.js"></script>
+<script defer src="js/app/75-prompt-template.js"></script>
+<script defer src="js/app/76-preset-task-runtime.js"></script>
+<script defer src="js/app/80-messages-generation.js"></script>
+<script defer src="js/app/81-message-transactions.js"></script>
+<script defer src="js/app/81-generation-prompt.js"></script>
+<script defer src="js/app/82-generation-coordinator.js"></script>
+<script defer src="js/app/83-card-bgm-player.js"></script>
+<script defer src="js/vendor/jsdiff-9.0.0.js"></script>
+<script defer src="js/app/84-speech.js"></script>
+<script defer src="js/app/84-speech-settings.js"></script>
+<script defer src="js/app/85-structured-requests.js"></script>
+<script defer src="js/app/86-image-generation.js"></script>
+<script defer src="js/app/90-session-chat-ui.js"></script>
+<script defer src="js/app/92-theme-ui.js"></script>
+<script defer src="js/app/91-branch-return.js"></script>
+<script defer src="js/app/95-chat-io-mobile.js"></script>
+<script defer src="js/app/96-mobile-interactions.js"></script>
+<script defer src="js/app/97-app-about.js"></script>
+<script defer src="js/app/99-bootstrap.js"></script>
+</body>
+</html>

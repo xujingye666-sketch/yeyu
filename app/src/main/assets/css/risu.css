@@ -1,0 +1,117 @@
+.risu-display-host {
+  width: 100%;
+  min-width: 0;
+  overflow: visible;
+}
+.risu-display-fallback {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.risu-display-host[data-risu-ready] > .risu-display-fallback {
+  display: none;
+}
+.risu-display-frame {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 1px;
+  border: 0;
+  overflow: hidden;
+  background: transparent;
+}
+.risu-background-frame {
+  position: absolute;
+  z-index: 0;
+  display: block;
+  border: 0;
+  pointer-events: none;
+  background: transparent;
+}
+#risu-emotion-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+#risu-emotion-stage > img {
+  max-width: min(100%, 720px);
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center bottom;
+}
+body.risu-character #chat-messages {
+  background: transparent;
+}
+#risu-options-modal > .modal {
+  overflow: hidden;
+}
+#risu-options-body {
+  overflow-x: hidden;
+}
+.risu-option-group {
+  margin: 0 0 var(--space-3);
+  border-bottom: 1px solid var(--ui-line);
+}
+.risu-option-group > summary {
+  min-height: var(--control-h);
+  padding: var(--space-2) 0;
+  color: var(--t-bright);
+  font-size: var(--type-section);
+  font-weight: 700;
+  cursor: pointer;
+}
+.risu-option-group[open] > summary {
+  margin-bottom: var(--space-2);
+}
+.risu-option-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(108px, 44%);
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--control-h);
+  padding: var(--space-2) 0;
+}
+.risu-option-row > label,
+.risu-option-row > span,
+.risu-option-row label > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--t);
+  font-size: var(--type-body);
+}
+.risu-option-row input:not([type='checkbox']):not([type='radio']),
+.risu-option-row select,
+.risu-option-row textarea {
+  width: 100%;
+  min-width: 0;
+}
+.risu-option-row textarea {
+  max-height: var(--textarea-long-max-h);
+  resize: vertical;
+}
+.risu-option-divider {
+  margin: var(--space-4) 0 var(--space-2);
+  color: var(--t-bright);
+  font-size: var(--type-section);
+}
+body.risu-hide-chat-icon .msg > .msg-avatar,
+body.risu-hide-chat-icon .msg-immersive-avatar {
+  display: none;
+}
+body.risu-large-portrait .msg.char > .msg-avatar {
+  height: calc(var(--chat-avatar) / 0.75);
+  border-radius: var(--radius-sm);
+}
+body.risu-large-portrait .msg.char > .msg-avatar img {
+  object-fit: cover;
+}
+@media (max-width: 520px) {
+  .risu-option-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
+}

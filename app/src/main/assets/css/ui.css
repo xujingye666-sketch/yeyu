@@ -1,0 +1,1232 @@
+/* First-party controls, dialogs, bottom panels and destination pages. Chat geometry lives in chat.css. */
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--button-h);
+  padding: 0 var(--space-5);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
+  color: var(--t);
+  font: 500 var(--type-control) / 1.4 var(--font);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease),
+    filter var(--motion-fast) var(--motion-ease);
+}
+.btn:hover {
+  background: var(--bg-hover);
+}
+.btn.primary {
+  background: var(--accent-grad);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+.btn.danger {
+  background: var(--red-bg);
+  color: var(--danger);
+}
+.btn.text {
+  padding-inline: var(--space-3);
+  background: transparent;
+  color: var(--t);
+}
+.btn.text:hover {
+  background: var(--bg-hover);
+}
+.btn.text.accent {
+  color: var(--accent-ink);
+}
+.btn.text.danger {
+  color: var(--danger);
+}
+.btn:active:not(:disabled) {
+  filter: brightness(0.88);
+}
+.btn.sm {
+  min-height: var(--button-small-h);
+  padding: 0 var(--space-3);
+  font-size: var(--type-label);
+}
+.btn.icon {
+  width: var(--icon-button);
+  min-width: var(--icon-button);
+  height: var(--icon-button);
+  min-height: var(--icon-button);
+  padding: 0;
+}
+.btn.icon.sm {
+  width: var(--button-small-h);
+  min-width: var(--button-small-h);
+  height: var(--button-small-h);
+  min-height: var(--button-small-h);
+}
+.btn .ui-icon {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+.btn:disabled,
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+  filter: none;
+}
+button:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.ui-leaving,
+.ui-leaving * {
+  pointer-events: none !important;
+}
+
+/* ---------- Dialogs and bottom panels ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: max(var(--space-6), var(--safe-top)) var(--space-6) max(var(--space-6), var(--safe-bottom));
+  background: var(--bg-overlay);
+  overscroll-behavior: contain;
+}
+.modal-overlay.open {
+  display: flex;
+}
+.chat-popover,
+.modal {
+  background: var(--chat-shell-fill);
+  border-color: var(--ui-line);
+  border-radius: var(--radius);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.chat-popover,
+.modal-overlay:not(.app-page) > .modal {
+  --t-dim: var(--surface-t-dim);
+  --danger: var(--surface-danger);
+}
+/* Blur is off while a reply streams; the shell turns opaque so nothing behind shows through. */
+body.generation-active :is(.chat-popover, .modal) {
+  background: var(--chat-shell-fill-solid);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.modal {
+  display: flex;
+  flex-direction: column;
+  width: min(640px, 100%);
+  min-width: 0;
+  min-height: 0;
+  max-height: 100%;
+  overflow: hidden;
+  margin: 0;
+  border: 0;
+  color: var(--t);
+  box-shadow: var(--shadow-modal);
+  font-size: var(--type-body);
+  line-height: var(--line-body);
+}
+.modal-hd {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--page-header-h);
+  padding: var(--space-3) var(--space-3) var(--space-3) var(--space-6);
+}
+.modal-hd h2 {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--t-bright);
+  font: 600 var(--type-page-title) / 1.35 var(--font);
+}
+.modal-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 var(--icon-button);
+  width: var(--icon-button);
+  height: var(--icon-button);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--t-dim);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease);
+}
+.modal-close:hover {
+  background: var(--bg-hover);
+  color: var(--t);
+}
+.modal-close .ui-icon {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+.modal-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-1) var(--space-6) var(--space-6);
+  -webkit-overflow-scrolling: touch;
+}
+.modal-ft {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--ui-line);
+}
+.modal-ft .btn {
+  flex: 0 1 auto;
+}
+/* The completing action always sits last; a destructive action is set apart on the leading edge. */
+.modal-ft .btn.primary {
+  order: 1;
+}
+.modal:not(.prompt-dialog) > .modal-ft > .btn.danger:first-child:not(:only-child) {
+  margin-right: auto;
+}
+.modal:focus,
+.modal-hd:focus {
+  outline: none;
+}
+
+/* Confirm, input and choice prompts stay compact: no close cross, no rules, one row of equal buttons. */
+.modal-overlay:not(.app-page) > .prompt-dialog {
+  width: min(320px, 100%);
+  height: auto;
+  max-height: 100%;
+  border-radius: var(--radius);
+}
+.modal-overlay:not(.app-page) > .prompt-dialog:has(.app-prompt-rich) {
+  width: min(360px, 100%);
+}
+.prompt-dialog > .modal-hd {
+  min-height: 0;
+  padding: var(--space-7) var(--space-7) 0;
+}
+.prompt-dialog > .modal-body {
+  flex: 0 1 auto;
+  padding: var(--space-3) var(--space-7) 0;
+}
+.prompt-dialog > .modal-ft {
+  flex-wrap: nowrap;
+  padding: var(--space-7);
+  border-top: 0;
+}
+.prompt-dialog > .modal-ft .btn {
+  flex: 1 1 0;
+  min-width: 0;
+}
+/* 三个选项放不下一行：竖排成整行按钮，完成操作在最上、取消在最下。 */
+.prompt-dialog > .modal-ft:has(> #app-prompt-alt:not([hidden])) {
+  flex-direction: column-reverse;
+  align-items: stretch;
+}
+.prompt-dialog > .modal-ft:has(> #app-prompt-alt:not([hidden])) .btn {
+  flex: 0 0 auto;
+}
+.app-prompt-message {
+  color: var(--t);
+  font-size: var(--type-body);
+  line-height: var(--line-body);
+  white-space: pre-wrap;
+}
+.app-prompt-message.app-prompt-rich {
+  white-space: normal;
+}
+#app-prompt-message:empty {
+  display: none;
+}
+#app-prompt-field {
+  margin-top: var(--space-5);
+}
+#app-prompt-message:empty + #app-prompt-field {
+  margin-top: 0;
+}
+
+/* ---------- Destination pages ---------- */
+/* A page fills the area above the shared navigation; secondary tasks open over it as dialogs or panels. */
+.modal-overlay.app-page {
+  inset: 0 0 calc(var(--mobile-bottom-nav-h) + var(--safe-bottom));
+  z-index: 34;
+  align-items: stretch;
+  padding: 0;
+  background: var(--bg-base);
+}
+.modal-overlay.app-page > .modal {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  border-radius: 0;
+  background: var(--bg-ambient);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.app-page > .modal > .modal-hd {
+  min-height: calc(var(--page-header-h) + var(--safe-top));
+  padding: calc(var(--space-3) + var(--safe-top)) var(--space-6) var(--space-3);
+}
+.app-page > .modal > .modal-ft {
+  padding: var(--space-4) var(--space-6);
+  background: var(--surface-shell);
+}
+body[data-page]:not([data-page='chat']) #app {
+  visibility: hidden;
+}
+
+/* ---------- Tabs ---------- */
+.tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  gap: var(--space-7);
+  min-width: 0;
+  max-width: 100%;
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  box-shadow: inset 0 -1px 0 var(--ui-line);
+}
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+.tabs button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: var(--control-h);
+  padding: 0 var(--space-1);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--t-dim);
+  font: 500 var(--type-control) / 1.4 var(--font);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color var(--motion-fast) var(--motion-ease);
+}
+.tabs button:hover {
+  color: var(--t);
+}
+.tabs button.active {
+  color: var(--t-bright);
+}
+.tabs button::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent-ink), var(--accent-ink-2));
+  opacity: 0;
+  transition: opacity var(--motion-fast) var(--motion-ease);
+}
+.tabs button.active::after {
+  opacity: 1;
+}
+.tabs button:focus-visible {
+  outline-offset: -2px;
+}
+.tabs button .ui-icon {
+  display: none;
+}
+.page-tabs {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 var(--space-6);
+}
+.page-tabs + .modal-body {
+  padding-top: var(--space-6);
+}
+
+/* ---------- Groups ---------- */
+/* Form sections carry no fill; scannable item collections sit in one soft group with ruled rows. */
+.ui-section + .ui-section {
+  margin-top: var(--space-8);
+}
+.ui-group-title {
+  margin: 0 0 var(--space-3);
+  color: var(--t-bright);
+  font: 600 var(--type-section) / 1.4 var(--font);
+}
+.ui-group {
+  margin: 0 0 var(--space-8);
+  padding: 0 var(--space-6);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+.ui-group:last-child {
+  margin-bottom: 0;
+}
+.ui-group > * + * {
+  border-top: 1px solid var(--ui-line);
+}
+/* A group title or field label that shares its line with trailing actions. */
+.ui-group-hd,
+.ui-field-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-width: 0;
+  min-height: var(--button-small-h);
+}
+.ui-group-hd {
+  margin: 0 0 var(--space-3);
+}
+.ui-group-hd > .ui-group-title {
+  min-width: 0;
+  margin: 0;
+}
+.ui-field-hd {
+  margin-bottom: var(--space-1);
+}
+.ui-field-hd > label {
+  min-width: 0;
+  color: var(--t);
+  font: 500 var(--type-label) / 1.4 var(--font);
+}
+/* A collapsible group: the summary is the group title with its item count, the body a soft group. */
+.ui-fold + .ui-fold {
+  margin-top: var(--space-6);
+}
+.ui-fold > summary {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: var(--button-small-h);
+}
+.ui-fold[open] > summary {
+  margin-bottom: var(--space-3);
+}
+/* The shared disclosure chevron floats; in the flex title row it is pushed to the end instead. */
+.modal-overlay .ui-fold > summary::after {
+  order: 1;
+  flex: 0 0 auto;
+  margin: 0 var(--space-1) 0 auto;
+}
+.ui-fold-title {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--t-bright);
+  font: 600 var(--type-section) / 1.4 var(--font);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* A field-level fold: the summary stands in for the label of the long editor it hides. */
+.ui-fold-label {
+  overflow: hidden;
+  min-width: 0;
+  color: var(--t);
+  font: 500 var(--type-label) / 1.4 var(--font);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ui-fold[open] > summary:has(> .ui-fold-label) {
+  margin-bottom: var(--space-2);
+}
+.ui-fold > summary > .ui-meta {
+  flex: 0 0 auto;
+  margin-right: var(--space-3);
+}
+.hint.ui-fold-hint {
+  margin: 0 0 var(--space-3);
+}
+.ui-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--space-1);
+  align-items: center;
+}
+/* Text buttons carry their own inline padding; pull it back so the label lines up with the edge. */
+.ui-actions:has(> .btn.text:last-child),
+:is(.ui-group-hd, .ui-field-hd) > .btn.text:last-child {
+  margin-right: calc(var(--space-3) * -1);
+}
+.ui-meta {
+  margin-left: var(--space-1);
+  color: var(--t-dim);
+  font: 400 var(--type-meta) / 1.4 var(--font);
+  font-variant-numeric: tabular-nums;
+}
+.hint.ui-intro {
+  margin: 0 0 var(--space-7);
+}
+.hint.ui-group-hint {
+  margin: 0 0 var(--space-5);
+}
+/* Empty states say what will appear here and what to do now: an optional title, then one line. */
+.ui-empty {
+  margin: 0;
+  padding: var(--space-8) var(--space-6);
+  color: var(--t-dim);
+  font: 400 var(--type-help) / 1.55 var(--font);
+  text-align: center;
+}
+.ui-empty.compact {
+  padding: var(--space-5) 0;
+}
+.ui-empty > strong {
+  display: block;
+  color: var(--t);
+  font: 500 var(--type-item) / 1.4 var(--font);
+}
+.ui-empty > p {
+  margin: var(--space-1) 0 0;
+}
+
+/* ---------- Form fields ---------- */
+.fg {
+  min-width: 0;
+  margin: 0 0 var(--space-6);
+}
+.fg:last-child {
+  margin-bottom: 0;
+}
+.fg > label {
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--t);
+  font: 500 var(--type-label) / 1.4 var(--font);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.fg-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-5);
+  min-width: 0;
+}
+.fg-row > .fg {
+  flex: 1;
+  min-width: 0;
+}
+/* Paired fields that each carry a hint stack one per line, so the two hints never read across as one sentence. */
+.fg-row:has(> .fg:first-child > .hint):has(> .fg:last-child > .hint) {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.fg-row:has(> .fg:first-child > .hint):has(> .fg:last-child > .hint) > .fg {
+  flex: none;
+}
+.fg-row:has(> .fg:first-child > .hint):has(> .fg:last-child > .hint):not(:last-child) > .fg {
+  margin-bottom: var(--space-6);
+}
+/* One hint shared by the whole row sits under it at the same distance as a field's own hint. */
+.fg-row-hint {
+  margin: calc(var(--space-4) * -1) 0 var(--space-6);
+}
+.hint {
+  color: var(--t-dim);
+  font: 400 var(--type-help) / 1.55 var(--font);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.fg > .hint {
+  margin-top: var(--space-2);
+}
+.modal-overlay
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']):not([type='hidden']),
+.modal-overlay textarea,
+.app-select-trigger {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--control-h);
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--t);
+  font: 400 var(--type-body) / 18px var(--font);
+  transition:
+    border-color var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease);
+}
+.modal-overlay textarea {
+  min-height: var(--textarea-min-h);
+  line-height: var(--line-body);
+  resize: none;
+}
+.modal-overlay input::placeholder,
+.modal-overlay textarea::placeholder {
+  color: var(--t-faint);
+  opacity: 1;
+}
+.modal-overlay input:focus,
+.modal-overlay textarea:focus,
+.app-select-trigger:focus-visible,
+.app-select-trigger[aria-expanded='true'] {
+  outline: none;
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+.modal-overlay input[readonly],
+.modal-overlay textarea[readonly] {
+  background: var(--surface-soft);
+  color: var(--t-dim);
+}
+.modal-overlay input:disabled,
+.modal-overlay textarea:disabled,
+.app-select-trigger:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.modal-overlay input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.modal-overlay input[type='number']::-webkit-inner-spin-button,
+.modal-overlay input[type='number']::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+.is-autogrow {
+  height: var(--textarea-min-h);
+  max-height: var(--textarea-max-h);
+  overflow-y: hidden;
+  resize: none !important;
+}
+.is-autogrow[data-autogrow='long'] {
+  max-height: var(--textarea-long-max-h);
+}
+.is-autogrow.is-scrollable {
+  overflow-y: auto;
+}
+
+.modal-overlay input[type='checkbox'],
+.modal-overlay input[type='radio'] {
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  flex: 0 0 18px;
+  margin: 0;
+  padding: 0;
+  border: 1.5px solid var(--ui-line-bright);
+  border-radius: var(--radius-xs);
+  background: var(--bg-input);
+  color: var(--on-accent);
+  cursor: pointer;
+  vertical-align: middle;
+  transition:
+    background-color var(--motion-fast) var(--motion-ease),
+    border-color var(--motion-fast) var(--motion-ease);
+}
+.modal-overlay input[type='radio'] {
+  border-radius: 50%;
+}
+.modal-overlay input[type='checkbox']:checked,
+.modal-overlay input[type='radio']:checked {
+  border-color: var(--accent-fill);
+  background: var(--accent-fill);
+}
+.modal-overlay input[type='checkbox']:checked::after {
+  content: '';
+  width: 9px;
+  height: 5px;
+  border: solid currentColor;
+  border-width: 0 0 2px 2px;
+  transform: translateY(-1px) rotate(-45deg);
+}
+.modal-overlay input[type='radio']:checked::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.modal-overlay input[type='checkbox']:focus-visible,
+.modal-overlay input[type='radio']:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.modal-overlay input[type='checkbox']:disabled,
+.modal-overlay input[type='radio']:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.switch-row,
+.fg > .switch-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  min-height: var(--control-h);
+  cursor: pointer;
+}
+.switch-copy {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+.switch-copy strong {
+  color: var(--t);
+  font-size: var(--type-label);
+  font-weight: 500;
+}
+.switch-copy small {
+  color: var(--t-dim);
+  font-size: var(--type-help);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.switch-row input[type='checkbox'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-width: 0;
+  min-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.switch-control {
+  display: block;
+  position: relative;
+  flex: 0 0 var(--switch-w);
+  width: var(--switch-w);
+  height: var(--switch-h);
+  padding: 0;
+  border-radius: var(--radius-pill);
+  background: var(--ui-line-bright);
+  transition: background-color var(--motion-fast) var(--motion-ease);
+}
+.switch-control::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: calc(var(--switch-h) - 6px);
+  height: calc(var(--switch-h) - 6px);
+  border-radius: 50%;
+  background: var(--t-dim);
+  transition:
+    transform var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease);
+}
+.switch-row input:checked + .switch-control {
+  background: var(--accent-grad);
+}
+.switch-row input:checked + .switch-control::after {
+  transform: translateX(calc(var(--switch-w) - var(--switch-h)));
+  background: var(--on-accent);
+}
+.switch-row input:focus-visible + .switch-control {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.switch-row input:disabled + .switch-control {
+  opacity: 0.45;
+}
+
+input[type='range'] {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 22px;
+  min-height: 22px;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--ui-line-bright);
+}
+input[type='range']::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent-fill);
+  box-shadow: 0 1px 3px var(--shadow-color);
+}
+input[type='range']:focus-visible {
+  outline: none;
+}
+input[type='range']:focus-visible::-webkit-slider-thumb {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+/* 表单列里的滑条撑满整列；行内滑条（音量、缩放）保留随内容排布的固有宽度。 */
+.fg > input[type='range'] {
+  display: block;
+  width: 100%;
+}
+.range-field > label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+.range-field > label > .range-value {
+  color: var(--t-dim);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+/* ---------- In-app select ---------- */
+.app-select {
+  position: relative;
+  min-width: 0;
+  flex: 1;
+}
+.app-select-native {
+  position: absolute !important;
+  width: 1px !important;
+  min-width: 0 !important;
+  height: 1px !important;
+  padding: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  clip-path: inset(50%);
+}
+.app-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  text-align: left;
+  cursor: pointer;
+}
+.app-select-trigger > span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.app-select-trigger .ui-icon {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  color: var(--t-dim);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+.app-select-trigger[aria-expanded='true'] .ui-icon {
+  transform: rotate(180deg);
+}
+.app-select-list {
+  position: fixed;
+  z-index: 10050;
+  display: grid;
+  gap: 2px;
+  padding: var(--space-1);
+  overflow: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-modal);
+}
+.app-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--control-h);
+  padding: var(--space-2) var(--space-4);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--t);
+  font: 400 var(--type-control) / 1.45 var(--font);
+  text-align: left;
+  cursor: pointer;
+}
+.app-select-option:hover,
+.app-select-option:focus-visible {
+  outline: none;
+  background: var(--bg-hover);
+}
+.app-select-option[aria-selected='true'] {
+  background: var(--accent-wash);
+  color: var(--t-bright);
+  font-weight: 500;
+}
+.app-select-option[aria-selected='true']::after {
+  content: '';
+  flex: 0 0 auto;
+  width: 10px;
+  height: 5px;
+  margin: 0 2px 3px 0;
+  border: solid var(--accent-ink);
+  border-width: 0 0 2px 2px;
+  transform: rotate(-45deg);
+}
+.app-select-empty,
+.app-select-group {
+  padding: var(--space-3) var(--space-4) var(--space-1);
+  color: var(--t-dim);
+  font-size: var(--type-help);
+}
+
+/* ---------- Disclosure, drop zone, toast ---------- */
+.modal-overlay summary {
+  list-style: none;
+  cursor: pointer;
+}
+.modal-overlay summary::-webkit-details-marker {
+  display: none;
+}
+.modal-overlay summary::marker {
+  content: '';
+}
+.modal-overlay details > summary::after {
+  content: '';
+  float: right;
+  width: 7px;
+  height: 7px;
+  margin: 0.5em var(--space-1) 0 var(--space-3);
+  border: solid var(--t-dim);
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+.modal-overlay details[open] > summary::after {
+  transform: translateY(3px) rotate(-135deg);
+}
+.drop-zone {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-6);
+  border: 1px dashed var(--ui-line-bright);
+  border-radius: var(--radius);
+  background: transparent;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color var(--motion-fast) var(--motion-ease),
+    background-color var(--motion-fast) var(--motion-ease);
+}
+.drop-zone:hover,
+.drop-zone.drag,
+.drop-zone:focus-visible {
+  outline: none;
+  border-color: var(--accent-line);
+  background: var(--accent-tint);
+}
+.drop-zone .dz-icon {
+  color: var(--t-dim);
+  line-height: 0;
+}
+.drop-zone .dz-icon .ui-icon {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+}
+.drop-zone .dz-text {
+  display: grid;
+  gap: 2px;
+  color: var(--t);
+  font-size: var(--type-control);
+  line-height: 1.5;
+}
+.drop-zone .dz-text small {
+  color: var(--t-dim);
+  font-size: var(--type-help);
+}
+#toasts {
+  position: fixed;
+  top: var(--space-7);
+  right: var(--space-7);
+  z-index: 10060;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  pointer-events: none;
+}
+.toast {
+  position: relative;
+  max-width: 360px;
+  padding: var(--space-4) var(--space-5);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  color: var(--t);
+  font: 400 var(--type-control) / 1.5 var(--font);
+  box-shadow: var(--shadow-soft);
+  /* App notices are text only; taps pass through to the header underneath. */
+  pointer-events: none;
+}
+/* Outcome is a small dot on the first line, never a coloured frame. */
+.toast:is(.ok, .err, .warning, .level-info, .level-success, .level-warning, .level-error) {
+  padding-left: calc(var(--space-5) + 7px + var(--space-2));
+}
+.toast:is(.ok, .err, .warning, .level-info, .level-success, .level-warning, .level-error)::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--space-4) + 7px);
+  left: var(--space-5);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--t-dim);
+}
+.toast:is(.ok, .level-success)::before {
+  background: var(--ok);
+}
+.toast:is(.err, .level-error)::before {
+  background: var(--danger);
+}
+.toast:is(.warning, .level-warning)::before {
+  background: var(--warning);
+}
+.toast.level-info::before {
+  background: var(--blue);
+}
+.toast:not(.card-frontend-toast) {
+  animation: toastEnter var(--motion-fast) var(--motion-ease);
+}
+/* A notice with an action takes taps; the action sits after the text on the same line. */
+.toast.has-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  pointer-events: auto;
+}
+.toast-action {
+  flex: none;
+  margin-left: auto;
+}
+@keyframes toastEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-7px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/* Card scripts raise toastr notices on the app toast surface; they stay interactive (close button, onclick, tap-to-dismiss, hover pause). */
+.toast.card-frontend-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  width: auto;
+  min-width: 220px;
+  max-width: min(330px, calc(100vw - 44px));
+  align-self: flex-end;
+  padding-top: var(--space-5);
+  padding-right: var(--space-6);
+  padding-bottom: var(--space-5);
+  overflow: hidden;
+  transition: opacity var(--motion-normal);
+}
+.toast.card-frontend-toast::before {
+  top: calc(var(--space-5) + 8px);
+}
+.card-frontend-toast.is-leaving {
+  opacity: 0;
+}
+.card-frontend-toast-content {
+  flex: 1;
+  min-width: 0;
+}
+.card-frontend-toast-title {
+  margin: 0 var(--space-8) var(--space-1) 0;
+  color: var(--t-bright);
+  font: 600 var(--type-section) / 1.4 var(--font);
+}
+.card-frontend-toast-message {
+  min-width: 0;
+  max-height: 190px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.card-frontend-toast-message.yeyu-rich-content {
+  contain: layout paint style;
+}
+.card-frontend-toast-message button {
+  min-height: var(--control-h);
+  touch-action: manipulation;
+}
+/* A script's inline fills and colours fall back to the app theme so the notice never hides the chat. */
+#toasts .card-frontend-toast-message,
+#toasts .card-frontend-toast-message * {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  color: inherit !important;
+  text-shadow: none !important;
+}
+.card-frontend-toast-close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  display: grid;
+  place-items: center;
+  width: var(--button-small-h);
+  height: var(--button-small-h);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--t-dim);
+  cursor: pointer;
+}
+.card-frontend-toast-close .ui-icon {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+.card-frontend-toast-progress {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: currentColor;
+  opacity: 0.48;
+  transform-origin: left center;
+  animation: yeyuToastProgress var(--yeyu-toast-duration) linear forwards;
+}
+.card-frontend-toast.is-paused .card-frontend-toast-progress {
+  animation-play-state: paused;
+}
+@keyframes yeyuToastProgress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+.status-line {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.status-line.ok {
+  color: var(--ok);
+}
+.status-line.err {
+  color: var(--danger);
+}
+
+:where(.modal, .modal-hd, .modal-ft, .page-tabs, .hint, .fg > label) {
+  transition:
+    background-color var(--motion-theme) var(--motion-ease),
+    color var(--motion-theme) var(--motion-ease),
+    border-color var(--motion-theme) var(--motion-ease);
+}
+
+/* ---------- Phone: dialogs stay centred; declared panels rise from the bottom ---------- */
+/* An overlay opts into the bottom panel with data-panel: "sheet" sizes to its content, "editor" fills the height.
+   Everything else is a centred dialog, because a surface should appear where the control that opened it lives. */
+@media (max-width: 768px) {
+  .modal-overlay:not(.app-page) {
+    padding: calc(var(--safe-top) + var(--space-6)) var(--space-5) calc(var(--safe-bottom) + var(--space-6));
+  }
+  .modal-overlay[data-panel]:not(.app-page) {
+    align-items: flex-end;
+    padding: calc(var(--safe-top) + var(--sheet-top-gap)) 0 0;
+  }
+  .modal-overlay[data-panel]:not(.app-page) > .modal {
+    /* Read by transitionUiVisibility to slide the surface instead of scaling it. */
+    --panel-motion: sheet;
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .modal-overlay[data-panel='editor']:not(.app-page) > .modal {
+    height: 100%;
+  }
+  .modal-overlay[data-panel]:not(.app-page) > .modal > .modal-ft,
+  .modal-overlay[data-panel]:not(.app-page) > .modal > .modal-body:last-child {
+    padding-bottom: calc(var(--space-4) + var(--safe-bottom));
+  }
+  #toasts {
+    top: calc(var(--space-3) + var(--safe-top));
+    left: var(--space-5);
+    right: var(--space-5);
+  }
+  .toast {
+    width: 100%;
+    max-width: none;
+  }
+  body.keyboard-open .modal-overlay.open {
+    top: var(--app-visual-viewport-top);
+    bottom: auto;
+    height: var(--app-keyboard-viewport-height);
+    min-height: 0;
+  }
+  body.keyboard-open .modal-overlay:not(.app-page):not([data-panel]) {
+    padding: calc(var(--safe-top) + var(--space-3)) var(--space-5) var(--space-3);
+  }
+  body.keyboard-open .modal-overlay[data-panel]:not(.app-page) > .modal > .modal-ft,
+  body.keyboard-open .modal-overlay[data-panel]:not(.app-page) > .modal > .modal-body:last-child {
+    padding-bottom: var(--space-4);
+  }
+  body.keyboard-open .modal-overlay.app-page.open {
+    height: calc(var(--app-keyboard-viewport-height) - var(--mobile-bottom-nav-h));
+  }
+}
+@media (min-width: 769px) {
+  .app-page > .modal {
+    padding-inline: max(0px, calc((100vw - 760px) / 2));
+  }
+}
+
+.grok-account {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.grok-device-link {
+  color: var(--accent-ink);
+  font-size: var(--type-control);
+  overflow-wrap: anywhere;
+}
+
+/* Speech shares the standard form layout; fieldsets only group inherited voice controls. */
+.speech-fields { border: 0; padding: 0; margin: 0; min-width: 0; }
+.speech-fields:disabled { opacity: .55; }

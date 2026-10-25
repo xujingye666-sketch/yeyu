@@ -1,0 +1,680 @@
+/* Sidebar drawer, list rows, avatars and message rich text. Chat geometry lives in chat.css. */
+/* ---------- Sidebar drawer ---------- */
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  z-index: 60;
+  background: var(--panel-ambient);
+  border-right: 1px solid var(--ui-line);
+  transition:
+    transform var(--motion-panel) var(--motion-ease),
+    visibility var(--motion-panel);
+}
+#sidebar.hidden {
+  transform: translateX(-100%);
+  visibility: hidden;
+  pointer-events: none;
+}
+.sidebar-backdrop {
+  display: none;
+}
+.sidebar-hd {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  min-height: var(--page-header-h);
+  padding: var(--space-5) var(--space-3) 0 var(--space-6);
+}
+.sidebar-hd h1 {
+  color: var(--t-bright);
+  font: 600 var(--type-section) / 1.4 var(--font);
+  letter-spacing: 0.16em;
+}
+.sidebar-hd .ver {
+  color: var(--t-dim);
+  font: 400 var(--type-meta) / 1.4 var(--font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+/* The text button's own inline padding is the space after the version, so the shared gap is pulled back. */
+.sidebar-hd .sidebar-about {
+  margin-left: calc(var(--space-3) * -1);
+}
+.sidebar-close {
+  display: none;
+  align-self: center;
+  place-items: center;
+  width: var(--icon-button);
+  height: var(--icon-button);
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--t-dim);
+  cursor: pointer;
+}
+.sidebar-close .ui-icon {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+.sidebar-tabs.tabs {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 0 var(--space-6);
+}
+.tab-panel {
+  flex: 1;
+  min-height: 0;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.tab-panel.active {
+  display: flex;
+}
+.sidebar-search {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: var(--space-3);
+  height: var(--control-h);
+  margin: var(--space-5) var(--space-6) var(--space-2);
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--t-dim);
+  transition:
+    border-color var(--motion-fast) var(--motion-ease),
+    box-shadow var(--motion-fast) var(--motion-ease);
+}
+.sidebar-search:focus-within {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+}
+.sidebar-search > .ui-icon {
+  width: 16px;
+  height: 16px;
+}
+.sidebar-search input {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--t);
+  font: 400 var(--type-body) / 1.4 var(--font);
+  appearance: none;
+}
+.sidebar-search input::placeholder {
+  color: var(--t-faint);
+}
+.sidebar-ft {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--ui-line);
+}
+.sidebar-ft > .btn {
+  flex: 1 1 0;
+  min-width: 0;
+}
+/* ---------- List rows: characters, personas, world books and wheel schemes ---------- */
+.char-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-1) var(--space-3) var(--space-3);
+}
+.char-item {
+  position: relative;
+  display: grid;
+  column-gap: var(--space-5);
+  align-items: center;
+  width: 100%;
+  min-height: var(--row-h);
+  padding: var(--space-3) calc(var(--icon-button) + var(--space-2)) var(--space-3) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--t);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--motion-ease);
+}
+/* Rows without an avatar (world books, wheel schemes) give the text the full width. */
+.char-list > .char-item {
+  grid-template-columns: minmax(0, 1fr);
+}
+.char-list > .char-item:has(> .char-avatar) {
+  grid-template-columns: var(--row-avatar) minmax(0, 1fr);
+}
+.char-item:not(:has(> .char-tools)) {
+  padding-right: var(--space-3);
+}
+.char-item + .char-item {
+  margin-top: 2px;
+}
+.char-item:active:not(:has(:is(a, button, summary):active)) {
+  background: var(--bg-hover);
+}
+.char-item.active {
+  background: var(--accent-wash);
+}
+.char-item:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+.char-item > .char-avatar {
+  grid-row: 1;
+  grid-column: 1;
+  width: var(--row-avatar);
+  height: var(--row-avatar);
+}
+.char-info {
+  display: grid;
+  grid-row: 1;
+  grid-column: -2 / -1;
+  gap: 2px;
+  min-width: 0;
+}
+.char-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.char-info .cname {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--t-bright);
+  font: 500 var(--type-item) / 1.4 var(--font);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.char-favorite {
+  display: inline-flex;
+  flex: none;
+  color: var(--accent-ink);
+}
+.char-favorite .ui-icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+.char-version {
+  flex: none;
+  color: var(--t-dim);
+  font: 400 var(--type-meta) / 1.4 var(--font);
+  font-variant-numeric: tabular-nums;
+}
+.char-info .cmeta {
+  overflow: hidden;
+  color: var(--t-dim);
+  font: 400 var(--type-help) / 1.5 var(--font);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.persona-item.active .persona-scope-label {
+  color: var(--accent-ink);
+}
+.char-tools {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  display: block;
+  min-width: 0;
+}
+.char-item:has(> .char-avatar) > .char-tools {
+  grid-column: 2 / -1;
+}
+.char-tools > summary {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-1);
+  display: grid;
+  place-items: center;
+  width: var(--icon-button);
+  height: var(--icon-button);
+  border-radius: var(--radius-sm);
+  color: var(--t-dim);
+  list-style: none;
+  cursor: pointer;
+}
+.char-tools > summary::-webkit-details-marker {
+  display: none;
+}
+.char-tools > summary:active,
+.char-tools[open] > summary {
+  background: var(--bg-hover);
+  color: var(--t);
+}
+.char-tools > summary:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+.char-tools > summary > .ui-icon {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+.char-actions {
+  display: none;
+  flex-wrap: wrap;
+  gap: 0 var(--space-1);
+  margin: var(--space-1) 0 calc(-1 * var(--space-1)) calc(-1 * var(--space-3));
+}
+.char-tools[open] > .char-actions {
+  display: flex;
+}
+/* Row actions read as one quiet line whatever button flavour the renderer chose. */
+.char-list .char-actions > .btn {
+  min-height: var(--button-small-h);
+  padding: 0 var(--space-3);
+  background: transparent;
+  color: var(--t);
+  font-size: var(--type-label);
+}
+.char-list .char-actions > .btn:active {
+  background: var(--bg-hover);
+}
+.char-list .char-actions > .btn.danger {
+  color: var(--danger);
+}
+.char-list .tag-chips {
+  padding: var(--space-1) var(--space-3) var(--space-3);
+}
+/* ---------- Avatars and tag chips ---------- */
+.char-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: var(--chat-avatar);
+  height: var(--chat-avatar);
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--surface-soft);
+}
+.char-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-4);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-soft);
+  color: var(--t-dim);
+  font: 400 var(--type-help) / 20px var(--font);
+  cursor: pointer;
+  transition:
+    background-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease);
+}
+.tag-chip:active {
+  background: var(--bg-hover);
+  color: var(--t);
+}
+.tag-chip.active {
+  background: var(--accent-tint);
+  color: var(--accent-ink);
+}
+.tag-chip-clear {
+  background: transparent;
+  color: var(--t-dim);
+}
+.tag-chip:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 1px;
+}
+/* Touch keeps :hover on the last tapped row, so hover tints only apply to real pointers. */
+@media (hover: hover) {
+  .char-item:not(.active):hover,
+  .char-tools > summary:hover,
+  .char-list .char-actions > .btn:hover {
+    background: var(--bg-hover);
+  }
+  .char-tools > summary:hover,
+  .tag-chip:hover {
+    color: var(--t);
+  }
+  .tag-chip:hover {
+    background: var(--bg-hover);
+  }
+}
+/* ---------- Message rich text ---------- */
+/* Semantic tones come from the theme pipeline; immersive narration adds italics in chat.css. */
+.msg-bubble.stream-active-bubble {
+  min-height: calc(var(--line-chat) * 1em + 2 * var(--space-4));
+}
+.msg-bubble :where(p) {
+  margin: 0 0 0.7em;
+}
+.msg-bubble :where(p:last-child) {
+  margin-bottom: 0;
+}
+.msg-bubble :where(h1, h2, h3, h4, h5, h6) {
+  margin: 1.1em 0 0.35em;
+  color: var(--t-bright);
+  font-size: 1em;
+  font-weight: var(--weight-chat-strong);
+  line-height: 1.55;
+}
+.msg-bubble :where(h1, h2, h3, h4, h5, h6):first-child {
+  margin-top: 0;
+}
+.msg-bubble :where(ul, ol) {
+  margin: 0 0 0.7em;
+  padding-left: 1.5em;
+}
+.msg-bubble :where(li + li) {
+  margin-top: var(--space-1);
+}
+.msg-bubble :where(blockquote) {
+  margin: 0 0 0.7em;
+  padding-left: var(--space-5);
+  border-left: 2px solid var(--ui-line-bright);
+  color: var(--t-dim);
+}
+.msg-bubble :where(hr) {
+  width: 40%;
+  height: 1px;
+  margin: 1em auto;
+  border: 0;
+  background: var(--ui-line-bright);
+}
+/* Markdown tables written in the message; card HTML tables keep their own look. Wide tables scroll. */
+.msg-bubble .msg-md-table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  margin: 0 0 0.7em;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.msg-bubble .msg-md-table :is(th, td) {
+  padding: var(--space-1) var(--space-3);
+  border-bottom: 1px solid var(--ui-line);
+  text-align: left;
+  vertical-align: top;
+}
+.msg-bubble .msg-md-table th {
+  border-bottom-color: var(--ui-line-bright);
+  color: var(--t-bright);
+  font-weight: var(--weight-chat-strong);
+}
+.msg-bubble .msg-md-table :is(th, td):first-child {
+  padding-left: 0;
+}
+.msg-bubble :where(a) {
+  color: var(--accent-ink);
+  text-underline-offset: 2px;
+}
+/* Code keeps its own lines: only a background step sets it apart, and long lines scroll inside the block. */
+.msg-bubble code {
+  padding: 1px var(--space-1);
+  border-radius: var(--radius-xs);
+  background: var(--bg-hover);
+  color: inherit;
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.msg-bubble pre {
+  max-width: 100%;
+  margin: 0.6em 0;
+  padding: var(--space-4) var(--space-5);
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  background: var(--bg-hover);
+  font-family: var(--mono);
+  font-size: var(--type-label);
+  line-height: var(--line-body);
+  white-space: pre;
+  overscroll-behavior-x: contain;
+}
+.msg-bubble pre code {
+  display: block;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: inherit;
+  white-space: inherit;
+  overflow-wrap: normal;
+  -webkit-box-decoration-break: slice;
+  box-decoration-break: slice;
+}
+/* Reasoning card in chat bubbles and the wheel biography: head (icon, title, timer, chevron), a one-line
+   preview while collapsed, the full text when open. :is() keeps the chat selectors' specificity. While the model thinks the icon breathes and the dots hop; both are transform and
+   opacity only and stop with data-thinking. */
+:is(.msg-bubble, .wheel-game-biography) .think-block {
+  display: block;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--think-line);
+  border-radius: var(--radius-sm);
+  background: var(--think-fill);
+  color: var(--t-dim);
+  font-family: var(--font);
+  font-size: var(--type-help);
+  font-weight: 500;
+  line-height: var(--line-body);
+}
+:is(.msg-bubble, .wheel-game-biography) details.think-block > summary {
+  display: block;
+  list-style: none;
+  cursor: pointer;
+}
+:is(.msg-bubble, .wheel-game-biography) details.think-block > summary::-webkit-details-marker {
+  display: none;
+}
+:is(.msg-bubble, .wheel-game-biography) .think-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--t);
+  font: 600 var(--type-help) / 1.5 var(--font);
+}
+:is(.msg-bubble, .wheel-game-biography) .think-icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  color: var(--accent-ink);
+  vertical-align: 0;
+}
+:is(.msg-bubble, .wheel-game-biography) .think-title {
+  flex: 1;
+  min-width: 0;
+}
+:is(.msg-bubble, .wheel-game-biography) .think-timer {
+  flex: none;
+  color: var(--t-dim);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+:is(.msg-bubble, .wheel-game-biography) .think-head::after {
+  content: '';
+  flex: none;
+  width: 6px;
+  height: 6px;
+  margin: 0 3px 3px var(--space-1);
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+  transition: transform var(--motion-fast) var(--motion-ease);
+}
+:is(.msg-bubble, .wheel-game-biography) details.think-block[open] .think-head::after {
+  margin-bottom: -3px;
+  transform: rotate(-135deg);
+}
+:is(.msg-bubble, .wheel-game-biography) .think-preview {
+  display: block;
+  margin: var(--space-1) 0 0 calc(16px + var(--space-2));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+:is(.msg-bubble, .wheel-game-biography) details.think-block[open] .think-preview {
+  display: none;
+}
+:is(.msg-bubble, .wheel-game-biography) .think-body {
+  margin-top: var(--space-2);
+}
+:is(.msg-bubble, .wheel-game-biography) .think-dots {
+  display: inline-flex;
+  gap: 2px;
+  margin-left: 3px;
+  vertical-align: 0.1em;
+}
+:is(.msg-bubble, .wheel-game-biography) .think-dots i {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: thinkDotHop 1.2s var(--motion-ease) infinite;
+}
+:is(.msg-bubble, .wheel-game-biography) .think-dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+:is(.msg-bubble, .wheel-game-biography) .think-dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+:is(.msg-bubble, .wheel-game-biography) details.think-block[data-thinking] .think-icon {
+  animation: thinkIconBreath 1.8s ease-in-out infinite;
+}
+@keyframes thinkDotHop {
+  0%,
+  60%,
+  100% {
+    opacity: 0.45;
+    transform: none;
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+@keyframes thinkIconBreath {
+  0%,
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(0.9);
+  }
+}
+.msg-bubble .tone-plain {
+  color: inherit;
+}
+.msg.char .msg-bubble .tone-plain {
+  color: var(--tone-narration);
+}
+.msg-bubble em,
+.msg-bubble .tone-narration {
+  color: var(--tone-narration);
+  font-style: normal;
+}
+.msg-bubble :where(b) {
+  font-weight: var(--weight-chat-strong);
+}
+.msg-bubble strong,
+.msg-bubble .tone-bold {
+  color: var(--tone-bold, var(--tone-narration));
+  font-style: normal;
+  font-weight: var(--weight-chat-strong);
+}
+.msg-bubble .tone-quote {
+  color: var(--tone-quote);
+  font-style: normal;
+}
+.msg-bubble .tone-paren {
+  color: var(--tone-paren);
+  font-style: normal;
+}
+.msg-bubble .tone-bracket,
+.msg-bubble .tone-invalid-directive {
+  padding: 0 0.2em;
+  border-radius: var(--radius-xs);
+  font-style: normal;
+  font-weight: var(--weight-chat-strong);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.msg-bubble .tone-bracket {
+  border: 1px solid var(--tone-bracket-border);
+  background: var(--tone-bracket-bg);
+  color: var(--tone-bracket);
+}
+.msg-bubble .tone-invalid-directive {
+  border-bottom: 1px dashed currentColor;
+  border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+  background: var(--tone-invalid-bg, var(--red-bg));
+  color: var(--tone-invalid, var(--danger));
+}
+.msg-bubble :is(.tone-bracket, .tone-invalid-directive) * {
+  color: inherit;
+  font-style: inherit;
+}
+.msg-bubble .card-inline-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: min(72vh, 780px);
+  margin: 0.7em 0;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+.msg-bubble .card-inline-image-missing,
+.msg-bubble .card-inline-image-loading {
+  display: inline-block;
+  padding: 2px var(--space-2);
+  border: 1px dashed var(--ui-line-bright);
+  border-radius: var(--radius-xs);
+  color: var(--t-dim);
+  font-size: var(--type-help);
+}
+.msg-bubble .card-inline-image-loading {
+  border-style: solid;
+}
+.msg-bubble .card-inline-image-retry {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin: 0.7em 0;
+  padding: var(--space-4) var(--space-5);
+  border-style: solid;
+}
+.msg-bubble .card-inline-image-retry > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.msg-bubble .card-inline-image-retry .btn {
+  flex: 0 0 auto;
+}

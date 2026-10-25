@@ -1,0 +1,91 @@
+'use strict';
+const assert = require('assert');
+const path = require('path');
+const {createAssetServer, listenOnBrowserSafePort, loadPlaywright, resolveEdgeExecutable} = require('./source');
+const {waitForAppReady} = require('./helpers/app-ready');
+let browser, server;
+(async () => {
+  server = createAssetServer(path.resolve(__dirname, '../../app/src/main/assets'));
+  await listenOnBrowserSafePort(server);
+  browser = await loadPlaywright().chromium.launch({executablePath: resolveEdgeExecutable(), headless: true});
+  const page = await browser.newPage();
+  await page.goto(`http://127.0.0.1:${server.address().port}/index.html`);
+  await waitForAppReady(page);
+  const proof = await page.evaluate(async () => {
+    D = defaults(); D.settings.useMemory = false;
+    const char = {id: 'history-effects', name: '原名', extensions: {}, regexScripts: []};
+    const session = createBlankSession('历史宏', 'history-effects-session');
+    D.characters = [char]; D.currentCharId = char.id;
+    D.chats = {[char.id]: {activeSid: session.id, sessions: [session]}};
+    const raw = '{{addvar::counter::1}}{{addglobalvar::globalCounter::1}}值={{getvar::counter}}，{{char}}{{//}}OPAQUE{{setvar::commentLeak::1}}{{/if}}{{////}}';
+    const message = await saveMsg('user', raw);
+    buildMessages(char, session.msgs, session, {commit: false});
+    buildMessages(char, session.msgs, session, {commit: false});
+    const previewUntouched = !session.macroVars && message.pendingMacroEffects != null;
+    buildMessages(char, session.msgs, session, {commit: true});
+    buildMessages(char, session.msgs, session, {commit: true});
+    const once = session.macroVars.counter;
+    const globalOnce = D.settings.stscript.globalVars.globalCounter;
+    session.macroVars.counter = 7; char.name = '新名';
+    const dynamic = buildMessages(char, session.msgs, session, {commit: true}).messages;
+    if (session.macroVars.commentLeak != null || dynamic.some(row => row.content.includes('OPAQUE')))
+      throw new Error('作用域注释正文或内部宏副作用泄漏');
+    callDeepSeek = async () => ({content: '{{addvar::counter::10}}新回复', reasoning: '', finishReason: 'stop'});
+    const sent = await doSendMessage('下一轮');
+    if (generationTarget && generationTarget.postCommitTask) await generationTarget.postCommitTask;
+    buildMessages(char, session.msgs, session, {commit: true});
+    const afterReply = session.macroVars.counter;
+    callDeepSeek = async () => ({content: '{{addvar::counter::100}}续写', reasoning: '', finishReason: 'stop'});
+    const continued = await continueGeneration();
+    if (generationTarget && generationTarget.postCommitTask) await generationTarget.postCommitTask;
+    buildMessages(char, session.msgs, session, {commit: true});
+    buildMessages(char, session.msgs, session, {commit: true});
+    const afterContinue = session.macroVars.counter;
+    session.msgs.push({role: 'assistant', seq: allocateMessageSeq(session), content: '{{addvar::counter::1000}}导入的已有历史'});
+    buildMessages(char, session.msgs, session, {commit: true});
+    const importedNotReplayed = session.macroVars.counter === afterContinue;
+    const openingSession = createBlankSession('开场白', 'opening-effects');
+    D.chats[char.id].sessions.push(openingSession);
+    D.chats[char.id].activeSid = openingSession.id;
+    const opening = appendOpeningGreeting(char, openingSession, '{{addvar::counter::3}}值={{getvar::counter}}', 0);
+    buildMessages(char, openingSession.msgs, openingSession, {commit: true});
+    openingSession.macroVars.counter = 8;
+    const openingDisplay = messageDisplayParts(char, opening).content;
+    buildMessages(char, openingSession.msgs, openingSession, {commit: true});
+    const openingValue = openingSession.macroVars.counter;
+    D.chats[char.id].activeSid = session.id;
+    await hostWriteCreateChatMessages({charId: char.id, kind: 'library', owner: {sessionId: session.id}}, {
+      messages: [{role: 'user', message: '{{addvar::hostCounter::2}}脚本新增消息'}], option: {refresh: 'none'},
+    });
+    buildMessages(char, session.msgs, session, {commit: true});
+    buildMessages(char, session.msgs, session, {commit: true});
+    const hostCounter = session.macroVars.hostCounter;
+    await flushPendingSave();
+    return {previewUntouched, once, globalOnce, dynamic, sent, continued, afterReply, afterContinue, importedNotReplayed, openingDisplay, openingValue, hostCounter, raw: message.content};
+  });
+  assert.strictEqual(proof.previewUntouched, true);
+  assert.strictEqual(proof.once, 1);
+  assert.strictEqual(proof.globalOnce, 1);
+  assert.ok(proof.dynamic.some(row => row.content.includes('值=7，新名')));
+  assert.strictEqual(proof.sent, true);
+  assert.strictEqual(proof.continued, true);
+  assert.strictEqual(proof.afterReply, 17);
+  assert.strictEqual(proof.afterContinue, 117, '继续回复只处理新增部分，旧前缀不得再次加 10');
+  assert.ok(proof.raw.includes('{{addvar::counter::1}}'));
+  assert.strictEqual(proof.importedNotReplayed, true);
+  assert.strictEqual(proof.openingDisplay, '值=8');
+  assert.strictEqual(proof.openingValue, 8);
+  assert.strictEqual(proof.hostCounter, 2);
+  await page.reload();
+  await waitForAppReady(page);
+  const reloaded = await page.evaluate(() => {
+    const char = getChar(), session = getActiveSession(char.id);
+    buildMessages(char, session.msgs, session, {commit: true});
+    return {value: session.macroVars.counter, global: D.settings.stscript.globalVars.globalCounter};
+  });
+  assert.deepStrictEqual(reloaded, {value: 117, global: 1});
+  console.log(JSON.stringify({historyWritesOnce: true, dynamicReads: true, rawPreserved: true, continuationOnlyNewEffects: true, reloadDoesNotReplay: true}));
+})().catch(error => { console.error(error); process.exitCode = 1; }).finally(async () => {
+  if (browser) await browser.close();
+  if (server) { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+});

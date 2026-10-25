@@ -1,0 +1,13 @@
+RPack compatibility data
+
+The 512 bytes in rpack-map.js are transcribed as a Uint8Array from RisuAI
+v2026.10.211, commit 02a83695d81eb4e083453c4524b8c7d463df95aa:
+
+  src/ts/rpack/rpack_map.bin
+
+RisuAI describes Rpack.js as a JavaScript rewrite of the original Rust rpack
+format, used for compatibility. RPack.js is dual-licensed; use outside RisuAI
+is governed by GNU AGPL version 3. The accompanying rpack-AGPL-3.0.txt is the
+upstream license text (LF line endings). Yeyu's decoder in ../core/risu-module.js is an
+independent implementation of the documented byte-substitution format and the
+legacy .risum container sequence in RisuAI src/ts/process/modules.ts.

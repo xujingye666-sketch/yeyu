@@ -1,0 +1,89 @@
+{
+  "type": "meme-auto-wheel-config",
+  "version": 1,
+  "title": "语义回归方案",
+  "description": "用于验证本机确定性转盘引擎",
+  "system_prompt": "保持为连续的冒险故事。",
+  "prompt_template": "标题={{title}}\n说明={{description}}\n摘要={{summary}}\n带数值={{summary_with_stats}}\n带变化={{summary_with_stat_changes}}\n记录={{records}}\n数值={{stats}}\n最终数值={{final_stats}}\nJSON={{json}}\n补充={{custom_input}}\n起点结果={{result:起点}}\n力量={{stat:力量}}\n条件={{checkmood}}\n全部条件={{conditional_prompts}}",
+  "start_wheel_id": "起点",
+  "stats": [
+    {"id": "力量", "name": "力量", "initial": 2, "hidden": false},
+    {"id": "秘密", "name": "秘密", "initial": 1, "hidden": true},
+    {"id": "总值", "name": "总值", "initial": 0, "hidden": false, "derived_formula": "力量 ^ 2 + max(秘密, 1)", "derived_formula_enabled": true}
+  ],
+  "prompt_fragments": [
+    {
+      "id": "mood",
+      "mode": "option_map",
+      "wheel_id": "起点",
+      "entries": [
+        {"option_id": "前进", "text": "{{wheel}}选择了{{result}}：{{note}}，当前力量{{stat:力量}}。"},
+        {"option_id": "停留", "text": "原地观察。"}
+      ]
+    }
+  ],
+  "wheels": [
+    {
+      "id": "起点",
+      "description": "决定如何进入遗迹。",
+      "default_next_wheel_id": "终点",
+      "options": [
+        {
+          "id": "前进",
+          "weight": 1,
+          "weight_formula": "clamp（力量 x 2，1，10）",
+          "custom_next_enabled": true,
+          "next_wheel_id": "终点",
+          "note": "越过石门",
+          "stat_effects": [{"stat_id": "力量", "mode": "add", "delta": 1}],
+          "condition_routes": [
+            {"next_wheel_id": "暗抽", "conditions": [{"stat_id": "力量", "op": "between", "min": 3, "max": 4}]}
+          ]
+        },
+        {"id": "停留", "weight": 1, "weight_formula": "0", "custom_next_enabled": false, "next_wheel_id": "", "note": ""}
+      ],
+      "stat_effects": [{"stat_id": "力量", "mode": "add", "delta": 1}],
+      "allow_repeat": true,
+      "force_option_next": false,
+      "condition_routes": []
+    },
+    {
+      "id": "暗抽",
+      "description": "自动决定暗门机关。",
+      "default_next_wheel_id": "分流",
+      "wheel_mode": "counter",
+      "options": [
+        {"id": "机关开启", "weight": 1, "custom_next_enabled": false, "next_wheel_id": "", "note": "暗门打开", "stat_effects": [{"stat_id": "秘密", "mode": "set", "value": 5}]}
+      ],
+      "stat_effects": [],
+      "allow_repeat": true,
+      "force_option_next": false,
+      "condition_routes": []
+    },
+    {
+      "id": "分流",
+      "description": "按秘密数值自动跳转。",
+      "default_next_wheel_id": "终点",
+      "wheel_mode": "redirect",
+      "options": [],
+      "stat_effects": [],
+      "allow_repeat": true,
+      "force_option_next": false,
+      "condition_routes": [
+        {"next_wheel_id": "终点", "conditions": [{"stat_id": "秘密", "op": "eq", "value": 5}, {"stat_id": "力量", "op": "gt", "value": 3}]}
+      ]
+    },
+    {
+      "id": "终点",
+      "description": "故事的最后一次转动。",
+      "default_next_wheel_id": "",
+      "options": [
+        {"id": "抵达祭坛", "weight": 1, "custom_next_enabled": true, "next_wheel_id": "", "note": "旅程结束"}
+      ],
+      "stat_effects": [],
+      "allow_repeat": true,
+      "force_option_next": false,
+      "condition_routes": []
+    }
+  ]
+}

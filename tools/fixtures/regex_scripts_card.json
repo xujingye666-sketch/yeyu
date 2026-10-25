@@ -1,0 +1,174 @@
+{
+  "spec": "chara_card_v2",
+  "spec_version": "2.0",
+  "data": {
+    "name": "合成角色",
+    "description": "仅用于正则脚本导入、执行与往返回归的合成角色卡。",
+    "personality": "测试用角色，不含真实素材。",
+    "scenario": "合成测试场景。",
+    "first_mes": "AI_DISPLAY ai_send AI_BOTH",
+    "mes_example": "",
+    "creator_notes": "合成测试数据。",
+    "tags": [
+      "fixture"
+    ],
+    "extensions": {
+      "fixture_extension": {
+        "keep": "card-extension"
+      },
+      "regex_scripts": [
+        {
+          "id": "fixture_ai_display",
+          "scriptName": "AI 仅显示",
+          "findRegex": "/AI_DISPLAY/g",
+          "replaceString": "AI显示",
+          "placement": [
+            2
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": false,
+          "trimStrings": [],
+          "runOnEdit": true,
+          "customFixture": {
+            "keep": "ai-display",
+            "nested": [
+              1,
+              "two"
+            ]
+          }
+        },
+        {
+          "id": "fixture_ai_send",
+          "scriptName": "AI 仅发送",
+          "findRegex": "/AI_SEND/gi",
+          "replaceString": "AI发送",
+          "placement": 2,
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "substituteRegex": true,
+          "customFixture": {
+            "keep": "ai-send"
+          }
+        },
+        {
+          "id": "fixture_ai_both",
+          "scriptName": "AI 显示与发送",
+          "findRegex": "/AI_(BOTH)/g",
+          "replaceString": "$1|{{match}}|{{user}}|{{char}}",
+          "placement": [
+            2
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "minDepth": 3,
+          "maxDepth": 9,
+          "customFixture": {
+            "keep": "ai-both"
+          }
+        },
+        {
+          "id": "fixture_user_display",
+          "scriptName": "用户仅显示",
+          "findRegex": "/USER_DISPLAY/g",
+          "replaceString": "用户显示",
+          "placement": [
+            1
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": false,
+          "customFixture": {
+            "keep": "user-display"
+          }
+        },
+        {
+          "id": "fixture_user_send",
+          "scriptName": "用户仅发送",
+          "findRegex": "/USER_SEND/g",
+          "replaceString": "用户发送",
+          "placement": [
+            1
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": true,
+          "customFixture": {
+            "keep": "user-send"
+          }
+        },
+        {
+          "id": "fixture_user_both",
+          "scriptName": "用户显示与发送",
+          "findRegex": "/USER_BOTH/g",
+          "replaceString": "用户两处",
+          "placement": [
+            1
+          ],
+          "disabled": false,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "customFixture": {
+            "keep": "user-both"
+          }
+        },
+        {
+          "id": "fixture_disabled",
+          "scriptName": "默认关闭项",
+          "findRegex": "/DISABLED_TOKEN/g",
+          "replaceString": "不应出现",
+          "placement": [
+            2
+          ],
+          "disabled": true,
+          "markdownOnly": false,
+          "promptOnly": false,
+          "customFixture": {
+            "keep": "disabled"
+          }
+        },
+        {
+          "id": "fixture_unsafe",
+          "scriptName": "危险规则",
+          "findRegex": "/(a+)+$/g",
+          "replaceString": "危险替换",
+          "placement": [
+            2
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": false,
+          "customFixture": {
+            "keep": "unsafe"
+          }
+        },
+        {
+          "id": "fixture_missing_defaults",
+          "scriptName": "缺字段默认项",
+          "findRegex": "/MISSING_DEFAULT/g",
+          "replaceString": "缺省替换",
+          "customFixture": {
+            "keep": "missing-defaults"
+          }
+        },
+        {
+          "id": "fixture_unsupported_replacement",
+          "scriptName": "不支持的替换宏",
+          "findRegex": "/CBS_TOKEN/g",
+          "replaceString": "{{raw::$1}}",
+          "placement": [
+            2
+          ],
+          "disabled": false,
+          "markdownOnly": true,
+          "promptOnly": false,
+          "customFixture": {
+            "keep": "unsupported-replacement"
+          }
+        }
+      ]
+    }
+  }
+}

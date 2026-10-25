@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Same value as the neutral bg-base token in css/tokens.css; shown before the WebView paints. -->
+    <color name="ink_background">#121212</color>
+</resources>

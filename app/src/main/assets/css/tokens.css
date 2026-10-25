@@ -1,0 +1,196 @@
+/* Single source of first-party design tokens. Every colour follows the character background: the theme
+   pipeline (92-theme-ui.js) writes seed colours, and each role below pins its own lightness per theme,
+   so contrast holds for any hue. Without a background the seeds are grey and the interface is neutral.
+   The seed-derived roles are declared on :root and on every .palette-scope element, so an element that
+   carries its own seeds (the wheel game, 92-theme-ui.js applyPaletteScopeSeeds) re-derives them on the
+   same pipeline; the neutral override below applies to :root only. */
+:root {
+  /* Runtime seeds: hue and lifted chroma of the background's primary, secondary and tertiary colours,
+     plus the colour found in each screen quadrant (top-left, top-right, bottom-left, bottom-right).
+     92-theme-ui.js overwrites them; these defaults equal its neutral reset. */
+  --accent:#5b5b5b;--accent-2:#5b5b5b;--accent-3:#5b5b5b;--accent-rgb:91,91,91;
+  --field-1:#5b5b5b;--field-2:#5b5b5b;--field-3:#5b5b5b;--field-4:#5b5b5b;
+
+  /* Where each ambient glow sits in its corner, its size and how far it reaches: 92-theme-ui.js derives
+     them from the palette; these defaults are the layout before any background is applied. */
+  --ambient-1-geometry:100% 52% at 0% 0%;--ambient-2-geometry:100% 52% at 100% 0%;
+  --ambient-3-geometry:110% 56% at 0% 100%;--ambient-4-geometry:110% 56% at 100% 100%;
+  --ambient-1-reach:100%;--ambient-2-reach:100%;--ambient-3-reach:100%;--ambient-4-reach:100%;
+
+  /* Semantic colour never follows the character. */
+  --red:#f5807a;--red-bg:rgba(245,128,122,.13);--green:#64c897;--green-bg:rgba(100,200,151,.12);--blue:#7fb0e8;--blue-bg:rgba(127,176,232,.12);
+  --danger:var(--red);--danger-on-image:#f5807a;--warning:#ebc75e;--warning-bg:rgba(235,199,94,.12);--ok:var(--green);--surface-danger:#ffa39c;
+
+  --shadow-color:rgba(0,0,0,.4);--shadow-soft:0 6px 18px rgba(0,0,0,.28);--shadow-modal:0 18px 48px rgba(0,0,0,.5);
+  /* Bubbles float just off the page: a close contact shadow plus a wide faint one. */
+  --shadow-bubble:0 1px 2px rgba(0,0,0,.2),0 4px 14px rgba(0,0,0,.16);
+  /* Reading tones; 92-theme-ui.js rewrites them from the background. These equal its neutral output. */
+  --tone-paren:#d8d8d8;--tone-quote:#d1d1d1;--tone-bold:#dbdbdb;--tone-bracket:#e1e1e1;--tone-bracket-bg:#4a4a4a;--tone-bracket-border:rgba(225,225,225,.42);--tone-narration:#dbdbdb;
+  /* Immersive text on a picture (chat.css [data-background="image"]; Risu frames inherit it):
+     both themes use one black drop shadow. Its alpha also shades the sampled picture colours in
+     92-theme-ui.js before reading-tone contrast correction, keeping the colour backdrop in sync. */
+  --immersive-text-shadow-alpha:.6;
+  --immersive-text-shadow:0 1px 2px rgba(0,0,0,var(--immersive-text-shadow-alpha));
+  --immersive-icon-shadow:drop-shadow(0 1px 2px rgba(0,0,0,var(--immersive-text-shadow-alpha)));
+  /* Reasoning card on a picture (components.css .think-block): a small share of the text shadow's black
+     under a hairline of the plain ink. */
+  --think-fill-image:rgba(0,0,0,calc(var(--immersive-text-shadow-alpha) * .3));
+  --think-line-image:color-mix(in srgb,var(--tone-plain) 32%,transparent);
+
+  /* Type: the phone's UI face everywhere (OEM fonts replace sans-serif on Android; desktop previews fall
+     back to YaHei UI). The bundled serif (base.css @font-face, weights 600 and 700 only) is kept for accent
+     spots and immersive reading text; system serifs cover characters outside its subset. */
+  --font:system-ui,-apple-system,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei UI","Microsoft YaHei",sans-serif;
+  --font-serif:"Yeyu Serif","Noto Serif CJK SC","Source Han Serif SC","Songti SC","SimSun",serif;
+  --mono:"JetBrains Mono","Cascadia Code","Roboto Mono","Consolas",monospace;
+  /* A surface's title outranks everything it contains, and a surface opened from a control never outranks
+     the bar it came from: popovers title themselves at label size, the chat identity sits one step above that. */
+  --type-page-title:17px;--type-identity:16px;--type-section:15px;--type-item:14px;--type-body:14px;--type-control:13px;--type-label:13px;--type-help:12px;--type-meta:11px;
+  /* The wheel game's attribute blocks (workflows.css .wheel-game-attr): the one number the page is built around. */
+  --type-stat:22px;
+  --line-body:1.6;--line-compact:1.4;
+  --type-chat:15px;--line-chat:1.78;
+  /* Bubble text is set at the regular weight in the UI face; immersive text sits on the picture in the
+     serif at 600 (chat.css .message-style-immersive). Marks that stand out (bold, headings, brackets,
+     table heads) keep a step above the body in both. */
+  --font-chat:var(--font);--weight-chat:400;--weight-chat-strong:700;
+
+  /* Controls follow phone-app density, not accessibility-sized targets. */
+  --control-h:34px;--button-h:32px;--button-small-h:26px;--icon-button:32px;--row-h:44px;--page-header-h:48px;
+  --switch-w:34px;--switch-h:20px;--sheet-top-gap:var(--space-8);
+  --chat-icon:18px;--chat-action-h:28px;--chat-input-h:44px;--chat-input-max-h:132px;--chat-avatar:32px;--chat-header-avatar:34px;--row-avatar:38px;
+  /* Room kept at the end of a bubble's text for the clock time ("21:05") tucked into its corner. */
+  --chat-time-reserve:calc(3 * var(--type-meta) + var(--space-3));
+  --chat-nav-hit-w:36px;--chat-nav-hit-h:36px;--chat-nav-edge:var(--space-3);--chat-nav-width:calc(var(--chat-nav-hit-w) + 2 * var(--space-1) + 2px);
+  --mobile-header-h:50px;--mobile-input-h:78px;--mobile-bottom-nav-h:50px;--composer-current-h:78px;
+
+  --space-1:4px;--space-2:6px;--space-3:8px;--space-4:10px;--space-5:12px;--space-6:16px;--space-7:20px;--space-8:24px;
+  /* Three radii plus the pill: controls, groups/bubbles, sheets. */
+  --radius-xs:6px;--radius-sm:10px;--radius:16px;--radius-pill:999px;
+
+  --textarea-min-h:60px;--textarea-max-h:min(34dvh,260px);--textarea-long-max-h:min(52dvh,440px);
+  --motion-fast:120ms;--motion-normal:200ms;--motion-panel:280ms;--motion-theme:460ms;
+  --motion-ease:cubic-bezier(.2,.8,.2,1);--motion-exit:cubic-bezier(.4,0,1,1);--motion-spring:cubic-bezier(.2,.9,.25,1.06);
+  --ui-fast:var(--motion-fast);--transition:var(--motion-normal) var(--motion-ease);
+  --sidebar-w:320px;color-scheme:dark;
+}
+
+:root,
+.palette-scope {
+  /* Accent roles carry the seed's full chroma; their fixed lightness is what keeps text contrast. */
+  --accent-ink:oklch(from var(--accent) .84 c h);
+  --accent-ink-2:oklch(from var(--accent-2) .84 c h);
+  --accent-fill:oklch(from var(--accent) .54 c h);
+  --accent-fill-2:oklch(from var(--accent-2) .5 c h);
+  --accent-grad:linear-gradient(135deg,var(--accent-fill),var(--accent-fill-2));
+  --on-accent:#fff;
+  --accent-tint:oklch(from var(--accent) .62 calc(c * .6) h / .2);
+  --accent-wash:linear-gradient(100deg,oklch(from var(--accent) .6 calc(c * .55) h / .26),oklch(from var(--accent-2) .6 calc(c * .55) h / .14));
+  --accent-line:oklch(from var(--accent) .72 c h / .6);
+  --focus-ring:oklch(from var(--accent) .8 c h / .9);
+
+  /* Surfaces: a night carrying only a trace of the primary hue (a small share of the seed chroma), so large
+     areas stay quiet while accent fills and ink keep the full chroma. */
+  /* --bg-base-reading is the night base in both themes: it backs the picture's transparent parts under
+     immersive text, which is pale ink in either theme (chat.css). */
+  --bg-base-reading:oklch(from var(--accent) .18 calc(c * .09) h);
+  --bg-base:var(--bg-base-reading);--bg-panel:oklch(from var(--accent) .205 calc(c * .09) h);
+  --surface-raised:oklch(from var(--accent) .25 calc(c * .09) h);
+  --surface-shell:oklch(from var(--accent) .19 calc(c * .1) h / .8);--surface-shell-solid:oklch(from var(--accent) .19 calc(c * .1) h);--surface-message:oklch(from var(--accent) .2 calc(c * .09) h / .82);
+  --surface-soft:oklch(from var(--accent) .82 calc(c * .18) h / .075);--bg-card:var(--surface-soft);
+  --bg-hover:oklch(from var(--accent) .82 calc(c * .18) h / .12);--bg-input:oklch(from var(--accent) .82 calc(c * .15) h / .075);
+  --bg-overlay:oklch(from var(--accent) .1 calc(c * .09) h / .58);
+  --t:oklch(from var(--accent) .93 calc(c * .04) h);--t-dim:oklch(from var(--accent) .77 calc(c * .07) h);
+  --t-bright:oklch(from var(--accent) .975 calc(c * .02) h);--t-faint:oklch(from var(--accent) .6 calc(c * .07) h);
+  --line:oklch(from var(--accent) .86 calc(c * .14) h / .1);--ui-line:var(--line);--ui-line-bright:oklch(from var(--accent) .86 calc(c * .14) h / .18);--ui-line-strong:var(--ui-line-bright);
+  --surface-t-dim:oklch(from var(--accent) .8 calc(c * .07) h);
+
+  /* Chat chrome and bubbles: translucent surfaces washed with the character's colours. The character bubble
+     carries a little more colour than the other large surfaces yet stays quieter than the user bubble: a wash
+     from the primary colour at the top left to the tertiary at the bottom right, a faint highlight of the
+     primary along its top edge and a barely-there hairline (--message-edge, chat.css). 92-theme-ui.js reads
+     both wash stops and --surface-message to keep reading tones at 4.5:1 on the bubble. */
+  --chat-shell-fill:linear-gradient(100deg,oklch(from var(--accent) .55 min(c,.08) h / .18),oklch(from var(--accent-2) .55 min(c,.08) h / .1)),var(--surface-shell);
+  --chat-shell-fill-solid:linear-gradient(100deg,oklch(from var(--accent) .55 min(c,.08) h / .18),oklch(from var(--accent-2) .55 min(c,.08) h / .1)),var(--surface-shell-solid);
+  --message-tint-1:oklch(from var(--accent) .55 min(c,.11) h / .22);--message-tint-2:oklch(from var(--accent-3) .55 min(c,.11) h / .16);
+  --chat-message-fill:linear-gradient(to bottom right,var(--message-tint-1),var(--message-tint-2)),var(--surface-message);
+  --message-edge:inset 0 1px 0 oklch(from var(--accent) .8 min(c,.12) h / .2),inset 0 0 0 1px oklch(from var(--accent) .8 min(c,.08) h / .07);
+  --surface-user:linear-gradient(135deg,oklch(from var(--accent) .35 min(c,.09) h / .9),oklch(from var(--accent-2) .31 min(c,.09) h / .9));
+
+  /* Ambience: each quadrant glows with the colour found there in the background, so opaque pages
+     and panels read as the same scene. The glow layout (--ambient-N-geometry, --ambient-N-reach) is a
+     runtime value on :root only, so every background lays its light out differently. */
+  --ambient-1:oklch(from var(--field-1) .38 min(c,.09) h / .5);--ambient-2:oklch(from var(--field-2) .38 min(c,.09) h / .46);
+  --ambient-3:oklch(from var(--field-3) .38 min(c,.09) h / .46);--ambient-4:oklch(from var(--field-4) .38 min(c,.09) h / .42);
+  --ambient-layers:radial-gradient(var(--ambient-1-geometry),var(--ambient-1),transparent var(--ambient-1-reach)),radial-gradient(var(--ambient-2-geometry),var(--ambient-2),transparent var(--ambient-2-reach)),radial-gradient(var(--ambient-3-geometry),var(--ambient-3),transparent var(--ambient-3-reach)),radial-gradient(var(--ambient-4-geometry),var(--ambient-4),transparent var(--ambient-4-reach));
+  --bg-ambient:var(--ambient-layers),var(--bg-base);
+  --panel-ambient:var(--ambient-layers),var(--bg-panel);
+  /* A light dim under the picture. Immersive text is pale ink on the picture in both themes, so it always
+     reads over this dim (chat.css). The light theme's bubbles sit over a brightened picture instead
+     (--overlay-image below). 92-theme-ui.js IMAGE_VEILS models both veils. */
+  --overlay-image-reading:linear-gradient(oklch(from var(--accent) .14 calc(c * .12) h / .12),oklch(from var(--accent) .14 calc(c * .12) h / .3));
+  --overlay-image:var(--overlay-image-reading);
+  /* Reasoning card tint and hairline on bubbles and the plain base (components.css .think-block). */
+  --think-fill:var(--surface-soft);--think-line:var(--ui-line-bright);
+}
+
+:root[data-theme="light"] {
+  --red:#b01f27;--red-bg:rgba(176,31,39,.09);--green:#0b764d;--green-bg:rgba(11,118,77,.09);--blue:#2a62b8;--blue-bg:rgba(42,98,184,.09);--warning:#8d5e00;--warning-bg:rgba(141,94,0,.09);--surface-danger:#a4121e;
+  --shadow-color:rgba(24,24,32,.14);--shadow-soft:0 6px 18px rgba(24,24,32,.1);--shadow-modal:0 18px 48px rgba(24,24,32,.18);
+  --shadow-bubble:0 1px 2px rgba(24,24,32,.06),0 3px 12px rgba(24,24,32,.06);
+  --tone-paren:#575757;--tone-quote:#535353;--tone-bold:#4f4f4f;--tone-bracket:#474747;--tone-bracket-bg:#e0e0e0;--tone-bracket-border:rgba(71,71,71,.48);--tone-narration:#4f4f4f;
+  color-scheme:light;
+}
+
+:root[data-theme="light"],
+:root[data-theme="light"] .palette-scope {
+  --accent-ink:oklch(from var(--accent) .45 c h);
+  --accent-ink-2:oklch(from var(--accent-2) .45 c h);
+  --accent-fill:oklch(from var(--accent) .53 c h);
+  --accent-fill-2:oklch(from var(--accent-2) .48 c h);
+  --accent-tint:oklch(from var(--accent) .62 calc(c * .6) h / .15);
+  --accent-wash:linear-gradient(100deg,oklch(from var(--accent) .64 calc(c * .55) h / .2),oklch(from var(--accent-2) .64 calc(c * .55) h / .1));
+  --accent-line:oklch(from var(--accent) .52 c h / .55);
+  --focus-ring:oklch(from var(--accent) .5 c h / .85);
+
+  --bg-base:oklch(from var(--accent) .972 calc(c * .035) h);--bg-panel:oklch(from var(--accent) .982 calc(c * .03) h);
+  --surface-raised:oklch(from var(--accent) .995 calc(c * .012) h);
+  --surface-shell:oklch(from var(--accent) .975 calc(c * .04) h / .86);--surface-shell-solid:oklch(from var(--accent) .975 calc(c * .04) h);--surface-message:oklch(from var(--accent) .99 calc(c * .025) h / .9);
+  --surface-soft:oklch(from var(--accent) .45 calc(c * .25) h / .06);
+  --bg-hover:oklch(from var(--accent) .45 calc(c * .25) h / .09);--bg-input:oklch(from var(--accent) .45 calc(c * .22) h / .055);
+  --bg-overlay:oklch(from var(--accent) .25 calc(c * .12) h / .3);
+  --t:oklch(from var(--accent) .27 calc(c * .08) h);--t-dim:oklch(from var(--accent) .45 calc(c * .1) h);
+  --t-bright:oklch(from var(--accent) .18 calc(c * .06) h);--t-faint:oklch(from var(--accent) .62 calc(c * .08) h);
+  --line:oklch(from var(--accent) .4 calc(c * .2) h / .12);--ui-line-bright:oklch(from var(--accent) .4 calc(c * .2) h / .2);
+  --surface-t-dim:oklch(from var(--accent) .43 calc(c * .1) h);
+
+  --chat-shell-fill:linear-gradient(100deg,oklch(from var(--accent) .7 min(c,.07) h / .16),oklch(from var(--accent-2) .7 min(c,.07) h / .08)),var(--surface-shell);
+  --chat-shell-fill-solid:linear-gradient(100deg,oklch(from var(--accent) .7 min(c,.07) h / .16),oklch(from var(--accent-2) .7 min(c,.07) h / .08)),var(--surface-shell-solid);
+  --message-tint-1:oklch(from var(--accent) .7 min(c,.095) h / .16);--message-tint-2:oklch(from var(--accent-3) .7 min(c,.095) h / .12);
+  --message-edge:inset 0 1px 0 oklch(from var(--accent) .8 min(c,.1) h / .45),inset 0 0 0 1px oklch(from var(--accent) .45 min(c,.08) h / .07);
+  --surface-user:linear-gradient(135deg,oklch(from var(--accent) .89 min(c,.05) h / .94),oklch(from var(--accent-2) .91 min(c,.045) h / .94));
+
+  --ambient-1:oklch(from var(--field-1) .88 min(c,.06) h / .6);--ambient-2:oklch(from var(--field-2) .88 min(c,.06) h / .55);
+  --ambient-3:oklch(from var(--field-3) .89 min(c,.06) h / .55);--ambient-4:oklch(from var(--field-4) .89 min(c,.06) h / .5);
+  --overlay-image:linear-gradient(oklch(from var(--accent) .98 calc(c * .035) h / .2),oklch(from var(--accent) .98 calc(c * .035) h / .34));
+}
+
+/* Without a background there is no colour to follow: the primary action becomes plain ink,
+   white on the dark theme and black on the light one. */
+:root[data-palette="neutral"] {
+  --accent-ink:oklch(.93 0 0);--accent-ink-2:oklch(.8 0 0);
+  --accent-fill:oklch(.94 0 0);--accent-fill-2:oklch(.8 0 0);--on-accent:oklch(.2 0 0);
+  --accent-tint:oklch(.85 0 0 / .12);--accent-wash:linear-gradient(100deg,oklch(.85 0 0 / .14),oklch(.85 0 0 / .06));
+  --accent-line:oklch(.85 0 0 / .45);--focus-ring:oklch(.88 0 0 / .85);
+  --ambient-layers:radial-gradient(90% 46% at 50% 0%,oklch(.32 0 0 / .55),transparent);
+  /* A grey user bubble keeps its lighter step; coloured ones sit darker so reading tones clear 4.5:1. */
+  --surface-user:linear-gradient(135deg,oklch(.42 0 0 / .9),oklch(.37 0 0 / .9));
+}
+:root[data-theme="light"][data-palette="neutral"] {
+  --accent-ink:oklch(.22 0 0);--accent-ink-2:oklch(.42 0 0);
+  --accent-fill:oklch(.24 0 0);--accent-fill-2:oklch(.38 0 0);--on-accent:#fff;
+  --accent-tint:oklch(.3 0 0 / .08);--accent-wash:linear-gradient(100deg,oklch(.3 0 0 / .09),oklch(.3 0 0 / .03));
+  --accent-line:oklch(.3 0 0 / .4);--focus-ring:oklch(.3 0 0 / .75);
+  --ambient-layers:radial-gradient(90% 46% at 50% 0%,oklch(1 0 0 / .9),transparent);
+  --surface-user:linear-gradient(135deg,oklch(.89 0 0 / .94),oklch(.91 0 0 / .94));
+}

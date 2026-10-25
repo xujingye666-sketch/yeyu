@@ -1,0 +1,15 @@
+{
+  "id": "oneplus13-pjz110",
+  "measuredAt": "2026-09-05",
+  "model": "PJZ110",
+  "build": "PJZ110_16.0.7.201(CN01)",
+  "physicalPixels": {"width": 1440, "height": 3168},
+  "effectiveDensityDpi": 560,
+  "fontScale": 1,
+  "nativeWindowDp": {"width": 411, "height": 905},
+  "nativeWebViewPixels": {"width": 1440, "height": 3168},
+  "systemBarPixels": {"top": 160, "bottom": 56},
+  "browserContext": {"viewport": {"width": 411, "height": 905}, "deviceScaleFactor": 3.5, "isMobile": true, "hasTouch": true},
+  "nativeSafeAreaCss": {"top": 46, "bottom": 16},
+  "evidence": "ADB wm size/density, font_scale, dumpsys activity com.yeyu.app; native window measured, browser CSS viewport and DPR inferred; no WebView DevTools socket exposed"
+}

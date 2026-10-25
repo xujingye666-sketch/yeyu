@@ -1,0 +1,7 @@
+/* Soft keyboard geometry; 99-bootstrap.js updates these while the keyboard is open. */
+@media (max-width: 768px) {
+  :root {
+    --keyboard-offset: 0px;
+    --app-keyboard-viewport-height: 100dvh;
+  }
+}

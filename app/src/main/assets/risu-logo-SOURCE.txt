@@ -1,0 +1,11 @@
+RisuAI logo
+
+risu-logo.png is the unmodified public/logo_512.png from RisuAI v2026.10.211,
+commit 02a83695d81eb4e083453c4524b8c7d463df95aa
+(https://github.com/kwaroran/RisuAI), SHA-256
+9d77e1651beb706940d97c5a1896e2a0d8e74d0049636d521a10c4cc857ac827.
+
+RisuAI is distributed under the GNU General Public License version 3; the
+accompanying risu-logo-GPL-3.0.txt is the license file of that commit (LF line
+endings). Yeyu bundles the image so Risu character cards that reference the
+logo display it as they do in RisuAI.
