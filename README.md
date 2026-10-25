@@ -2,6 +2,14 @@
 
 夜欲是一款在 Android 手机本地运行的角色对话应用。它可以导入 SillyTavern 与 RisuAI 格式的角色卡，以及 SillyTavern 的预设和世界书，连接你自己配置的模型服务进行对话。角色、聊天和设置都保存在手机本地。
 
+<p>
+  <a href="docs/images/home.jpg"><img src="docs/images/home.jpg" width="240" alt="深色首页"></a>
+  <a href="docs/images/character-layout.jpg"><img src="docs/images/character-layout.jpg" width="240" alt="角色卡自定义排版"></a>
+  <a href="docs/images/chat-bubbles.jpg"><img src="docs/images/chat-bubbles.jpg" width="240" alt="气泡对话"></a>
+</p>
+
+以上为实际界面截图，依次为深色首页、角色卡自定义排版与气泡对话。图中的角色、背景和开场白均来自角色卡与用户配置，非应用内置内容，相关素材权利归原权利人所有。点击图片可查看原图。
+
 ## 主要功能
 
 - 导入 PNG、JSON 和 CHARX 角色卡，支持角色卡自带的世界书、开场白、正则脚本、前端页面与脚本。
