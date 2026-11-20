@@ -325,6 +325,7 @@
     {"id": "behavior.branch-return-transactions-browser", "path": "tools/tests/branch_return_transactions_browser.js", "profile": "browser", "domain": "messages", "keep": "data", "timeoutMs": 60000},
     {"id": "behavior.generation-mutation-transactions-browser", "path": "tools/tests/generation_mutation_transactions_browser.js", "profile": "browser", "domain": "messages", "keep": "data", "timeoutMs": 60000},
     {"id": "behavior.risu-execution-ownership", "path": "tools/tests/risu_execution_ownership.js", "profile": "browser", "domain": "risu", "keep": "data", "gate": "fast"},
-    {"id": "behavior.card-import-localization-browser", "path": "tools/tests/card_import_localization_browser.js", "profile": "browser", "domain": "import", "keep": "data"}
+    {"id": "behavior.card-import-localization-browser", "path": "tools/tests/card_import_localization_browser.js", "profile": "browser", "domain": "import", "keep": "data"},
+    {"id": "behavior.anti-filter-retry-stop-browser", "path": "tools/tests/anti_filter_retry_stop_browser.js", "profile": "browser", "domain": "messages", "keep": "main"}
   ]
 }

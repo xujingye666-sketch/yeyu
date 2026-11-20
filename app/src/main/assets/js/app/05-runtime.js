@@ -91,6 +91,9 @@ function normalizePromptPostProcessing(value) {
     .toLowerCase();
   return ['none', 'merge', 'semi', 'strict', 'single'].includes(mode) ? mode : 'none';
 }
+function providerSupportsToolAntiFilter(protocol) {
+  return protocol === 'openai' || protocol === 'gemini';
+}
 function makeDefaultProvider() {
   return {
     id: 'provider_default',
@@ -100,7 +103,7 @@ function makeDefaultProvider() {
     apiKey: '',
     apiKeys: [],
     activeApiKeyId: '',
-    model: 'deepseek-chat',
+    model: '',
     models: [],
     promptPostProcessing: 'none',
     enabled: true,
@@ -195,6 +198,10 @@ function normalizeProviderRecord(value, index) {
     )
   ).slice(0, 500);
   p.promptPostProcessing = normalizePromptPostProcessing(p.promptPostProcessing);
+  if (Object.prototype.hasOwnProperty.call(p, 'contextInToolDescription'))
+    p.contextInToolDescription = providerSupportsToolAntiFilter(p.protocol) && p.contextInToolDescription === true;
+  if (Object.prototype.hasOwnProperty.call(p, 'toolOutputChannel'))
+    p.toolOutputChannel = providerSupportsToolAntiFilter(p.protocol) && p.toolOutputChannel === true;
   delete p.capabilities;
   delete p.capabilityCache;
   p.enabled = p.enabled !== false;
@@ -483,6 +490,9 @@ function resolveApiRoute(task, options) {
     apiKey: provider.protocol === 'grok-subscription' ? '' : providerActiveApiKey(provider),
     model: model,
     promptPostProcessing: normalizePromptPostProcessing(provider.promptPostProcessing),
+    contextInToolDescription:
+      providerSupportsToolAntiFilter(provider.protocol) && provider.contextInToolDescription === true,
+    toolOutputChannel: providerSupportsToolAntiFilter(provider.protocol) && provider.toolOutputChannel === true,
     capabilities: {},
     translation: MODEL_ROUTE_DEFINITIONS.some(function (x) {
       return x.key === routeTask && x.translation;
@@ -760,6 +770,52 @@ function providerErrorText(raw) {
   text = text.replace(/\s+/g, ' ').trim();
   return text.length > 500 ? text.slice(0, 500) + '…' : text;
 }
+// Race an async operation against an AbortSignal without leaving unhandled rejections behind.
+// With preferSettled: true, an already-aborted signal still allows an already-buffered microtask result
+// (such as a queued ReadableStream chunk) to settle before aborting a genuinely stalled read.
+function racePromiseWithSignal(promise, signal, options) {
+  options = options || {};
+  if (!signal) return promise;
+  var makeError =
+    typeof options.makeError === 'function'
+      ? options.makeError
+      : function () {
+          var err = new Error('已取消');
+          err.name = 'AbortError';
+          return err;
+        };
+  var onAbortCleanup = typeof options.onAbort === 'function' ? options.onAbort : null;
+  if (signal.aborted && !options.preferSettled) {
+    Promise.resolve(promise).catch(function () {});
+    if (onAbortCleanup) onAbortCleanup();
+    return Promise.reject(makeError());
+  }
+  return new Promise(function (resolve, reject) {
+    var settled = false,
+      abortTimer = 0;
+    function finish(error, value) {
+      if (settled) return;
+      settled = true;
+      if (abortTimer) {
+        clearTimeout(abortTimer);
+        abortTimer = 0;
+      }
+      signal.removeEventListener('abort', onAbort);
+      if (error) reject(error);
+      else resolve(value);
+    }
+    function onAbort() {
+      if (settled) return;
+      if (onAbortCleanup) onAbortCleanup();
+      finish(makeError());
+    }
+    Promise.resolve(promise).then(function (value) {
+      finish(null, value);
+    }, finish);
+    if (signal.aborted) abortTimer = setTimeout(onAbort, 0);
+    else signal.addEventListener('abort', onAbort, { once: true });
+  });
+}
 async function fetchCompatibleCompletion(route, body, signal, options) {
   options = options || {};
   if (route.protocol === 'grok-subscription') {
@@ -801,17 +857,21 @@ async function fetchCompatibleCompletion(route, body, signal, options) {
       })
     )
       headers.Authorization = 'Bearer ' + route.apiKey;
-    resp = await fetch(nativeRequest ? nativeRequest.url : route.apiUrl + '/chat/completions', {
-      method: 'POST',
-      headers: nativeRequest ? nativeRequest.headers : headers,
-      body: JSON.stringify(nativeRequest ? nativeRequest.body : body),
-      signal: signal,
-    });
-    if (resp.ok) return nativeProtocol ? nativeProviderResponse(route, resp, !!body.stream) : resp;
+    resp = await racePromiseWithSignal(
+      fetch(nativeRequest ? nativeRequest.url : route.apiUrl + '/chat/completions', {
+        method: 'POST',
+        headers: nativeRequest ? nativeRequest.headers : headers,
+        body: JSON.stringify(nativeRequest ? nativeRequest.body : body),
+        signal: signal,
+      }),
+      signal
+    );
+    if (resp.ok) return nativeProtocol ? nativeProviderResponse(route, resp, !!body.stream, signal) : resp;
     lastStatus = resp.status;
     try {
-      lastText = await resp.text();
-    } catch (_) {
+      lastText = await racePromiseWithSignal(resp.text(), signal);
+    } catch (textError) {
+      if (signal && signal.aborted) throw textError;
       lastText = '';
     }
     // Adapt only after Gemini explicitly refuses a model-ending request. Old models keep their
@@ -1025,6 +1085,14 @@ function captureProviderForm(providerId) {
   if ($('s-model')) provider.model = $('s-model').value.trim();
   if ($('s-prompt-post-processing'))
     provider.promptPostProcessing = normalizePromptPostProcessing($('s-prompt-post-processing').value);
+  if (providerSupportsToolAntiFilter(provider.protocol)) {
+    if ($('s-context-in-tool')) provider.contextInToolDescription = $('s-context-in-tool').checked === true;
+    if ($('s-tool-output-channel')) provider.toolOutputChannel = $('s-tool-output-channel').checked === true;
+  } else {
+    if (Object.prototype.hasOwnProperty.call(provider, 'contextInToolDescription'))
+      provider.contextInToolDescription = false;
+    if (Object.prototype.hasOwnProperty.call(provider, 'toolOutputChannel')) provider.toolOutputChannel = false;
+  }
   settings.activeProviderId = provider.id;
   return provider;
 }
@@ -1259,8 +1327,17 @@ function renderProviderEditor() {
   if ($('s-model')) $('s-model').value = provider.model;
   if ($('s-prompt-post-processing'))
     $('s-prompt-post-processing').value = normalizePromptPostProcessing(provider.promptPostProcessing);
+  renderProviderAntiFilterFields(provider);
   if (typeof stscriptPromptFeatureRenderUi === 'function') stscriptPromptFeatureRenderUi();
   renderGrokSubscription();
+}
+function renderProviderAntiFilterFields(provider) {
+  var panel = $('s-provider-antifilter-panel'),
+    supported = !!(provider && providerSupportsToolAntiFilter(provider.protocol));
+  if (panel) panel.hidden = !supported;
+  if ($('s-context-in-tool')) $('s-context-in-tool').checked = supported && provider.contextInToolDescription === true;
+  if ($('s-tool-output-channel'))
+    $('s-tool-output-channel').checked = supported && provider.toolOutputChannel === true;
 }
 function providerProtocolDefaultApiUrl(protocol) {
   return (
@@ -1311,6 +1388,7 @@ function changeProviderProtocol() {
     input.value = providerProtocolDefaultApiUrl(select.value);
   provider = captureProviderForm(provider.id);
   renderProviderApiUrlHint(provider.protocol);
+  renderProviderAntiFilterFields(provider);
   if (select.value === 'grok-subscription') {
     provider.apiUrl = 'https://api.x.ai/v1';
     if (input) input.value = provider.apiUrl;

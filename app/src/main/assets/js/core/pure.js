@@ -1860,7 +1860,133 @@
     text = scanned + text.slice(cursor);
     return { source: text, slots: slots };
   }
+  // Incrementally decode one top-level string field (or first matching key in a list) from a complete or
+  // truncated JSON object. Incomplete escapes and trailing high surrogates wait for the next chunk.
+  function extractJsonStringField(raw, fieldName) {
+    var text = String(raw == null ? '' : raw),
+      len = text.length,
+      singleTarget = !Array.isArray(fieldName),
+      targets = singleTarget ? [String(fieldName || '')] : fieldName.map(String),
+      matches = Object.create(null),
+      pos = 0;
+    function skipWs() {
+      while (pos < len && (text[pos] === ' ' || text[pos] === '\t' || text[pos] === '\r' || text[pos] === '\n')) pos++;
+    }
+    function readString() {
+      if (pos >= len || text[pos] !== '"') return null;
+      pos++;
+      var out = '';
+      while (pos < len) {
+        var ch = text[pos];
+        if (ch === '"') {
+          pos++;
+          return { complete: true, value: out };
+        }
+        if (ch !== '\\') {
+          out += ch;
+          pos++;
+          continue;
+        }
+        if (pos + 1 >= len) return { complete: false, value: out };
+        var esc = text[pos + 1];
+        if (esc === 'u') {
+          if (pos + 6 > len) return { complete: false, value: out };
+          var hex = text.slice(pos + 2, pos + 6);
+          if (!/^[0-9a-fA-F]{4}$/.test(hex)) {
+            out += 'u';
+            pos += 2;
+            continue;
+          }
+          var code = parseInt(hex, 16);
+          if (code >= 0xd800 && code <= 0xdbff) {
+            // Hold an unpaired leading surrogate until the low surrogate arrives or the stream proves it standalone.
+            if (pos + 6 >= len) return { complete: false, value: out };
+            if (text[pos + 6] === '\\') {
+              if (pos + 7 >= len) return { complete: false, value: out };
+              if (text[pos + 7] === 'u' && pos + 12 > len) return { complete: false, value: out };
+            }
+          }
+          out += String.fromCharCode(code);
+          pos += 6;
+          continue;
+        }
+        var mapped = { '"': '"', '\\': '\\', '/': '/', b: '\b', f: '\f', n: '\n', r: '\r', t: '\t' }[esc];
+        out += mapped !== undefined ? mapped : esc;
+        pos += 2;
+      }
+      return { complete: false, value: out };
+    }
+    function skipValue() {
+      skipWs();
+      if (pos >= len) return false;
+      var ch = text[pos];
+      if (ch === '"') {
+        var str = readString();
+        return !!(str && str.complete);
+      }
+      if (ch === '{' || ch === '[') {
+        var depth = 0;
+        while (pos < len) {
+          var cur = text[pos];
+          if (cur === '"') {
+            var nested = readString();
+            if (!nested || !nested.complete) return false;
+            continue;
+          }
+          if (cur === '{' || cur === '[') depth++;
+          else if (cur === '}' || cur === ']') {
+            depth--;
+            if (depth === 0) {
+              pos++;
+              return true;
+            }
+          }
+          pos++;
+        }
+        return false;
+      }
+      while (pos < len && !/[,\}\]\s]/.test(text[pos])) pos++;
+      return pos < len;
+    }
+    skipWs();
+    if (pos >= len || text[pos] !== '{') return { found: false, complete: false, value: '' };
+    pos++;
+    while (pos < len) {
+      skipWs();
+      if (pos >= len || text[pos] === '}') break;
+      var key = readString();
+      if (!key || !key.complete) break;
+      skipWs();
+      if (pos >= len || text[pos] !== ':') break;
+      pos++;
+      skipWs();
+      if (targets.indexOf(key.value) >= 0) {
+        var value = readString();
+        if (value) {
+          var hit = { found: true, complete: value.complete, value: value.value, fieldName: key.value };
+          if (singleTarget || (key.value === targets[0] && (value.value || !value.complete))) return hit;
+          matches[key.value] = hit;
+          if (!value.complete) break;
+          skipWs();
+          if (pos < len && text[pos] === ',') pos++;
+          continue;
+        }
+        if (singleTarget) return { found: false, complete: false, value: '' };
+      }
+      if (!skipValue()) break;
+      skipWs();
+      if (pos < len && text[pos] === ',') pos++;
+    }
+    if (!singleTarget) {
+      for (var ti = 0; ti < targets.length; ti++) {
+        var candidate = matches[targets[ti]];
+        if (candidate && (candidate.value || !candidate.complete)) return candidate;
+      }
+    }
+    return { found: false, complete: false, value: '' };
+  }
   g.YeyuPure = {
+    extractJsonStringField: extractJsonStringField,
     protectTranslationMarkup: protectTranslationMarkup,
     deepMerge: deepMerge,
     estTokens: estTokens,

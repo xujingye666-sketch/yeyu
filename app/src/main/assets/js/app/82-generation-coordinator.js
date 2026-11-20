@@ -488,33 +488,144 @@ async function notifyPresetTaskAfterAi(target, options) {
 }
 // Decided by status and interruption kind, never by wording: gateways and CDNs (502/504/520/524) fail
 // transiently as often as origin servers do, and rewording a message must not change retry policy.
+var GENERATION_RETRY_DELAYS_MS = [1500, 3000, 6000];
 function isInitialRetryableError(error) {
   var status = Math.floor(Number(error && error.status) || 0);
-  if (status) return status >= 500 || status === 408;
-  return ['network_offline', 'network_interrupted'].includes(String((error && error.interruptionReason) || ''));
+  if (status) return status === 429 || status === 408 || status >= 500;
+  return ['network_offline', 'network_interrupted', 'first_output_timeout', 'empty_tool_call'].includes(
+    String((error && error.interruptionReason) || '')
+  );
+}
+function waitForGenerationRetry(delayMs, signal) {
+  if (isGenerationCancelled() || (signal && signal.aborted)) {
+    var immediate = new Error('已取消');
+    immediate.name = 'AbortError';
+    return Promise.reject(immediate);
+  }
+  if (!delayMs || delayMs <= 0) return Promise.resolve();
+  return new Promise(function (resolve, reject) {
+    var timer = 0,
+      settled = false;
+    function cleanup() {
+      if (timer) {
+        clearTimeout(timer);
+        timer = 0;
+      }
+      if (signal) signal.removeEventListener('abort', onAbort);
+    }
+    function onAbort() {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      var cancelErr = new Error('已取消');
+      cancelErr.name = 'AbortError';
+      reject(cancelErr);
+    }
+    if (signal) signal.addEventListener('abort', onAbort, { once: true });
+    timer = setTimeout(function () {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      if (isGenerationCancelled() || (signal && signal.aborted)) {
+        var lateCancel = new Error('已取消');
+        lateCancel.name = 'AbortError';
+        reject(lateCancel);
+      } else resolve();
+    }, delayMs);
+  });
 }
 async function requestGenerationWithRetry(requestMessages, requestTarget, segmentOptions) {
-  var attempts = 0,
-    result;
-  async function requestOnce() {
-    attempts++;
-    return await callDeepSeek(requestMessages, requestTarget, segmentOptions);
-  }
-  try {
-    result = await requestOnce();
-  } catch (error) {
-    var retryable = !error.noRetry && !isGenerationCancelled(error) && attempts === 1 && isInitialRetryableError(error);
-    if (retryable) {
-      toast('连接未成功，正在重试一次…', 'info');
-      try {
-        result = await requestOnce();
-      } catch (retryError) {
-        error = retryError;
+  var retrySignal =
+      (segmentOptions && segmentOptions.controller && segmentOptions.controller.signal) ||
+      (abortController && abortController.signal) ||
+      null,
+    retries = 0,
+    maxRetries = Array.isArray(GENERATION_RETRY_DELAYS_MS) ? GENERATION_RETRY_DELAYS_MS.length : 0;
+  while (true) {
+    try {
+      return await callDeepSeek(requestMessages, requestTarget, segmentOptions);
+    } catch (error) {
+      var retryable =
+        !error?.noRetry && !isGenerationCancelled(error) && retries < maxRetries && isInitialRetryableError(error);
+      if (!retryable) throw error;
+      var delayMs = Number(GENERATION_RETRY_DELAYS_MS[retries]) || 0;
+      retries++;
+      toast('连接未成功，正在第 ' + retries + '/' + maxRetries + ' 次重试…', 'info');
+      await waitForGenerationRetry(delayMs, retrySignal);
+      if (isGenerationCancelled()) {
+        var cancelError = new Error('已取消');
+        cancelError.name = 'AbortError';
+        throw cancelError;
       }
     }
-    if (!result) throw error;
   }
-  return result;
+}
+function isTruncatedFinishReason(finishReason) {
+  var reason = String(finishReason || '').toLowerCase();
+  return reason === 'length' || !!providerInterceptedFinishReason(reason);
+}
+function canAutoContinueTruncation(target) {
+  return !!(
+    D &&
+    D.settings &&
+    D.settings.autoContinueOnTruncation === true &&
+    target &&
+    !target.autoContinuationUsed &&
+    ['new', 'regenerate', 'swipe', 'continue'].includes(String(target.mode || 'new'))
+  );
+}
+function resolveAutoContinueNudgeText(partialContent) {
+  var raw = typeof activeCompletionPresetRaw === 'function' ? activeCompletionPresetRaw(D && D.settings) : null,
+    template = String((raw && raw.continue_nudge_prompt) || DEFAULT_CONTINUATION_POST_HISTORY_TPL || '').trim();
+  return presetContinuationNudge(template, partialContent);
+}
+function buildAutoContinueMessages(prompt, partialContent, char) {
+  var next = prompt.messages.slice(),
+    controls = prompt.built.continuationControls,
+    assistant = controls && controls.find(row => row.identifier === 'continueTarget'),
+    index = assistant ? next.findLastIndex(row => row.role === 'assistant' && row.content === assistant.content) : -1;
+  if (index >= 0) {
+    var combined = mergeContinuationContent(assistant.content, partialContent, char);
+    next[index] = Object.assign({}, next[index], { content: combined });
+    var nudgeRow = controls.find(row => row.identifier === 'continueNudge'),
+      template = prompt.built.continuationNudgeTemplate;
+    if (nudgeRow && template?.includes('{{lastChatMessage}}') &&
+        nudgeRow.content === presetContinuationNudge(template, assistant.content)) {
+      var nudgeIndex = next.findIndex((row, i) => i > index && row.role === 'user' && row.content === nudgeRow.content);
+      if (nudgeIndex >= 0) next[nudgeIndex] = Object.assign({}, next[nudgeIndex], {
+        content: presetContinuationNudge(template, combined),
+      });
+    }
+    return next;
+  }
+  // A preset can omit the history slot. A script may instead have replaced the assembled turn.
+  if (controls && !assistant) partialContent = mergeContinuationContent(prompt.baseText, partialContent, char);
+  next.push({ role: 'assistant', content: partialContent });
+  var nudge = resolveAutoContinueNudgeText(partialContent);
+  if (nudge) next.push({ role: 'user', content: nudge });
+  return next;
+}
+function mergeContinuationContent(base, addition, char) {
+  return typeof StoryDirection === 'object' && StoryDirection && typeof StoryDirection.mergeContinuation === 'function'
+    ? StoryDirection.mergeContinuation(base, addition, char)
+    : joinContinuationText(base, addition);
+}
+function mergeAutoContinuationResult(char, first, second) {
+  var firstContent = String((first && first.content) || ''),
+    secondContent = String((second && second.content) || ''),
+    mergedContent = mergeContinuationContent(firstContent, secondContent, char),
+    mergedReasoning = joinReasoningText(first && first.reasoning, second && second.reasoning);
+  return {
+    content: mergedContent,
+    display: cleanDisplayText(mergedContent, 'assistant'),
+    reasoning: mergedReasoning,
+    reasoningMs: (Number(first && first.reasoningMs) || 0) + (Number(second && second.reasoningMs) || 0),
+    reasoningCollapsed: second && second.reasoningCollapsed !== undefined ? second.reasoningCollapsed : first.reasoningCollapsed,
+    usage: mergeUsageTotals((first && first.usage) || null, (second && second.usage) || null),
+    finishReason: (second && second.finishReason) || '',
+    streamed: !!(first.streamed || second.streamed),
+    streamDraftId: (second && second.streamDraftId) || (first && first.streamDraftId) || '',
+  };
 }
 
 async function doAPICall(options) {
@@ -524,7 +635,22 @@ async function doAPICall(options) {
     ownedSession = generationSessionForTarget(target);
   if (!ownedSession) throw new Error('当前对话不可用');
   bindGenerationTargetOwnership(target, ownedSession);
-  var releaseApiOperation = beginGenerationSessionOperation(target, ownedSession);
+  var releaseApiOperation = beginGenerationSessionOperation(target, ownedSession),
+    tokenRelay;
+  function finishTokens() {
+    if (!tokenRelay) return null;
+    var delivered = tokenRelay.finish();
+    tokenRelay = null;
+    return delivered;
+  }
+  async function saveInterruption(error) {
+    if (!error || typeof error !== 'object') error = new Error(String(error || '生成中断'));
+    if (_activeStreamDraft && streamDraftOwnedByGeneration(_activeStreamDraft, target)) {
+      var saved = await autoSaveInterruptedStreamDraft(target, error, finishTokens());
+      if (saved.saved) error.autoSavedIncomplete = true;
+    }
+    throw error;
+  }
   try {
     await completionPresetAwaitRuntime();
     _qrWiQueue = [];
@@ -608,7 +734,9 @@ async function doAPICall(options) {
     target.wbMetrics = built.worldBookMetrics;
     var baseText = promptBuild.baseText,
       manualContinuation = target.mode === 'continue';
+    tokenRelay = cardFrontendStreamTokenRelay(100);
     var requestOptions = {
+      tokenRelay: tokenRelay,
       deferCommit: true,
       route: target.mode === 'impersonate' ? 'impersonate' : 'chat',
       controller: externalController,
@@ -621,21 +749,101 @@ async function doAPICall(options) {
           { signal: promptController.signal }
         );
       };
-    var result;
+    var result,
+      interruptedError = null;
     try {
       result = await requestGenerationWithRetry(messages, target, requestOptions);
     } catch (error) {
-      var initialAutoSaved = await autoSaveInterruptedStreamDraft(target, error);
-      if (initialAutoSaved && initialAutoSaved.saved) error.autoSavedIncomplete = true;
-      throw error;
+      if (
+        !isGenerationCancelled(error) &&
+        canAutoContinueTruncation(target) &&
+        error && !error.status &&
+        ['network_interrupted', 'network_offline', 'connection_timeout'].includes(error.interruptionReason) &&
+        error.partialResult &&
+        String(error.partialResult.content || '').trim()
+      ) {
+        result = error.partialResult;
+        interruptedError = error;
+      } else {
+        await saveInterruption(error);
+      }
     }
 
-    checkExternalCancellation();
+    if (
+      result &&
+      !result.toolOnly &&
+      !isGenerationCancelled() &&
+      canAutoContinueTruncation(target) &&
+      String(result.content || '').trim() &&
+      (interruptedError || isTruncatedFinishReason(result.finishReason))
+    ) {
+      target.autoContinuationUsed = true;
+      toast('回复异常中断，正在自动补写一次…', 'info');
+      tokenRelay.continueFrom(result.providerContent, (base, piece) => mergeContinuationContent(base, piece, char));
+      var continuationMessages = buildAutoContinueMessages(promptBuild, result.content, char),
+        continuationOptions = Object.assign({}, requestOptions, {
+          skipPrefill: true,
+          autoContinueBase: result.content,
+          autoContinueReasoning: result.reasoning || '',
+        });
+      try {
+        var continuedResult = await requestGenerationWithRetry(continuationMessages, target, continuationOptions);
+        if (String(continuedResult.finishReason).toLowerCase() === 'refusal')
+          throw Object.assign(new Error('模型拒绝了自动补写'), { finishReason: 'refusal' });
+        if (!String(continuedResult.content || '').trim()) throw new Error('补写未返回正文');
+        result = mergeAutoContinuationResult(char, result, continuedResult);
+      } catch (continueError) {
+        var draft = streamDraftOwnedByGeneration(_activeStreamDraft, target) ? _activeStreamDraft : null,
+          refused = String(continueError?.finishReason || '').toLowerCase() === 'refusal',
+          cancelled = isGenerationCancelled(continueError),
+          contPartial = continueError?.partialResult,
+          continueInterruption =
+            !refused && !cancelled && continueError && (continueError.interruptionReason || continueError.status)
+              ? generationInterruption(continueError, 'error')
+              : null;
+        if (refused) {
+          tokenRelay.discardSegment();
+          if (draft) checkpointStreamDraft(target, sess, result.content, { draft: draft, force: true });
+        } else if (!cancelled && contPartial?.content) {
+          result = mergeAutoContinuationResult(
+            char,
+            result,
+            Object.assign({}, contPartial, { finishReason: result.finishReason })
+          );
+        }
+        if (cancelled || continueInterruption) {
+          var stopReason = cancelled ? 'user_cancelled' : continueInterruption.kind;
+          if (!draft || !cancelled)
+            draft = checkpointStreamDraft(target, sess, result.content, {
+              draft: draft,
+              state: streamDraftStateForReason(stopReason),
+              stopReason: stopReason,
+              force: true,
+            });
+          await saveInterruption(continueError);
+        }
+        if (draft) result.streamDraftId = draft.draftId;
+        toast(
+          refused
+            ? '自动补写被模型拒绝，已保留已生成内容'
+            : '自动补写未成功，已保留已生成内容：' + String(continueError?.message || continueError || '未知错误'),
+          'info'
+        );
+        if (interruptedError) await saveInterruption(interruptedError);
+      }
+    }
+
+    if (isGenerationCancelled() || currentGenerationController()?.signal.aborted) {
+      if (!result.toolOnly && target.mode !== 'impersonate' && result.content)
+        checkpointStreamDraft(target, sess, result.content, { state: 'cancelled', stopReason: 'user_cancelled', force: true });
+      await saveInterruption(Object.assign(new Error('已取消'), { name: 'AbortError' }));
+    }
     if (result.toolOnly) {
       publishUsage(result.usage || null, target);
       return '';
     }
     if (target.mode === 'impersonate') {
+      finishTokens();
       var input = $('user-input'),
         impersonated = String(result.display || '');
       if (input) {
@@ -661,13 +869,14 @@ async function doAPICall(options) {
       streamed: result.streamed,
       viewportState: requestOptions.viewportState,
       streamDraftId: result.streamDraftId,
-      streamTokensDelivered: result.streamTokensDelivered,
+      streamTokensDelivered: finishTokens(),
     });
     checkExternalCancellation();
     assertGenerationTargetOwnership(target, sess);
     if (!target.postCommitTask && !target.presetAfterAiQueued) await notifyPresetTaskAfterAi(target);
     return risuAfterGeneration(target, options, manualContinuation ? committed : result.display);
   } finally {
+    if (tokenRelay) tokenRelay.close();
     releaseApiOperation();
   }
 }

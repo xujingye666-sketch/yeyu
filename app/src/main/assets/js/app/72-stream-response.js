@@ -108,25 +108,152 @@ function completionReasoningSignature(message) {
     message.reasoning_signature || (message.extra && message.extra.signature) || (encrypted && encrypted.data) || ''
   );
 }
-function completionFromJsonResponse(json) {
+var ANTI_FILTER_TOOL_ARG_KEYS = [
+  'content',
+  'actual_content',
+  'text',
+  'reply',
+  'response',
+  'output',
+  'message',
+  'acknowledged',
+];
+var ANTI_FILTER_TRIVIAL_ACK_PATTERN = /^(?:true|false|yes|no|ok|acknowledged|1|0)$/i;
+function buildAntiFilterToolNameSet(outputToolName, antiFilterToolNames) {
+  var names = new Set();
+  if (outputToolName) names.add(String(outputToolName));
+  if (Array.isArray(antiFilterToolNames)) {
+    antiFilterToolNames.forEach(function (name) {
+      if (name) names.add(String(name));
+    });
+  }
+  return names;
+}
+function isAntiFilterToolCallName(name, toolNameSet) {
+  var value = String(name || '');
+  return !!(value && toolNameSet && toolNameSet.size && toolNameSet.has(value));
+}
+function extractAntiFilterToolArgFromObject(argsObj) {
+  if (!argsObj || typeof argsObj !== 'object' || Array.isArray(argsObj)) return '';
+  for (var i = 0; i < ANTI_FILTER_TOOL_ARG_KEYS.length; i++) {
+    var key = ANTI_FILTER_TOOL_ARG_KEYS[i],
+      val = argsObj[key];
+    if (typeof val !== 'string' || !val) continue;
+    if (key === 'acknowledged' && ANTI_FILTER_TRIVIAL_ACK_PATTERN.test(val.trim())) continue;
+    return val;
+  }
+  return '';
+}
+function extractAntiFilterToolArgText(rawArgs) {
+  var extracted = window.YeyuPure.extractJsonStringField(rawArgs, ANTI_FILTER_TOOL_ARG_KEYS);
+  if (!extracted || !extracted.found) return { found: false, complete: false, value: '', fieldName: '' };
+  if (extracted.fieldName === 'acknowledged') {
+    if (!extracted.complete && extracted.value.length <= 16)
+      return { found: false, complete: false, value: '', fieldName: '' };
+    if (extracted.complete && ANTI_FILTER_TRIVIAL_ACK_PATTERN.test(extracted.value.trim()))
+      return { found: false, complete: false, value: '', fieldName: '' };
+  }
+  return extracted;
+}
+function hasAntiFilterToolCall(toolCalls, toolNameSet) {
+  if (!toolNameSet || !toolNameSet.size || !Array.isArray(toolCalls) || !toolCalls.length) return false;
+  return toolCalls.some(function (call) {
+    return !!(call && call.function && isAntiFilterToolCallName(call.function.name, toolNameSet));
+  });
+}
+function extractOutputChannelToolContent(toolCalls, outputToolName, toolNameSet) {
+  if (!toolNameSet || !toolNameSet.size || !Array.isArray(toolCalls) || !toolCalls.length) return '';
+  var primaryParts = [],
+    fallbackParts = [];
+  toolCalls.forEach(function (call) {
+    var fn = call && call.function;
+    if (!fn || !isAntiFilterToolCallName(fn.name, toolNameSet)) return;
+    var text = '';
+    if (fn.arguments && typeof fn.arguments === 'object') {
+      text = extractAntiFilterToolArgFromObject(fn.arguments);
+    } else if (typeof fn.arguments === 'string' && fn.arguments) {
+      var parsed = null;
+      try {
+        parsed = JSON.parse(fn.arguments);
+      } catch (_) {}
+      if (parsed && typeof parsed === 'object') text = extractAntiFilterToolArgFromObject(parsed);
+      else {
+        var extracted = extractAntiFilterToolArgText(fn.arguments);
+        if (extracted && extracted.found && extracted.value) text = extracted.value;
+      }
+    }
+    if (!text) return;
+    if (outputToolName && String(fn.name) === outputToolName) primaryParts.push(text);
+    else fallbackParts.push(text);
+  });
+  return primaryParts.length ? primaryParts.join('') : fallbackParts.join('');
+}
+function mergeOutputChannelText(plainText, toolText) {
+  var plain = String(plainText || ''),
+    tool = String(toolText || '');
+  if (!tool) return plain;
+  if (!plain.trim()) return tool;
+  if (tool.indexOf(plain.trim()) >= 0) return tool;
+  if (plain.indexOf(tool.trim()) >= 0) return plain;
+  return plain + '\n' + tool;
+}
+function normalizeOutputChannelFinishReason(reason, hasAntiFilterTools) {
+  var value = String(reason || '');
+  if (hasAntiFilterTools && (value === 'tool_calls' || value === 'function_call')) return 'stop';
+  return value;
+}
+function looksLikeSSETransport(resp, rawResponse, sawSSEEvents) {
+  if (sawSSEEvents) return true;
+  var contentType = String(
+    (resp && resp.headers && resp.headers.get && resp.headers.get('content-type')) || ''
+  ).toLowerCase();
+  if (/\btext\/event-stream\b/.test(contentType)) return true;
+  var text = String(rawResponse || ''),
+    start = text.charCodeAt(0) === 0xfeff ? 1 : 0,
+    hasSSELine = false;
+  while (start < text.length) {
+    var end = text.indexOf('\n', start);
+    if (end < 0) end = text.length;
+    var line = text.slice(start, end).trim();
+    start = end + 1;
+    if (!line) continue;
+    if (line.charAt(0) !== ':' && !/^(?:event|id|retry|data):/.test(line)) return false;
+    hasSSELine = true;
+  }
+  return hasSSELine;
+}
+function completionErrorStatus(json) {
+  return [json.status, json.error?.status, json.error?.code].map(Number).find(function (value) {
+    return Number.isInteger(value) && value >= 100 && value <= 599;
+  }) || 0;
+}
+function completionErrorFinishReason(error) {
+  return String(error.stop_reason || error.candidate?.finishReason || '').toLowerCase();
+}
+function completionFromJsonResponse(json, options) {
+  options = options || {};
   // Relays often answer quota, group or rate-limit failures with HTTP 200 and an error document; its
   // own words are the only diagnosis the user gets, so it fails as a provider error, not an empty reply.
   var error = json && typeof json === 'object' ? json.error : null;
   if (error && !(Array.isArray(json.choices) && json.choices.length)) {
-    var status = Math.floor(Number(json.status || error.status) || 0),
-      known = status >= 100 && status <= 599,
+    var status = completionErrorStatus(json),
       detail = providerErrorMessage(json),
       providerError = new Error(
-        detail || (known ? providerHttpErrorText(status) : providerErrorText(json) || '供应商返回了错误，没有生成回复')
+        detail || (status ? providerHttpErrorText(status) : providerErrorText(json) || '供应商返回了错误，没有生成回复')
       );
     providerError.interruptionReason = 'provider_error';
-    if (known) providerError.status = status;
+    providerError.finishReason = completionErrorFinishReason(error);
+    if (status) providerError.status = status;
     providerError.responseText = JSON.stringify(json);
     throw providerError;
   }
   var choice = (json && json.choices && json.choices[0]) || {},
     message = choice.message || choice.delta || {},
-    content = completionContentPart(message.content, false) || '',
+    outputToolName = String(options.outputToolName || ''),
+    antiFilterToolSet = buildAntiFilterToolNameSet(outputToolName, options.antiFilterToolNames),
+    plainContent = completionContentPart(message.content, false) || '',
+    toolContent = extractOutputChannelToolContent(message.tool_calls, outputToolName, antiFilterToolSet),
+    content = mergeOutputChannelText(plainContent, toolContent),
     reasoning =
       completionContentPart(message.reasoning_content, true) ||
       completionContentPart(message.reasoning, true) ||
@@ -137,7 +264,10 @@ function completionFromJsonResponse(json) {
     reasoning: sanitizeText(reasoning),
     reasoning_signature: completionReasoningSignature(message),
     usage: (json && json.usage) || null,
-    finishReason: message.refusal ? 'refusal' : choice.finish_reason || '',
+    finishReason: message.refusal
+      ? 'refusal'
+      : normalizeOutputChannelFinishReason(choice.finish_reason, antiFilterToolSet.size > 0),
+    sawAntiFilterToolCall: hasAntiFilterToolCall(message.tool_calls, antiFilterToolSet),
   };
 }
 
@@ -351,16 +481,57 @@ function ensureStreamContentSlots(bubble) {
 }
 async function streamResponse(resp, target, options) {
   options = options || {};
+  var outputToolName = String(options.outputToolName || ''),
+    antiFilterToolNames = Array.isArray(options.antiFilterToolNames) ? options.antiFilterToolNames : [],
+    antiFilterToolSet = buildAntiFilterToolNameSet(outputToolName, antiFilterToolNames),
+    autoContinueBase = String(options.autoContinueBase || ''),
+    autoContinueReasoning = String(options.autoContinueReasoning || ''),
+    streamSignal =
+      (options.controller && options.controller.signal) || (abortController && abortController.signal) || null,
+    firstOutputNotified = false;
+  function signalFirstOutput() {
+    if (firstOutputNotified) return;
+    firstOutputNotified = true;
+    if (typeof options.onFirstOutput === 'function') {
+      try {
+        options.onFirstOutput();
+      } catch (_) {}
+    }
+  }
+  function makeStreamSignalError() {
+    if (isGenerationCancelled()) {
+      var cancelErr = new Error('已取消');
+      cancelErr.name = 'AbortError';
+      return cancelErr;
+    }
+    var timeoutErr = new Error('连接超时');
+    timeoutErr.name = 'TimeoutAbortError';
+    timeoutErr.interruptionReason = 'first_output_timeout';
+    return timeoutErr;
+  }
+  function awaitStreamSignal(promise, onAbortCleanup, preferSettled) {
+    return racePromiseWithSignal(promise, streamSignal, {
+      makeError: makeStreamSignalError,
+      onAbort: onAbortCleanup,
+      preferSettled: preferSettled === true,
+    });
+  }
   async function readResponseText(response) {
-    if (response && typeof response.text === 'function') return await response.text();
-    if (response && typeof response.json === 'function') return JSON.stringify(await response.json());
+    if (response && typeof response.text === 'function') return await awaitStreamSignal(response.text());
+    if (response && typeof response.json === 'function')
+      return JSON.stringify(await awaitStreamSignal(response.json()));
     if (response && response.body && typeof response.body.getReader === 'function') {
       var directReader = response.body.getReader(),
         decoder = new TextDecoder('utf-8'),
-        parts = [];
+        parts = [],
+        cancelDirect = function () {
+          try {
+            Promise.resolve(directReader.cancel()).catch(function () {});
+          } catch (_) {}
+        };
       try {
         while (true) {
-          var item = await directReader.read();
+          var item = await awaitStreamSignal(directReader.read(), cancelDirect);
           if (item.done) break;
           parts.push(decoder.decode(item.value, { stream: true }));
         }
@@ -377,10 +548,15 @@ async function streamResponse(resp, target, options) {
   var thinkingLimitMessage =
     '本次回复的额度在思考阶段就用完了，正文没有生成。请调大“单次回复长度上限”，或关闭思考后重试。';
   // 没有正文时按结束原因说明：额度在思考阶段用完、供应商拦截，其余才是空响应。
-  function emptyReplyMessage(finishReason) {
-    if (String(finishReason || '').toLowerCase() === 'length') return thinkingLimitMessage;
-    var intercepted = providerInterceptedFinishReason(finishReason);
-    return intercepted ? '供应商拦截了这次回复（' + intercepted + '），没有生成正文' : 'API 返回空响应';
+  function emptyReplyError(finishReason, sawToolCall) {
+    finishReason = String(finishReason || '').toLowerCase();
+    var intercepted = providerInterceptedFinishReason(finishReason),
+      message = 'API 返回空响应';
+    if (finishReason === 'length') message = thinkingLimitMessage;
+    else if (intercepted) message = '供应商拦截了这次回复（' + intercepted + '），没有生成正文';
+    var err = Object.assign(new Error(message), { finishReason: finishReason });
+    if (sawToolCall && !intercepted && finishReason !== 'length') err.interruptionReason = 'empty_tool_call';
+    return err;
   }
   // 思考用时随消息一起保存，提交那一刻标题和折叠状态才不会跳变。流式模式按推理流计时；非流式
   // 整段返回，没有推理流可计，就用请求等待时长。
@@ -425,17 +601,22 @@ async function streamResponse(resp, target, options) {
   // A relay may label a real SSE body as application/json, so only the absence of a readable
   // stream selects the whole-body path; the reader loop below recovers whole-JSON bodies itself.
   if (!resp.body || typeof resp.body.getReader !== 'function') {
-    var direct = completionFromJsonResponse(JSON.parse(await readResponseText(resp))),
+    var direct = completionFromJsonResponse(JSON.parse(await readResponseText(resp)), {
+        outputToolName: outputToolName,
+        antiFilterToolNames: antiFilterToolNames,
+      }),
       directRaw = assistantResponseWithPrefix(options.responsePrefix, direct.content),
       directVisible = cleanDisplayText(directRaw, 'assistant'),
       directReasoning = joinReasoningText(direct.reasoning, splitAssistantResponseText(direct.content).reasoning);
+    if (directRaw.trim() || directReasoning.trim()) signalFirstOutput();
     if (isGenerationCancelled()) throw new Error('已取消');
-    if (!directRaw.trim()) throw new Error(emptyReplyMessage(direct.finishReason));
+    if (!directRaw.trim()) throw emptyReplyError(direct.finishReason, direct.sawAntiFilterToolCall);
     var directUsage = direct.usage ? mergeUsageTotals(null, direct.usage) : null,
       directReasoningMs = directReasoning ? requestWaitMs() : 0;
     if (options.deferCommit)
       return {
         content: directRaw,
+        providerContent: direct.content,
         display: directVisible,
         reasoning: directReasoning,
         reasoningMs: directReasoningMs,
@@ -464,6 +645,7 @@ async function streamResponse(resp, target, options) {
     streamRefused = false,
     streamEnded = false,
     sawSSEEvents = false,
+    sawAntiFilterToolCall = false,
     readerReleased = false;
   let activeDraft = null,
     streamDraftIdentity = streamDraftTargetIdentity(target, sess);
@@ -484,7 +666,7 @@ async function streamResponse(resp, target, options) {
       mediaRevisions: Object.create(null),
     };
   const paintEpoch = ++_streamPaintEpoch,
-    tokenRelay = cardFrontendStreamTokenRelay(100);
+    tokenRelay = options.tokenRelay || cardFrontendStreamTokenRelay(100);
   let paintPending = false,
     lastPaint = 0,
     paintFrame = 0,
@@ -615,7 +797,11 @@ async function streamResponse(resp, target, options) {
   }
   // 没有正文、也没有可显示的思考块时，这一轮什么都画不出来，底部的「生成中」指示继续留着。
   function streamHasVisibleOutput() {
-    return !!String(full || '').trim() || !!(D.settings.showThinking && String(reasoningFull || '').trim());
+    return (
+      !!String(full || '').trim() ||
+      !!autoContinueBase.trim() ||
+      !!(D.settings.showThinking && String(reasoningFull || '').trim())
+    );
   }
   function notePaintCost(startedAt) {
     var spent = performance.now() - startedAt;
@@ -698,9 +884,14 @@ async function streamResponse(resp, target, options) {
     paintFrame = 0;
     paintPending = false;
   }
+  function roundDraftText() {
+    var received = assistantResponseWithPrefix(options.responsePrefix, full);
+    if (!autoContinueBase) return received;
+    return streamRefused ? autoContinueBase : mergeContinuationContent(autoContinueBase, received, char);
+  }
   function checkpointReceivedText(force) {
-    if (isImpersonate || !full) return;
-    var checkpointed = checkpointStreamDraft(target, sess, assistantResponseWithPrefix(options.responsePrefix, full), {
+    if (isImpersonate || (!full && !autoContinueBase)) return;
+    var checkpointed = checkpointStreamDraft(target, sess, roundDraftText(), {
       draft: activeDraft,
       state: 'streaming',
       force: force === true,
@@ -719,9 +910,7 @@ async function streamResponse(resp, target, options) {
       if (paintEpoch !== _streamPaintEpoch || (streamPaintDone && !finalPaint)) return;
       lastPaint = performance.now();
       var paintStartedAt = lastPaint,
-        streamed = splitAssistantResponseText(full),
-        rawDraftText = assistantResponseWithPrefix(options.responsePrefix, full),
-        visibleDraftText = cleanDisplayText(rawDraftText, 'assistant');
+        streamed = splitAssistantResponseText(full);
       if (full.length) firstContentHandled = true;
       if (!finalPaint && document.visibilityState === 'hidden') return;
       if (!finalPaint && !isContinuation && !isRegeneration && !streamHasVisibleOutput()) return;
@@ -737,19 +926,11 @@ async function streamResponse(resp, target, options) {
       var openedThink = el.querySelector('.stream-reasoning-slot > details.think-block');
       if (openedThink) streamThinkOpen = openedThink.open === true;
       removeStreamCursor(el);
-      var draft = visibleDraftText,
-        combined =
-          isContinuation &&
-          typeof StoryDirection === 'object' &&
-          StoryDirection &&
-          typeof StoryDirection.mergeContinuation === 'function'
-            ? StoryDirection.mergeContinuation(continuedBase, draft, char)
-            : isContinuation
-              ? joinContinuationText(continuedBase, draft)
-              : draft,
+      var draft = cleanDisplayText(roundDraftText(), 'assistant'),
+        combined = isContinuation ? mergeContinuationContent(continuedBase, draft, char) : draft,
         liveReasoning = joinReasoningText(
-          isContinuation ? String((targetMessage && targetMessage.reasoning) || '') : '',
-          joinReasoningText(reasoningFull, streamed.reasoning)
+          isContinuation && targetMessage ? targetMessage.reasoning : '',
+          joinReasoningText(autoContinueReasoning, joinReasoningText(reasoningFull, streamed.reasoning))
         ),
         previewMessage = targetMessage,
         paintKey = liveReasoning + '\u0000' + combined,
@@ -916,6 +1097,49 @@ async function streamResponse(resp, target, options) {
     return activeBubble;
   }
 
+  var toolCallStreams = Object.create(null);
+  function consumeOutputChannelToolDeltas(toolCalls) {
+    if (!antiFilterToolSet.size || !Array.isArray(toolCalls) || !toolCalls.length) return '';
+    var pieces = '';
+    toolCalls.forEach(function (call) {
+      if (!call || typeof call !== 'object') return;
+      var index = call.index == null ? 0 : Number(call.index),
+        entry = toolCallStreams[index];
+      if (!entry) {
+        entry = { name: '', argsBuffer: '', emitted: '', fieldName: '' };
+        toolCallStreams[index] = entry;
+      }
+      var fn = call.function;
+      if (fn && typeof fn === 'object') {
+        if (typeof fn.name === 'string' && fn.name) entry.name = fn.name;
+        if (typeof fn.arguments === 'string' && fn.arguments) entry.argsBuffer += fn.arguments;
+      }
+      if (!isAntiFilterToolCallName(entry.name, antiFilterToolSet)) return;
+      sawAntiFilterToolCall = true;
+      if (!entry.argsBuffer) return;
+      var extracted = entry.fieldName
+        ? window.YeyuPure.extractJsonStringField(entry.argsBuffer, entry.fieldName)
+        : outputToolName && entry.name === outputToolName
+          ? window.YeyuPure.extractJsonStringField(entry.argsBuffer, 'content')
+          : extractAntiFilterToolArgText(entry.argsBuffer);
+      if (extracted && extracted.found && (extracted.value || entry.fieldName)) {
+        if (!entry.fieldName) entry.fieldName = extracted.fieldName || 'content';
+        if (extracted.value.length > entry.emitted.length) {
+          pieces += extracted.value.slice(entry.emitted.length);
+          entry.emitted = extracted.value;
+        }
+      }
+    });
+    return pieces;
+  }
+  function markStreamRefused() {
+    if (streamRefused) return;
+    streamRefused = true;
+    if (autoContinueBase) {
+      tokenRelay.discardSegment();
+      if (activeDraft) checkpointReceivedText(true);
+    }
+  }
   function consumeSSEEvents(events) {
     events = events || [];
     if (events.length) sawSSEEvents = true;
@@ -934,51 +1158,62 @@ async function streamResponse(resp, target, options) {
         } catch (_) {
           providerBody = String(j.error || '');
         }
-        var providerStatus = Math.floor(Number(j.status || (j.error && j.error.status)) || 0),
+        var providerStatus = completionErrorStatus(j),
           providerText = providerErrorText(j),
-          providerMessage =
-            providerStatus >= 100 && providerStatus <= 599
-              ? providerHttpErrorText(providerStatus, providerText)
-              : providerText || '供应商在回复途中返回了错误',
+          providerMessage = providerStatus
+            ? providerHttpErrorText(providerStatus, providerText)
+            : providerText || '供应商在回复途中返回了错误',
           providerError = new Error(providerMessage);
-        providerError.interruptionReason = j.interruptionReason || 'provider_error';
-        if (providerStatus >= 100 && providerStatus <= 599) providerError.status = providerStatus;
+        providerError.interruptionReason = providerStatus ? 'provider_error' : j.interruptionReason || 'provider_error';
+        providerError.finishReason = completionErrorFinishReason(j.error) || finishReason;
+        if (providerError.finishReason === 'refusal') markStreamRefused();
+        if (providerStatus) providerError.status = providerStatus;
         providerError.responseText = providerBody;
         throw providerError;
       }
       if (j.usage) finalUsage = j.usage;
       var choice = j.choices?.[0] || {},
-        delta = choice.delta || {};
-      if (choice.finish_reason) finishReason = choice.finish_reason;
-      if (delta.refusal) streamRefused = true;
+        delta = choice.delta || choice.message || {};
+      if (choice.finish_reason)
+        finishReason = normalizeOutputChannelFinishReason(choice.finish_reason, antiFilterToolSet.size > 0);
+      if (delta.refusal || choice.message?.refusal || String(finishReason).toLowerCase() === 'refusal') markStreamRefused();
       if (streamRefused) finishReason = 'refusal';
       var reasoning =
         completionContentPart(delta.reasoning_content, true) ||
         completionContentPart(delta.reasoning, true) ||
         completionContentPart(delta.thinking, true) ||
         '';
-      var cont = completionContentPart(delta.content, false) || '';
+      var plainCont = completionContentPart(delta.content, false) || '',
+        toolCont = consumeOutputChannelToolDeltas(delta.tool_calls),
+        cont = plainCont && toolCont ? plainCont + toolCont : toolCont || plainCont;
       if (reasoning) {
+        signalFirstOutput();
         reasoningFull += sanitizeText(reasoning);
         if (!isImpersonate) noteReasoningDelta();
       }
       if (cont) {
+        signalFirstOutput();
         full += sanitizeText(cont);
         checkpointReceivedText(false);
         noteContentDelta();
-        if (tokenRelay) tokenRelay.push(full);
+        if (!(autoContinueBase && streamRefused)) tokenRelay.push(full);
       }
       if ((reasoning || cont) && !isImpersonate) paintStream(false);
     }
   }
-  async function releaseReader() {
+  function releaseReader() {
     if (readerReleased) return;
     readerReleased = true;
+    // Never await reader.cancel(): a stalled upstream stream or TransformStream can hold cancel() open
+    // indefinitely and pin the UI on "正在停止" until the app is killed.
     if (typeof reader.cancel === 'function') {
       try {
-        await reader.cancel();
+        Promise.resolve(reader.cancel()).catch(function () {});
       } catch (_) {}
     }
+  }
+  function readStreamChunk() {
+    return awaitStreamSignal(reader.read(), releaseReader, true);
   }
   // A read whose bytes are already buffered resolves on the microtask queue, so a provider that keeps
   // the socket full lets this loop run for the whole reply without the event loop ever coming back —
@@ -1015,7 +1250,7 @@ async function streamResponse(resp, target, options) {
   }
   try {
     while (true) {
-      const { done, value } = await reader.read();
+      const { done, value } = await readStreamChunk();
       lastDataAt = Date.now();
       if (stallWatch) noteGenerationStall(0);
       if (done) break;
@@ -1034,7 +1269,7 @@ async function streamResponse(resp, target, options) {
         throw readAbort;
       }
       if (streamEnded) {
-        await releaseReader();
+        releaseReader();
         if (isGenerationCancelled()) {
           var doneAbort = new Error('流式响应已取消');
           doneAbort.name = 'AbortError';
@@ -1051,29 +1286,40 @@ async function streamResponse(resp, target, options) {
       consumeSSEEvents(tailParsed.events);
     }
     stopStallWatch();
-    if (!full.trim() && rawResponse.trim()) {
+    var parsedWholeJson = false,
+      trimmedRaw = !sawSSEEvents && !full.trim() ? rawResponse.trim() : '';
+    if (trimmedRaw) {
       var wholeJson = null;
       try {
-        wholeJson = JSON.parse(rawResponse.trim());
+        wholeJson = JSON.parse(trimmedRaw);
       } catch (_) {}
-      if (wholeJson) {
-        var compatible = completionFromJsonResponse(wholeJson);
+      if (isObjectRecord(wholeJson)) {
+        parsedWholeJson = true;
+        var compatible = completionFromJsonResponse(wholeJson, {
+          outputToolName: outputToolName,
+          antiFilterToolNames: antiFilterToolNames,
+        });
         full = compatible.content;
         reasoningFull = joinReasoningText(reasoningFull, compatible.reasoning);
         finalUsage = compatible.usage || finalUsage;
         finishReason = compatible.finishReason || finishReason;
+        if (compatible.sawAntiFilterToolCall) sawAntiFilterToolCall = true;
+        if (String(finishReason).toLowerCase() === 'refusal') markStreamRefused();
+        if (full.trim() || reasoningFull.trim()) signalFirstOutput();
       }
     }
+    if (!parsedWholeJson && !streamEnded && !finishReason && looksLikeSSETransport(resp, rawResponse, sawSSEEvents))
+      throw Object.assign(new Error('流在协议结束前关闭'), { interruptionReason: 'network_interrupted' });
   } catch (e) {
     stopStallWatch();
-    if (tokenRelay) tokenRelay.close();
+    if (!options.tokenRelay) tokenRelay.close();
     streamPaintDone = true;
     stopReasoningTicker();
     clearStreamPendingIndicator();
     cancelPendingPaint();
     dropStreamRegexPreviews();
     if (risuStream) dropRisuStreamPreviews(streamDisplayState);
-    await releaseReader();
+    releaseReader();
     clearStreamCursors();
     if ((isContinuation || isRegeneration) && visible) restoreTargetBubble(target);
     var userCancelled = isGenerationCancelled(e),
@@ -1082,8 +1328,30 @@ async function streamResponse(resp, target, options) {
     checkpointReceivedText(true);
     if (activeDraft) await flushActiveStreamDraft(draftReason);
     if (userCancelled) throw new Error('已取消');
+    var partialResult = null;
+    if (full.trim()) {
+      var partialSeparated = splitAssistantResponseText(full),
+        partialContent = assistantResponseWithPrefix(options.responsePrefix, full),
+        partialReasoning = joinReasoningText(reasoningFull, partialSeparated.reasoning);
+      partialResult = {
+        content: partialContent,
+        providerContent: full,
+        display: cleanDisplayText(partialContent, 'assistant'),
+        reasoning: partialReasoning,
+        reasoningMs: partialReasoning
+          ? reasoningElapsedMs || (reasoningStartedAt ? performance.now() - reasoningStartedAt : requestWaitMs())
+          : 0,
+        reasoningCollapsed: !streamThinkOpen,
+        usage: finalUsage ? mergeUsageTotals(null, finalUsage) : null,
+        finishReason: finishReason,
+        streamed: sawSSEEvents,
+        streamDraftId: (activeDraft && activeDraft.draftId) || '',
+      };
+    }
+    if (e && e.interruptionReason === 'first_output_timeout') throw e;
     if (e && e.interruptionReason === 'provider_error') {
       e.noRetry = !!(full || reasoningFull);
+      if (partialResult) e.partialResult = partialResult;
       throw e;
     }
     var streamError = new Error(
@@ -1095,14 +1363,16 @@ async function streamResponse(resp, target, options) {
       (interruption && interruption.kind) || (navigator.onLine === false ? 'network_offline' : 'network_interrupted');
     if (e && e.status) streamError.status = e.status;
     if (e && e.responseText) streamError.responseText = e.responseText;
+    if (streamRefused) streamError.finishReason = 'refusal';
+    if (partialResult) streamError.partialResult = partialResult;
     throw streamError;
   }
 
   if (isGenerationCancelled()) {
-    if (tokenRelay) tokenRelay.close();
+    if (!options.tokenRelay) tokenRelay.close();
     throw new Error('已取消');
   }
-  var streamTokensDelivered = tokenRelay ? tokenRelay.finish() : null;
+  var streamTokensDelivered = options.tokenRelay ? null : tokenRelay.finish();
   checkpointReceivedText(true);
   if (!isImpersonate) paintStream(true);
   // No further prefix is coming, so anything still waiting for the preview lane would only delay the
@@ -1113,7 +1383,7 @@ async function streamResponse(resp, target, options) {
     content = assistantResponseWithPrefix(options.responsePrefix, full),
     reasoning = joinReasoningText(reasoningFull, separated.reasoning),
     display = cleanDisplayText(content, 'assistant');
-  if (!content.trim()) throw new Error(emptyReplyMessage(finishReason));
+  if (!content.trim()) throw emptyReplyError(finishReason, sawAntiFilterToolCall);
   if (activeDraft) await flushActiveStreamDraft('streaming');
   var usageTotal = finalUsage ? mergeUsageTotals(null, finalUsage) : null,
     // 正文到达时定格的用时；正文一直没到就算到流结束，整段返回的则是请求等待时长。
@@ -1122,6 +1392,7 @@ async function streamResponse(resp, target, options) {
       : 0,
     result = {
       content: content,
+      providerContent: full,
       display: display,
       reasoning: reasoning,
       reasoningMs: thinkingMs,

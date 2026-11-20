@@ -58,10 +58,10 @@ runStreamPage(async scenario => {
     assert.strictEqual(session.msgs[0].content, '原回复后续', '续写必须接在原消息正文之后');
     assert.strictEqual(joinContinuationText('原回复。', '后续内容。'), '原回复。\\n\\n后续内容。', '原文已成句时续写另起段落');
     setGenerationState('streaming');
-    await streamResponse(body([chunk('新回复')]), {...target, mode: 'regenerate'}, {});
+    await streamResponse(body([chunk('新回复'), done]), {...target, mode: 'regenerate'}, {});
     assert.strictEqual(session.msgs[0].content, '新回复', '重新生成必须替换原消息正文');
     setGenerationState('streaming');
-    await streamResponse(body([sse({choices: [{delta: {reasoning_content: '内部分析', content: '纯正文'}}]})]), {...target, mode: 'regenerate'}, {});
+    await streamResponse(body([sse({choices: [{delta: {reasoning_content: '内部分析', content: '纯正文'}}]}), done]), {...target, mode: 'regenerate'}, {});
     assert.strictEqual(session.msgs[0].content, '纯正文', 'reasoning_content 不得混入正文');
     assert.strictEqual(session.msgs[0].reasoning, '内部分析', 'reasoning_content 必须存入思考字段');
     assert.strictEqual(session.msgs.length, 1, '三次写回都落在同一条消息上');

@@ -152,6 +152,7 @@ let server;
     try {
       ensureProviderSettings(D.settings);
       activeProviderForSettings(D.settings).apiKey = 'structured-probe-key';
+      activeProviderForSettings(D.settings).model = 'structured-probe-model';
       D.settings.maxTokens = 2048;
       const run = async () => requestStructuredJson('系统', '用户', {
         route: 'memorySummary',

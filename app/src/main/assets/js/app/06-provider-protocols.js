@@ -79,6 +79,67 @@ const GEMINI_MAX_STOP_SEQUENCES = 5;
 // SillyTavern 1.19.0 src/prompt-converters.js default promptPlaceholder.
 const NATIVE_PROMPT_PLACEHOLDER = '[Start a new chat]';
 
+function geminiToolSchema(schema) {
+  if (!schema || typeof schema !== 'object' || Array.isArray(schema)) return undefined;
+  var out = {},
+    rawType = typeof schema.type === 'string' ? schema.type.toUpperCase() : '';
+  if (rawType) out.type = rawType;
+  if (typeof schema.description === 'string' && schema.description) out.description = schema.description;
+  if (Array.isArray(schema.enum) && schema.enum.length) out.enum = schema.enum.slice();
+  if (Array.isArray(schema.required) && schema.required.length) out.required = schema.required.map(String);
+  if (schema.items && typeof schema.items === 'object') {
+    var items = geminiToolSchema(schema.items);
+    if (items) out.items = items;
+  }
+  if (schema.properties && typeof schema.properties === 'object' && !Array.isArray(schema.properties)) {
+    var props = {};
+    Object.keys(schema.properties).forEach(function (key) {
+      var prop = geminiToolSchema(schema.properties[key]);
+      if (prop) props[key] = prop;
+    });
+    if (Object.keys(props).length) out.properties = props;
+  }
+  // Gemini v1beta rejects an OBJECT schema with empty properties; omit parameters when nothing is declared.
+  if (out.type === 'OBJECT' && (!out.properties || !Object.keys(out.properties).length)) return undefined;
+  return out;
+}
+// Checked 2026-11-20: https://ai.google.dev/api/caching (FunctionDeclaration, FunctionCallingConfig)
+function geminiToolsFromOpenAI(tools, toolChoice) {
+  var declarations = (Array.isArray(tools) ? tools : [])
+    .map(function (tool) {
+      var fn = tool && tool.type === 'function' && tool.function && typeof tool.function === 'object' ? tool.function : null;
+      if (!fn || !fn.name) return null;
+      var decl = { name: String(fn.name) };
+      if (typeof fn.description === 'string' && fn.description) decl.description = fn.description;
+      var params = geminiToolSchema(fn.parameters);
+      if (params) decl.parameters = params;
+      return decl;
+    })
+    .filter(Boolean);
+  if (!declarations.length) return null;
+  var out = { tools: [{ functionDeclarations: declarations }] };
+  if (toolChoice === 'none') out.toolConfig = { functionCallingConfig: { mode: 'NONE' } };
+  else if (toolChoice === 'required') out.toolConfig = { functionCallingConfig: { mode: 'ANY' } };
+  else if (
+    toolChoice &&
+    typeof toolChoice === 'object' &&
+    toolChoice.type === 'function' &&
+    toolChoice.function &&
+    toolChoice.function.name
+  ) {
+    out.toolConfig = {
+      functionCallingConfig:
+        declarations.length > 1
+          ? { mode: 'ANY' }
+          : {
+              mode: 'ANY',
+              allowedFunctionNames: [String(toolChoice.function.name)],
+            },
+    };
+  }
+  return out;
+}
+
 function anthropicModelFeatures(model) {
   var name = String(model || '').toLowerCase(),
     // Minor versions are one or two digits; a dated suffix (claude-sonnet-4-20250514) means x.0.
@@ -313,6 +374,11 @@ function nativeProviderRequest(route, body) {
       if (body.response_format.json_schema && body.response_format.json_schema.schema)
         config.responseJsonSchema = body.response_format.json_schema.schema;
     }
+    var geminiTools = geminiToolsFromOpenAI(body.tools, body.tool_choice);
+    if (geminiTools) {
+      wire.tools = geminiTools.tools;
+      if (geminiTools.toolConfig) wire.toolConfig = geminiTools.toolConfig;
+    }
     url =
       base +
       '/models/' +
@@ -416,8 +482,117 @@ function nativeProviderStopError(protocol, stop, hasContent) {
     candidate: stop,
   };
 }
+function geminiEncodeJsonStringFragment(value) {
+  return JSON.stringify(String(value == null ? '' : value)).slice(1, -1);
+}
+function geminiStreamFunctionCallDeltas(call, toolState) {
+  if (!call || typeof call !== 'object') return [];
+  var deltas = [],
+    name = typeof call.name === 'string' && call.name ? call.name : '',
+    active = toolState.active;
+  if (!active || active.closed || (name && active.name && name !== active.name)) {
+    if (active && active.openedField && !active.closed) {
+      deltas.push({ index: active.index, function: { arguments: '"}' } });
+      active.closed = true;
+    }
+    active = {
+      index: toolState.nextIndex++,
+      id: String(call.id || 'call_gemini_' + toolState.nextIndex),
+      name: name,
+      announced: false,
+      openedField: '',
+      emitted: '',
+      closed: false,
+    };
+    toolState.active = active;
+  } else {
+    if (!active.name && name) active.name = name;
+    if (!active.id && call.id) active.id = String(call.id);
+  }
+  function pushChunk(argsChunk) {
+    var entry = { index: active.index, function: { arguments: argsChunk } };
+    if (!active.announced) {
+      active.announced = true;
+      entry.id = active.id;
+      entry.type = 'function';
+      if (active.name) entry.function.name = active.name;
+    }
+    deltas.push(entry);
+  }
+  var partials = Array.isArray(call.partialArgs) ? call.partialArgs : [];
+  if (partials.length) {
+    partials.forEach(function (fragment) {
+      if (!fragment || typeof fragment !== 'object') return;
+      var match = /^\$\.([A-Za-z0-9_]+)$/.exec(String(fragment.jsonPath || ''));
+      if (!match || typeof fragment.stringValue !== 'string') return;
+      var field = match[1],
+        piece = fragment.stringValue;
+      if (!active.openedField) {
+        active.openedField = field;
+        active.emitted = piece;
+        pushChunk('{' + JSON.stringify(field) + ':"' + geminiEncodeJsonStringFragment(piece));
+      } else if (active.openedField === field) {
+        active.emitted += piece;
+        pushChunk(geminiEncodeJsonStringFragment(piece));
+      }
+    });
+    if (call.willContinue !== true && active.openedField && !active.closed) {
+      pushChunk('"}');
+      active.closed = true;
+    }
+    return deltas;
+  }
+  if (call.args && typeof call.args === 'object' && !Array.isArray(call.args)) {
+    var argKeys = Object.keys(call.args);
+    // An empty args:{} placeholder frame may precede partialArgs chunks; keep the call open without emitting "{}".
+    if (!argKeys.length) return deltas;
+    var stringKey =
+      typeof call.args.content === 'string'
+        ? 'content'
+        : argKeys.find(function (key) {
+            return typeof call.args[key] === 'string';
+          }) || '';
+    if (active.openedField && stringKey === active.openedField) {
+      var nextText = call.args[stringKey],
+        addition = nextText.startsWith(active.emitted) ? nextText.slice(active.emitted.length) : nextText;
+      if (addition) {
+        active.emitted += addition;
+        pushChunk(geminiEncodeJsonStringFragment(addition));
+      }
+      if (call.willContinue !== true && !active.closed) {
+        pushChunk('"}');
+        active.closed = true;
+      }
+      return deltas;
+    }
+    if (stringKey && call.willContinue === true) {
+      active.openedField = stringKey;
+      active.emitted = call.args[stringKey];
+      pushChunk('{' + JSON.stringify(stringKey) + ':"' + geminiEncodeJsonStringFragment(active.emitted));
+      return deltas;
+    }
+    if (!active.closed) {
+      if (stringKey && !active.announced) {
+        // Keep the field open in case a proxy emits subsequent chunks for the same call; closed on stream end.
+        active.openedField = stringKey;
+        active.emitted = call.args[stringKey];
+        pushChunk('{' + JSON.stringify(stringKey) + ':"' + geminiEncodeJsonStringFragment(active.emitted));
+      } else {
+        pushChunk(JSON.stringify(call.args));
+        active.closed = true;
+      }
+    }
+  }
+  return deltas;
+}
+function geminiFlushOpenToolCallDelta(toolState) {
+  var active = toolState && toolState.active;
+  if (!active || !active.openedField || active.closed) return null;
+  active.closed = true;
+  return { index: active.index, function: { arguments: '"}' } };
+}
 // streamChunk: one frame of a stream, where a usage-only frame without candidates is normal.
-function nativeProviderCompletion(protocol, json, hasContent, streamChunk) {
+function nativeProviderCompletion(protocol, json, hasContent, streamChunk, toolState) {
   if (json.error) return json;
   if (protocol === 'gemini' && json.promptFeedback && json.promptFeedback.blockReason)
     return { error: geminiBlockError(json.promptFeedback) };
@@ -425,18 +600,46 @@ function nativeProviderCompletion(protocol, json, hasContent, streamChunk) {
     return { error: geminiNoCandidateError(json) };
   var candidate = (json.candidates && json.candidates[0]) || {},
     parts = protocol === 'anthropic' ? json.content || [] : (candidate.content && candidate.content.parts) || [],
-    message = { role: 'assistant', content: '', reasoning_content: '' };
+    message = { role: 'assistant', content: '', reasoning_content: '' },
+    toolCalls = [];
   parts.forEach(function (part) {
     if (part.signature || part.thoughtSignature) message.reasoning_signature = part.signature || part.thoughtSignature;
     if (protocol === 'anthropic' && part.type === 'thinking') message.reasoning_content += part.thinking || '';
     else if (typeof part.text === 'string') message[part.thought ? 'reasoning_content' : 'content'] += part.text;
+    else if (protocol === 'gemini' && part.functionCall && typeof part.functionCall === 'object') {
+      if (streamChunk && toolState) {
+        toolCalls.push.apply(toolCalls, geminiStreamFunctionCallDeltas(part.functionCall, toolState));
+      } else {
+        var fc = part.functionCall,
+          argsObj = fc.args && typeof fc.args === 'object' ? fc.args : {};
+        toolCalls.push({
+          id: String(fc.id || 'call_gemini_' + (toolCalls.length + 1)),
+          type: 'function',
+          function: {
+            name: String(fc.name || ''),
+            arguments: JSON.stringify(argsObj),
+          },
+        });
+      }
+    }
   });
+  if (toolCalls.length) message.tool_calls = toolCalls;
+  var finish = nativeProviderFinishReason(json.stop_reason || candidate.finishReason);
+  if (protocol === 'gemini' && streamChunk && finish && toolState) {
+    var closing = geminiFlushOpenToolCallDelta(toolState);
+    if (closing) {
+      if (!message.tool_calls) message.tool_calls = [];
+      message.tool_calls.push(closing);
+    }
+  }
+  var hasToolOutput = !!(message.tool_calls && message.tool_calls.length) || !!(toolState && toolState.sawToolCalls);
   var error = nativeProviderStopError(
     protocol,
     protocol === 'anthropic' ? json : candidate,
-    hasContent || !!message.content.trim()
+    hasContent || !!message.content.trim() || hasToolOutput
   );
   if (error) return { error: error };
+  if (protocol === 'gemini' && finish === 'stop' && hasToolOutput) finish = 'tool_calls';
   return {
     id: json.id || json.responseId || '',
     object: 'chat.completion',
@@ -445,19 +648,21 @@ function nativeProviderCompletion(protocol, json, hasContent, streamChunk) {
       {
         index: 0,
         message: message,
-        finish_reason: nativeProviderFinishReason(json.stop_reason || candidate.finishReason),
+        finish_reason: finish,
       },
     ],
     usage: nativeProviderUsage(protocol, protocol === 'anthropic' ? json.usage : json.usageMetadata),
   };
 }
-function nativeProviderResponse(route, response, streaming) {
+function nativeProviderResponse(route, response, streaming, signal) {
   var headers = new Headers(response.headers),
     protocol = route.protocol;
   headers.delete('content-length');
   headers.delete('content-encoding');
   // Transform JSON incrementally too: fetchCompatibleCompletion must not wait for the whole body,
   // otherwise existing cancellation/idle readers could not interrupt a stalled non-stream response.
+  // Drive the upstream reader directly instead of pipeThrough(TransformStream) so aborting the
+  // request immediately breaks a stalled Gemini/Anthropic SSE connection without hanging on cancel().
   var decoder = new TextDecoder(),
     encoder = new TextEncoder(),
     buffer = '',
@@ -465,14 +670,56 @@ function nativeProviderResponse(route, response, streaming) {
     hasContent = false,
     geminiCandidateSeen = false,
     geminiLastFrame = null,
-    finished = false;
+    geminiToolState = { nextIndex: 0, active: null, sawToolCalls: false },
+    finished = false,
+    upstream = response.body && typeof response.body.getReader === 'function' ? response.body.getReader() : null,
+    upstreamCancelled = false,
+    streamController = null,
+    enqueuedInPull = false;
+  function cancelUpstream() {
+    if (signal) signal.removeEventListener('abort', onAbort);
+    if (!upstream || upstreamCancelled) return;
+    upstreamCancelled = true;
+    try {
+      Promise.resolve(upstream.cancel()).catch(function () {});
+    } catch (_) {}
+  }
+  function onAbort() {
+    if (finished) return;
+    finished = true;
+    cancelUpstream();
+    if (streamController) {
+      try {
+        var abortError = new Error('已取消');
+        abortError.name = 'AbortError';
+        streamController.error(abortError);
+      } catch (_) {}
+    }
+  }
+  function enqueueBytes(controller, bytes) {
+    enqueuedInPull = true;
+    controller.enqueue(bytes);
+  }
   function emit(controller, value) {
-    controller.enqueue(encoder.encode('data: ' + JSON.stringify(value) + '\n\n'));
+    enqueueBytes(controller, encoder.encode('data: ' + JSON.stringify(value) + '\n\n'));
+  }
+  function closeStream(controller) {
+    if (!finished) finished = true;
+    cancelUpstream();
+    try {
+      controller.close();
+    } catch (_) {}
+  }
+  function failStream(controller, error) {
+    if (finished) return;
+    finished = true;
+    cancelUpstream();
+    controller.error(error);
   }
   function end(controller) {
     if (finished) return;
     finished = true;
-    controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+    enqueueBytes(controller, encoder.encode('data: [DONE]\n\n'));
   }
   function event(controller, raw) {
     if (finished || !raw.trim()) return;
@@ -503,10 +750,9 @@ function nativeProviderResponse(route, response, streaming) {
       mappedUsage = null;
     if (json.error || json.type === 'error' || (json.promptFeedback && json.promptFeedback.blockReason)) {
       emit(controller, {
-        error:
-          json.error || json.type === 'error'
-            ? { message: providerErrorText(json.error || json) }
-            : geminiBlockError(json.promptFeedback),
+        status: json.status,
+        error: json.error ||
+          (json.type === 'error' ? { message: providerErrorText(json) } : geminiBlockError(json.promptFeedback)),
       });
       end(controller);
       return;
@@ -514,7 +760,7 @@ function nativeProviderResponse(route, response, streaming) {
     if (protocol === 'gemini') {
       geminiLastFrame = json;
       if (geminiHasCandidates(json)) geminiCandidateSeen = true;
-      var completion = nativeProviderCompletion(protocol, json, hasContent, true);
+      var completion = nativeProviderCompletion(protocol, json, hasContent, true, geminiToolState);
       if (completion.error) {
         emit(controller, completion);
         end(controller);
@@ -522,6 +768,7 @@ function nativeProviderResponse(route, response, streaming) {
       }
       var choice = completion.choices[0];
       delta = choice.message;
+      if (delta.tool_calls && delta.tool_calls.length) geminiToolState.sawToolCalls = true;
       finish = choice.finish_reason;
       mappedUsage = completion.usage;
     } else {
@@ -553,7 +800,7 @@ function nativeProviderResponse(route, response, streaming) {
         return;
       }
     }
-    if (delta.content && delta.content.trim()) hasContent = true;
+    if ((delta.content && delta.content.trim()) || (delta.tool_calls && delta.tool_calls.length)) hasContent = true;
     if (Object.keys(delta).length || finish || mappedUsage)
       emit(controller, {
         object: 'chat.completion.chunk',
@@ -571,9 +818,9 @@ function nativeProviderResponse(route, response, streaming) {
         if (flush) throw error;
         return;
       }
-      controller.enqueue(encoder.encode(JSON.stringify(nativeProviderCompletion(protocol, json))));
+      enqueueBytes(controller, encoder.encode(JSON.stringify(nativeProviderCompletion(protocol, json))));
       finished = true;
-      controller.terminate();
+      closeStream(controller);
       return;
     }
     var match;
@@ -582,12 +829,21 @@ function nativeProviderResponse(route, response, streaming) {
       buffer = buffer.slice(match.index + match[0].length);
       event(controller, raw);
       if (finished) {
-        controller.terminate();
+        closeStream(controller);
         return;
       }
     }
     if (flush) {
       event(controller, buffer);
+      if (!finished && protocol === 'gemini' && geminiToolState.active && !geminiToolState.active.closed) {
+        var closing = geminiFlushOpenToolCallDelta(geminiToolState);
+        if (closing)
+          emit(controller, {
+            object: 'chat.completion.chunk',
+            choices: [{ index: 0, delta: { tool_calls: [closing] }, finish_reason: null }],
+            usage: null,
+          });
+      }
       if (!finished && protocol === 'gemini' && geminiLastFrame && !geminiCandidateSeen) {
         emit(controller, { error: geminiNoCandidateError(geminiLastFrame) });
         end(controller);
@@ -599,23 +855,58 @@ function nativeProviderResponse(route, response, streaming) {
         });
         end(controller);
       }
+      closeStream(controller);
     }
   }
   headers.set('Content-Type', streaming ? 'text/event-stream' : 'application/json');
-  var stream = response.body.pipeThrough(
-    new TransformStream({
-      transform: function (chunk, controller) {
-        buffer += decoder.decode(chunk, { stream: true });
-        consume(controller, false);
-      },
-      flush: function (controller) {
-        if (!finished) {
-          buffer += decoder.decode();
-          consume(controller, true);
+  var stream = new ReadableStream({
+    start: function (controller) {
+      streamController = controller;
+      if (signal) {
+        if (signal.aborted) onAbort();
+        else signal.addEventListener('abort', onAbort, { once: true });
+      }
+    },
+    pull: async function (controller) {
+      if (finished) return;
+      if (!upstream) {
+        try {
+          buffer = await response.text();
+          if (!finished) consume(controller, true);
+        } catch (error) {
+          failStream(controller, error);
         }
-      },
-    })
-  );
+        return;
+      }
+      enqueuedInPull = false;
+      while (!finished && !enqueuedInPull) {
+        var item;
+        try {
+          item = await upstream.read();
+        } catch (error) {
+          failStream(controller, error);
+          return;
+        }
+        if (finished) return;
+        try {
+          if (item.done) {
+            buffer += decoder.decode();
+            consume(controller, true);
+            return;
+          }
+          buffer += decoder.decode(item.value, { stream: true });
+          consume(controller, false);
+        } catch (error) {
+          failStream(controller, error);
+          return;
+        }
+      }
+    },
+    cancel: function () {
+      finished = true;
+      cancelUpstream();
+    },
+  });
   return new Response(stream, { status: response.status, statusText: response.statusText, headers: headers });
 }
 

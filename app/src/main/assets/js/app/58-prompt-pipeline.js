@@ -1079,6 +1079,7 @@ function* buildMessageStages(char, allMsgs, sessionOverride, buildOptions) {
     }
     if (prepared.omitted) return;
     var apiMessage = { role: m.role, content: c, _yeyuConversation: true };
+    if (m === continuationHistoryMessage) apiMessage.identifier = 'continueTarget';
     if (m._yeyuGenerationImageKey) apiMessage._yeyuGenerationImageKey = String(m._yeyuGenerationImageKey);
     result.push(apiMessage);
     conversationPromptMessages.add(apiMessage);
@@ -1328,6 +1329,10 @@ function* buildMessageStages(char, allMsgs, sessionOverride, buildOptions) {
       message.content = renderedRisuRows[index];
     });
   }
+  // Capture the rendered controls before outbound normalization strips their identifiers.
+  var continuationControls = continuationTarget && result.filter(function (row) {
+    return row.identifier === 'continueTarget' || row.identifier === 'continueNudge';
+  });
   if (presetAssembly && typeof presetFinalizeMessages === 'function') {
     var finalizedPresetMessages = presetFinalizeMessages(result, completionPresetForBuild);
     result.splice.apply(result, [0, result.length].concat(finalizedPresetMessages));
@@ -1341,6 +1346,8 @@ function* buildMessageStages(char, allMsgs, sessionOverride, buildOptions) {
   });
   return {
     messages: result,
+    continuationControls: continuationControls,
+    continuationNudgeTemplate: continuationTarget && completionPresetForBuild?.continue_nudge_prompt,
     usedTokens: result.reduce(function (sum, m) {
       return sum + estTokens(m.content || '') + 4;
     }, 0),

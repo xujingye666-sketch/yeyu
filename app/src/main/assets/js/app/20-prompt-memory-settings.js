@@ -964,6 +964,7 @@ var SETTINGS_PAGE_FIELD_IDS = [
   's-presence-penalty',
   's-show-thinking',
   's-stream-output',
+  's-auto-continue-truncation',
   's-reasoning-effort',
   's-inner-os',
   's-theme-mode',
@@ -1057,6 +1058,7 @@ function renderSettingsForm() {
     optionalSamplingValue(s, 'presence_penalty') === null ? '' : optionalSamplingValue(s, 'presence_penalty');
   $('s-show-thinking').checked = s.showThinking;
   if ($('s-stream-output')) $('s-stream-output').checked = s.streamOutput !== false;
+  if ($('s-auto-continue-truncation')) $('s-auto-continue-truncation').checked = s.autoContinueOnTruncation === true;
   if ($('s-reasoning-effort')) $('s-reasoning-effort').value = s.reasoningEffort || 'auto';
   $('s-inner-os').checked = s.innerOS;
   if ($('s-theme-mode')) $('s-theme-mode').value = s.themeMode || 'auto';
@@ -1092,7 +1094,6 @@ async function saveSettings() {
   if (typeof captureImageSourceForm === 'function') captureImageSourceForm();
   var active = activeProviderForSettings(providerFormSettings()),
     apiUrl = active.apiUrl,
-    model = String(active.model || '').trim(),
     embeddingApiUrl = normalizeApiBase($('s-embedding-api-url') && $('s-embedding-api-url').value),
     embeddingDimensionsText = String(($('s-embedding-dimensions') && $('s-embedding-dimensions').value) || '').trim(),
     embeddingDimensions = embeddingDimensionsText ? Number(embeddingDimensionsText) : 0,
@@ -1107,8 +1108,9 @@ async function saveSettings() {
       : D.worldBook.vector_enabled !== false,
     vectorWorldbookChanged = D.worldBook.vector_enabled !== vectorWorldbookEnabled;
   $('s-style-audit-max-tokens').value = String(styleAuditLimit);
-  if (!isValidApiBase(apiUrl) || !model) {
-    toast(!isValidApiBase(apiUrl) ? 'API 地址必须是有效的 http:// 或 https:// 地址' : '请填写当前对话模型 ID', 'err');
+  // 模型可留空保存，先填 Key 再检测选择；未选模型时由发送入口拦下并提示。
+  if (!isValidApiBase(apiUrl)) {
+    toast('API 地址必须是有效的 http:// 或 https:// 地址', 'err');
     return;
   }
   if (
@@ -1156,6 +1158,7 @@ async function saveSettings() {
     presence_penalty: presencePenalty,
     showThinking: $('s-show-thinking').checked,
     streamOutput: $('s-stream-output') ? $('s-stream-output').checked : true,
+    autoContinueOnTruncation: $('s-auto-continue-truncation') ? $('s-auto-continue-truncation').checked : false,
     reasoningEffort: $('s-reasoning-effort') ? $('s-reasoning-effort').value : 'auto',
     innerOS: $('s-inner-os').checked,
     themeMode: $('s-theme-mode') ? $('s-theme-mode').value : 'auto',

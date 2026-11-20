@@ -961,6 +961,7 @@ async function commitStreamDraftAsIncomplete(draftId, options) {
     await commitGeneratedResponse(target, text, {
       generationMeta: streamDraftIncompleteMeta(draft, options.interruption),
       streamDraftId: draft.draftId,
+      streamTokensDelivered: options.streamTokensDelivered,
       deferMemorySummary: true,
       allowCancelledCommit: options.allowCancelled === true,
     });
@@ -971,13 +972,13 @@ async function commitStreamDraftAsIncomplete(draftId, options) {
     return { saved: false, target: target, error: error };
   }
 }
-async function autoSaveInterruptedStreamDraft(target, error) {
+async function autoSaveInterruptedStreamDraft(target, error, streamTokensDelivered) {
   var draft = _activeStreamDraft,
     session = draft && findSession(draft.charId, draft.sessionId);
   if (!draft || !draft.text || !session || !streamDraftOwnedByGeneration(draft, target))
     return { saved: false, skipped: true, target: null };
   var interruption = generationInterruption(error, 'error') || generationInterruption(draft, 'draft'),
-    commitOptions = { allowCancelled: true, ownerTarget: target };
+    commitOptions = { allowCancelled: true, ownerTarget: target, streamTokensDelivered: streamTokensDelivered };
   if (interruption) commitOptions.interruption = interruption;
   var result = await commitStreamDraftAsIncomplete(draft.draftId, commitOptions);
   if (result.saved) toast('未完成回复已自动保存，可点击“继续生成”接着写。', 'info');

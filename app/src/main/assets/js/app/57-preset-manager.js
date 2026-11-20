@@ -1703,6 +1703,9 @@ function presetOutboundMessages(messages) {
       return row;
     });
 }
+function presetContinuationNudge(template, content) {
+  return String(template || '').replace(/{{lastChatMessage}}/g, () => String(content || '').trim());
+}
 function presetFinalizeMessages(messages, raw) {
   var rows = (messages || []).map(function (message) {
     return Object.assign({}, message);
@@ -1910,10 +1913,7 @@ function presetAssembleMessages(legacy, stages, context) {
     if (!context.disablePostHistoryPrompt && !raw.continue_prefill && String(raw.continue_nudge_prompt || ''))
       utilityControls.push({
         role: 'user',
-        content: String(raw.continue_nudge_prompt).replace(
-          /{{lastChatMessage}}/g,
-          String(continuation.content || '').trim()
-        ),
+        content: presetContinuationNudge(raw.continue_nudge_prompt, continuation.content),
         identifier: 'continueNudge',
       });
   }

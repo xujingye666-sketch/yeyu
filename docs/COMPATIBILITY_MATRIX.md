@@ -43,7 +43,7 @@ JS-Slash-Runner 名称以固定 `src/function/index.ts` 的真实导出为准，
 | 角色卡覆盖的原文 | `/sysprompt` 选中的命名系统提示词档也属于 `{{original}}` 可替换的原文；其余覆盖和 `forbid_overrides` 规则见数据模型。 |
 | 续写末条角色 | `continueNudge` 在夜欲装配层直接为末条 user；ST 装配为 system，再由 Google/Claude 转换层改 user。此差异避免 Gemini 兼容层在 model turn 结尾报 400。 |
 | 预设参数与预填 | 参数保真，不覆盖设置；`stream_openai` 不控制主对话流式，只有全局开关生效。`assistant_prefill` 对 OpenAI 兼容/自定义协议也作为尾部 assistant（ST 只对 Claude），Gemini 和开启思考的 Anthropic 不发送。退役 `wrap_in_quotes` 只保真。 |
-| 工具消息转换 | 不增加 `MERGE_TOOLS/SEMI_TOOLS/STRICT_TOOLS` 第二套 ST 转换；当前无真实卡片消费者。工具注册、预设工具调用开关和 OpenAI-compatible `tools/tool_choice` 请求均不支持；raw 的 `function_calling` 保真，旧工具消息按普通历史显示。 |
+| 工具消息转换 | 不增加 `MERGE_TOOLS/SEMI_TOOLS/STRICT_TOOLS` 第二套 ST 转换；不支持通用工具注册（ToolManager）、预设工具调用开关和多轮模型工具调用循环；脚本侧 `tools/tool_choice` 仍按未知配置拒绝；raw 的 `function_calling` 保真，旧工具消息按普通历史显示。OpenAI 兼容与 Google Gemini 主对话支持原生防过滤传输开关（将上下文搬入工具说明、借用工具参数作为正文输出通道并在流式与非流式回包中还原为正文），关闭时请求与普通纯文本一致。 |
 
 ### 2.3 宏、世界书、Regex、STScript 与 Quick Reply
 

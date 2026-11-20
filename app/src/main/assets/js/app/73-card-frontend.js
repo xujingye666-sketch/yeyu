@@ -4626,7 +4626,10 @@ function cardFrontendRedrawGreeting(redraw) {
 // for the interval and resolves once no dispatch is running any more: ST awaits every chunk before it
 // saves the reply, so MESSAGE_RECEIVED waits for it. A reply that arrived as one JSON body sends nothing.
 function cardFrontendStreamTokenRelay(intervalMs) {
-  var latest = '',
+  var mergePiece = null,
+    pendingPiece = null,
+    pendingBoundary = null,
+    latest = null,
     sent = '',
     busy = false,
     closed = false,
@@ -4637,11 +4640,26 @@ function cardFrontendStreamTokenRelay(intervalMs) {
   function settle() {
     if (resolveDelivered && !busy) resolveDelivered();
   }
+  function clearTimer() {
+    clearTimeout(timer);
+    timer = 0;
+  }
   function send() {
     timer = 0;
-    if (closed || busy || latest === sent) return;
+    if (closed || busy) return;
+    var text = pendingBoundary;
+    if (text !== null) pendingBoundary = null;
+    else {
+      if (latest === null) return;
+      text = mergePiece ? mergePiece(latest) : latest;
+      latest = null;
+    }
+    if (text === sent) {
+      schedule();
+      return;
+    }
     busy = true;
-    sent = latest;
+    sent = text;
     lastAt = Date.now();
     Promise.resolve(cardFrontendDispatchEvent(CARD_FRONTEND_TAVERN_EVENT_VALUES.STREAM_TOKEN_RECEIVED, [sent]))
       .catch(function (error) {
@@ -4654,18 +4672,40 @@ function cardFrontendStreamTokenRelay(intervalMs) {
       });
   }
   function schedule() {
-    if (closed || busy || timer || latest === sent) return;
+    if (closed || busy || timer || (pendingBoundary === null && latest === null)) return;
     if (delivered) send();
     else timer = setTimeout(send, Math.max(0, lastAt + intervalMs - Date.now()));
   }
   return {
+    continueFrom: function (base, join = (left, right) => left + right) {
+      base = String(base ?? '');
+      mergePiece = piece => join(base, piece);
+      pendingBoundary = latest;
+      latest = null;
+    },
+    discardSegment: function () {
+      pendingPiece = null;
+      latest = null;
+      if (pendingBoundary === null) clearTimer();
+    },
     push: function (text) {
-      latest = String(text == null ? '' : text);
+      text = String(text ?? '');
+      if (mergePiece) {
+        // The next SSE frame can reject the preceding text. Keep the newest snapshot
+        // retractable even if the dispatch timer fires before that frame arrives.
+        var previous = pendingPiece;
+        pendingPiece = text;
+        if (previous === null) return;
+        latest = previous;
+      } else latest = text;
       schedule();
     },
     finish: function () {
-      if (timer) clearTimeout(timer);
-      timer = 0;
+      if (pendingPiece !== null) {
+        latest = pendingPiece;
+        pendingPiece = null;
+      }
+      clearTimer();
       delivered =
         delivered ||
         new Promise(function (resolve) {
@@ -4677,8 +4717,7 @@ function cardFrontendStreamTokenRelay(intervalMs) {
     },
     close: function () {
       closed = true;
-      if (timer) clearTimeout(timer);
-      timer = 0;
+      clearTimer();
     },
   };
 }
